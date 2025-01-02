@@ -14,9 +14,108 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  name String
-  email String
-  password String
+  userId     Int     @id @default(autoincrement())
+  name       String
+  email      String  @unique
+  password   String
+  profileUrl String?
+  isAdmin    Boolean @default(false)
+
+  recipes   Recipe[]
+  bookmarks Bookmark[]
+  comments  Comment[]
+  likes     Like[]
+
+  followers UserFollower[] @relation("Followers") // Users who follow this user
+  following UserFollower[] @relation("Following") // Users this user is following
+
   createdAt DateTime @default(now())
+  udpatedAt DateTime @updatedAt
+}
+
+model UserFollower {
+  followId         Int @id @default(autoincrement())
+
+  followFromUserId Int // User who initiates the follow
+  followFromUser User @relation("Following", fields: [followFromUserId], references: [userId])
+
+  followToUserId   Int // User being followed
+  followToUser   User @relation("Followers", fields: [followToUserId], references: [userId])
+
+  createdAt DateTime @default(now())
+
+  @@unique([followFromUserId, followToUserId]) // Ensure no duplicate relationships
+}
+
+model Recipe {
+  recipeId    Int     @id @default(autoincrement())
+  title       String
+  description String
+  servingSize Int
+  recipeUrl   String?
+  steps       String
+
+  userId Int
+  user   User @relation(fields: [userId], references: [userId])
+
+  ingredients Ingredient[]
+  categories  Category[]
+  bookmarks   Bookmark[]
+  comments    Comment[]
+  likes       Like[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Ingredient {
+  ingredientId   Int    @id @default(autoincrement())
+  ingredientName String
+  quantityAmount String // e.g., "1", "1/4"
+  quantityUnit   String // e.g., "cup", "tbsp"
+
+  recipeId Int
+  recipe   Recipe @relation(fields: [recipeId], references: [recipeId])
+}
+
+model Category {
+  id           Int      @id @default(autoincrement())
+  categoryName String
+  recipes      Recipe[] //Many to many Relation to Recipe model //will allow search by category name
+}
+
+model Bookmark {
+  bookmarkId Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+
+  userId     Int
+  user   User   @relation(fields: [userId], references: [userId])
+  recipeId   Int
+  recipe Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+
+  @@unique([userId, recipeId]) // Enforce unique bookmarks for each user-recipe pair
+}
+
+model Comment {
+ id                 Int             @id @default(autoincrement())
+ text               String
+
+ recipeId           Int
+ recipe             Recipe          @relation(fields: [recipeId], references: [recipeId])
+ userId             Int
+ user               User            @relation(fields: [userId], references: [userId])
+ 
+ createdAt          DateTime        @default(now())
+ updatedAt          DateTime        @updatedAt
+}
+
+model Like {
+ id                 Int             @id @default(autoincrement())
+
+ userId             Int
+ user               User            @relation(fields: [userId], references: [userId])
+ recipeId           Int
+ recipe             Recipe          @relation(fields: [recipeId], references: [recipeId])
+ 
+ createdAt          DateTime        @default(now())
 }
