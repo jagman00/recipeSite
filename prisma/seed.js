@@ -139,7 +139,7 @@ async function main() {
   }
 
   // Seed User Followers
-  const followCount = faker.number.int({ min: 5, max: 19 });
+  const followCount = faker.number.int({ min: 5, max: 10 });
   console.log(`Seeding ${followCount} followers`);
   for (let i = 0; i < followCount; i++) {
     const followFromUser = faker.helpers.arrayElement(users);
