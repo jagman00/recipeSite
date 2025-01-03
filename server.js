@@ -1,9 +1,18 @@
 const express = require('express');
 const app = express();
+const cors = require('cors');
 
 require('dotenv').config(); //please put your PORT in .env file
 app.use(express.json());
 app.use(require('morgan')('dev'));
+app.use(cors());
+
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173/",
+//     credentials: true,
+//   })
+//);
 
 // Mount the API router at /api
 app.use("/api", require("./api/router"));
