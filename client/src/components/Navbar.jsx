@@ -7,9 +7,16 @@ import userIcon from '../assets/UserIcon.png';
 import logoIcon from '../assets/RoundTable.png'
 
 function Navbar() {
+    const token = localStorage.getItem("token");
+
+    const handleLogout = () => {
+        localStorage.clear();
+        setToken(null);
+    }
 
   return (
     <nav className="navbar">
+
         <Link to='/'>
           <div id="logoContainer">
             <img id="logoIcon" src={logoIcon} alt="Website logo" />
@@ -20,12 +27,30 @@ function Navbar() {
           <input id="searchbar" type='text'  placeholder='Search for recipes or users'></input>
           <button>Search</button>
         </div>
-        <Link id="userIcon" to='/user'>
-          <div id="userIconContainer">
-            <img src={userIcon} alt="User icon" />
-            <span>Login</span>
-          </div>
-        </Link>   
+        {token?
+        (
+            <>
+                <Link id="userIcon" to="/" onClick={()=>handleLogout()}>
+                  <div id="userIconContainer">
+                    <img src={userIcon} alt="User icon" />
+                    <span>Logout</span>
+                  </div>
+                </Link>
+            </>
+        )
+        :
+        (
+            <>
+                <Link id="userIcon" to='/login'>
+                  <div id="userIconContainer">
+                    <img src={userIcon} alt="User icon" />
+                    <span>Login</span>
+                  </div>
+                </Link>
+                <Link to="/register">Register</Link>
+            </>
+        )
+        }
     </nav>
   )
 }

@@ -6,7 +6,7 @@ require('dotenv').config();
 const authenticateUser = require('../middleware/authenticateUser');
 const authenticateAdmin = require('../middleware/authenticateAdmin');
 
-// Create a new recipe
+// Create new recipe
 // POST /api/recipes
 router.post("/", authenticateUser, async (req, res, next) => {
     const { title, description, servingSize, recipeUrl, steps } = req.body;
@@ -39,7 +39,7 @@ router.get("/", async (req, res, next) => {
     }
 });
 
-// Get a single recipe by ID
+// Get single recipe by ID
 // GET /api/recipes/:id
 router.get("/:id", async (req, res, next) => {
     const { id } = req.params;
@@ -58,7 +58,7 @@ router.get("/:id", async (req, res, next) => {
     }
 });
 
-// Update a recipe
+// Update recipe
 // PUT /api/recipes/:id
 router.put("/:id", authenticateUser, async (req, res, next) => {
     const { id } = req.params;
@@ -88,7 +88,7 @@ router.put("/:id", authenticateUser, async (req, res, next) => {
     }
 });
 
-// Delete a recipe
+// Delete recipe
 // DELETE /api/recipes/:id
 router.delete("/:id", authenticateUser, async (req, res, next) => {
     const { id } = req.params;
