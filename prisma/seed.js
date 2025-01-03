@@ -4,33 +4,43 @@ const { faker } = require('@faker-js/faker');
 const prisma = new PrismaClient();
 
 async function main() {
+    //Dropping the tables if exists /*MODIFIED*/
+    await prisma.bookmark.deleteMany();
+    await prisma.comment.deleteMany();
+    await prisma.ingredient.deleteMany();
+    await prisma.like.deleteMany();
+    await prisma.recipe.deleteMany();
+    await prisma.category.deleteMany();
+    await prisma.userFollower.deleteMany();
+    await prisma.user.deleteMany();
+
   console.log('Seeding the database with random quantities');
 
-      //Hardcoded Admin User
-  console.log('Seeding Admin user...');
+  //Hardcoded Admin User /*MODIFIED*/ hashed for bcrypt
+  console.log("Seeding Admin user...");
+  const hashedPassword = await bcrypt.hash("admin123", 10);
   const adminUser = await prisma.user.create({
     data: {
-      name: 'Admin User',
-      email: 'admin@example.com',
-      password: 'securepassword123!', 
+      name: "Admin Apple",
+      email: "apple@gmail.com",
+      password: hashedPassword,
       profileUrl: faker.image.avatar(),
       isAdmin: true,
     },
   });
 
-
-  // Seed Users
+  // Seed Users /*MODIFIED*/ hashed for bcrypt
   const users = [];
-  const userCount = faker.number.int({ min: 10, max: 15
-   });
+  const userCount = faker.number.int({ min: 10, max: 15 });
   console.log(`Seeding ${userCount} users...`);
   for (let i = 0; i < userCount; i++) {
+    const hashedPassword = await bcrypt.hash(faker.internet.password(), 10);
     users.push(
       await prisma.user.create({
         data: {
           name: faker.person.fullName(),
           email: faker.internet.email(),
-          password: faker.internet.password(),
+          password: hashedPassword,
           profileUrl: faker.image.avatar(),
           isAdmin: faker.datatype.boolean(),
         },
@@ -101,16 +111,30 @@ async function main() {
     });
   }
 
-  // Seed Bookmarks
-  const bookmarkCount = faker.number.int({ min: 2, max: 7});
+  // Seed Bookmarks /*MODIFIED*/ avoid duplicate bookmarks
+  const bookmarkCount = faker.number.int({ min: 2, max: 10 });
   console.log(`Seeding ${bookmarkCount} bookmarks...`);
   for (let i = 0; i < bookmarkCount; i++) {
-    await prisma.bookmark.create({
-      data: {
-        userId: faker.helpers.arrayElement(users).userId,
-        recipeId: faker.helpers.arrayElement(recipes).recipeId,
+    const randomUserId = faker.helpers.arrayElement(users).userId;
+    const randomRecipeId = faker.helpers.arrayElement(recipes).recipeId;
+    const existingBookmark = await prisma.bookmark.findFirst({
+      where: {
+        userId: randomUserId,
+        recipeId: randomRecipeId,
       },
     });
+    if (!existingBookmark) {
+      await prisma.bookmark.create({
+        data: {
+          userId: randomUserId,
+          recipeId: randomRecipeId,
+        },
+      });
+    } else {
+      console.log(
+        `Duplicate bookmark skipped for user${randomUserId} and recipe ${randomRecipeId}`
+      );
+    }
   }
 
   // Seed Comments
@@ -126,34 +150,61 @@ async function main() {
     });
   }
 
-  // Seed Likes
+  // Seed Likes /*MODIFIED*/ avoid duplicate likes
   const likeCount = faker.number.int({ min: 20, max: 100 });
   console.log(`Seeding ${likeCount} likes`);
   for (let i = 0; i < likeCount; i++) {
-    await prisma.like.create({
-      data: {
-        userId: faker.helpers.arrayElement(users).userId,
-        recipeId: faker.helpers.arrayElement(recipes).recipeId,
+    const randomUserId = faker.helpers.arrayElement(users).userId;
+    const randomRecipeId = faker.helpers.arrayElement(recipes).recipeId;
+    const existingBookmark = await prisma.like.findFirst({
+      where: {
+        userId: randomUserId,
+        recipeId: randomRecipeId,
       },
     });
+    if (!existingBookmark) {
+      await prisma.like.create({
+        data: {
+          userId: randomUserId,
+          recipeId: randomRecipeId,
+        },
+      });
+    } else {
+      console.log(
+        `Duplicate like skipped for user${randomUserId} and recipe ${randomRecipeId}`
+      );
+    }
   }
 
-  // Seed User Followers
-  const followCount = faker.number.int({ min: 5, max: 10 });
+  // Seed User Followers /*MODIFIED*/ avoid duplicate follow relationships
+  const followCount = faker.number.int({ min: 5, max: 19 });
   console.log(`Seeding ${followCount} followers`);
   for (let i = 0; i < followCount; i++) {
     const followFromUser = faker.helpers.arrayElement(users);
-    const followToUser = faker.helpers.arrayElement(users.filter(user => user.userId !== followFromUser.userId));
-
-    await prisma.userFollower.create({
-      data: {
+    const followToUser = faker.helpers.arrayElement(
+      users.filter((user) => user.userId !== followFromUser.userId)
+    );
+    const existingFollow = await prisma.userFollower.findFirst({
+      where: {
         followFromUserId: followFromUser.userId,
         followToUserId: followToUser.userId,
       },
     });
-  }
 
-  console.log('Seeding completed with random quantities!');
+    if (!existingFollow) {
+      await prisma.userFollower.create({
+        data: {
+          followFromUserId: followFromUser.userId,
+          followToUserId: followToUser.userId,
+        },
+      });
+    } else {
+      console.log(
+        `Follow relationship already exists between User ${followFromUser.userId} and User ${followToUser.userId}`
+      );
+    }
+  }
+  console.log("Seeding completed with random quantities!");
 }
 
 main()
@@ -165,4 +216,3 @@ main()
     await prisma.$disconnect();
   });
 
-  
