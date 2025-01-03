@@ -3,6 +3,8 @@ const { faker } = require('@faker-js/faker');
 
 const prisma = new PrismaClient();
 
+const bcrypt = require('bcrypt');
+
 async function main() {
     //Dropping the tables if exists /*MODIFIED*/
     await prisma.bookmark.deleteMany();
