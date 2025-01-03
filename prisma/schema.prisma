@@ -20,6 +20,8 @@ model User {
   password   String
   profileUrl String?
   isAdmin    Boolean @default(false)
+  userTitle  String?
+  bio        String?
 
   recipes   Recipe[]
   bookmarks Bookmark[]
