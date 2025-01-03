@@ -30,7 +30,7 @@ model User {
   following UserFollower[] @relation("Following") // Users this user is following
 
   createdAt DateTime @default(now())
-  udpatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 }
 
 model UserFollower {
