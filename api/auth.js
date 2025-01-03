@@ -66,6 +66,14 @@ router.post("/login", async(req,res,next)=>{
 
 // Get the authenticated user
 // GET /api/auth/me 
-router.get("/me", authenticateUser, (req,res)=>{
-    res.status(201).json(req.user);
+router.get("/me", authenticateUser, async (req,res)=>{
+    try {
+        const user = await prisma.user.findUnique({
+            where:{userId: req.user.userId},
+            include:{recipes:true},
+        });
+        res.status(201).json(user);
+    } catch (error) {
+        next(error);
+    }
 });
