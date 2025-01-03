@@ -13,16 +13,18 @@ import React from 'react'
 function App() {
 
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/user" element={<User />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/recipe/:id" element={<Recipe />} />
-        <Route path="/" element={<Recipes />} />
-      </Routes>
-    </Router>
+      <body className="background">
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/user" element={<User />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/recipe/:id" element={<Recipe />} />
+            <Route path="/" element={<Recipes />} />
+          </Routes>
+        </Router>
+      </body>
   )
 }
 
