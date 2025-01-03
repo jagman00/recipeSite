@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(require('morgan')('dev'));
 
 // Mount the API router at /api
-app.use("/api", require("./api"));
+app.use("/api", require("./api/router"));
 
 app.use((err, req, res, next) => {
     console.error(err);
