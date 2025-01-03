@@ -31,24 +31,26 @@ async function main() {
     },
   });
 
-  // Seed Users /*MODIFIED*/ hashed for bcrypt
-  const users = [];
-  const userCount = faker.number.int({ min: 10, max: 15 });
-  console.log(`Seeding ${userCount} users...`);
-  for (let i = 0; i < userCount; i++) {
-    const hashedPassword = await bcrypt.hash(faker.internet.password(), 10);
-    users.push(
-      await prisma.user.create({
-        data: {
-          name: faker.person.fullName(),
-          email: faker.internet.email(),
-          password: hashedPassword,
-          profileUrl: faker.image.avatar(),
-          isAdmin: faker.datatype.boolean(),
-        },
-      })
-    );
-  }
+// Seed Users /*MODIFIED*/ hashed for bcrypt
+const users = [];
+const userCount = faker.number.int({ min: 10, max: 15 });
+console.log(`Seeding ${userCount} users...`);
+for (let i = 0; i < userCount; i++) {
+  const hashedPassword = await bcrypt.hash(faker.internet.password(), 10);
+  users.push(
+    await prisma.user.create({
+      data: {
+        name: faker.person.fullName(),
+        email: faker.internet.email(),
+        password: hashedPassword,
+        profileUrl: faker.image.avatar(),
+        isAdmin: faker.datatype.boolean(),
+        userTitle: faker.person.jobTitle(), // Adding userTitle
+        bio: faker.lorem.paragraph(),      // Adding bio
+      },
+    })
+  );
+}
 
   // Seed Recipes
   const recipes = [];
