@@ -5,8 +5,9 @@ const prisma = require("../prisma");
 require('dotenv').config();
 const authenticateUser = require('../middleware/authenticateUser');
 const authenticateAdmin = require('../middleware/authenticateAdmin');
+const { use } = require("react");
 
-// Create new recipe
+// Create new recipe by authenticated user /*create ingredients inclusively*/
 // POST /api/recipes
 router.post("/", authenticateUser, async (req, res, next) => {
     const { title, description, servingSize, recipeUrl, steps } = req.body;
@@ -20,7 +21,15 @@ router.post("/", authenticateUser, async (req, res, next) => {
                 recipeUrl,
                 steps,
                 userId: req.user.userId,
+                ingredients: {  /* Create related ingredients */ /* Expect an array of ingredient objects*/
+                    create: req.body.ingredients.map((ingredient) => ({ 
+                        ingredientName: ingredient.ingredientName,
+                        quantityAmount: ingredient.quantityAmount,
+                        quantityUnit: ingredient.quantityUnit,
+                    })),
+                }
             },
+            include:{ingredients:true},
         });
         res.status(201).json(recipe);
     } catch (error) {
@@ -32,21 +41,49 @@ router.post("/", authenticateUser, async (req, res, next) => {
 // GET /api/recipes
 router.get("/", async (req, res, next) => {
     try {
-        const recipes = await prisma.recipe.findMany();
+        const recipes = await prisma.recipe.findMany({
+            include: { /* Include related user details */
+                user: {
+                    select: {
+                        userId: true,
+                        name: true,
+                        profileUrl: true,
+                    },
+                },
+                _count: { /* Include count of comments, bookmarks, and likes */
+                    select: { 
+                        comments: true,
+                        bookmarks: true,
+                        likes: true,
+                    }, 
+                },
+            },
+
+        });
         res.status(200).json(recipes);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Failed to fetch recipes" });
     }
 });
 
-// Get single recipe by ID
+// Get a single recipe by ID
 // GET /api/recipes/:id
 router.get("/:id", async (req, res, next) => {
     const { id } = req.params;
     try {
         const recipe = await prisma.recipe.findUnique({
             where: { recipeId: parseInt(id) },
-        });
+            include: {
+                user: {
+                    select: {
+                        userId: true,
+                        name: true,
+                        profileUrl: true,
+                        userTitle: true,
+                    },
+                },
+                ingredients: true, /* Include related ingredients */
+        }});
 
         if (!recipe) {
             return res.status(404).json({ message: "Recipe not found" });
@@ -54,15 +91,16 @@ router.get("/:id", async (req, res, next) => {
 
         res.status(200).json(recipe);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Failed to fetch a recipe" });
     }
 });
 
-// Update recipe
+
+// Update recipe /*edit ingredients inclusively*/
 // PUT /api/recipes/:id
 router.put("/:id", authenticateUser, async (req, res, next) => {
     const { id } = req.params;
-    const { title, description, servingSize, recipeUrl, steps } = req.body;
+    const { title, description, servingSize, recipeUrl, steps, ingredients } = req.body;
 
     try {
         const recipe = await prisma.recipe.findUnique({
@@ -79,16 +117,31 @@ router.put("/:id", authenticateUser, async (req, res, next) => {
 
         const updatedRecipe = await prisma.recipe.update({
             where: { recipeId: parseInt(id) },
-            data: { title, description, servingSize, recipeUrl, steps },
+            data: { 
+                title, 
+                description, 
+                servingSize, 
+                recipeUrl, 
+                steps,
+                ingredients: {  /* Update related ingredients */
+                    deleteMany: {}, /* Delete all existing ingredients */
+                    create: ingredients.map((ingredient) => ({ 
+                        ingredientName: ingredient.ingredientName,
+                        quantityAmount: ingredient.quantityAmount,
+                        quantityUnit: ingredient.quantityUnit,
+                    })),
+                },
+            },
+            include:{ingredients:true},
         });
 
         res.status(200).json(updatedRecipe);
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Failed to update recipe" });
     }
 });
 
-// Delete recipe
+// Delete recipe (only by the user or admin)
 // DELETE /api/recipes/:id
 router.delete("/:id", authenticateUser, async (req, res, next) => {
     const { id } = req.params;
@@ -112,6 +165,6 @@ router.delete("/:id", authenticateUser, async (req, res, next) => {
 
         res.status(204).send();
     } catch (error) {
-        next(error);
+        res.status(500).json({ message: "Failed to delete recipe" });
     }
 });

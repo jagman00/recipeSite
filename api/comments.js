@@ -5,7 +5,7 @@ const prisma = require("../prisma"); // Prisma client for database interaction
 const authenticateUser = require("../middleware/authenticateUser"); // Middleware for user authentication
 const authenticateAdmin = require("../middleware/authenticateAdmin"); // Middleware for admin authentication
 
-// Get all comments with pagination
+// Get all comments with pagination 
 router.get("/", authenticateUser, async (req, res) => {
   const { limit = 10, offset = 0 } = req.query; // Set default pagination values
   try {
