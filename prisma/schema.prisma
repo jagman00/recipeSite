@@ -36,13 +36,13 @@ model User {
 }
 
 model UserFollower {
-  followId         Int @id @default(autoincrement())
+  followId Int @id @default(autoincrement())
 
   followFromUserId Int // User who initiates the follow
-  followFromUser User @relation("Following", fields: [followFromUserId], references: [userId])
+  followFromUser   User @relation("Following", fields: [followFromUserId], references: [userId], onDelete: Cascade)
 
-  followToUserId   Int // User being followed
-  followToUser   User @relation("Followers", fields: [followToUserId], references: [userId])
+  followToUserId Int // User being followed
+  followToUser   User @relation("Followers", fields: [followToUserId], references: [userId], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
@@ -52,13 +52,13 @@ model UserFollower {
 model Recipe {
   recipeId    Int     @id @default(autoincrement())
   title       String
-  description String
-  servingSize Int
+  description String?
+  servingSize Int?
   recipeUrl   String?
   steps       String
 
   userId Int
-  user   User @relation(fields: [userId], references: [userId])
+  user   User @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   ingredients Ingredient[]
   categories  Category[]
@@ -73,11 +73,11 @@ model Recipe {
 model Ingredient {
   ingredientId   Int    @id @default(autoincrement())
   ingredientName String
-  quantityAmount String // e.g., "1", "1/4"
-  quantityUnit   String // e.g., "cup", "tbsp"
+  quantityAmount String? // e.g., "1", "1/4"
+  quantityUnit   String? // e.g., "cup", "tbsp"
 
   recipeId Int
-  recipe   Recipe @relation(fields: [recipeId], references: [recipeId])
+  recipe   Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
 }
 
 model Category {
@@ -90,34 +90,34 @@ model Bookmark {
   bookmarkId Int      @id @default(autoincrement())
   createdAt  DateTime @default(now())
 
-  userId     Int
-  user   User   @relation(fields: [userId], references: [userId])
-  recipeId   Int
-  recipe Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+  userId   Int
+  user     User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  recipeId Int
+  recipe   Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
 
   @@unique([userId, recipeId]) // Enforce unique bookmarks for each user-recipe pair
 }
 
 model Comment {
- id                 Int             @id @default(autoincrement())
- text               String
+  id   Int    @id @default(autoincrement())
+  text String
 
- recipeId           Int
- recipe             Recipe          @relation(fields: [recipeId], references: [recipeId])
- userId             Int
- user               User            @relation(fields: [userId], references: [userId])
- 
- createdAt          DateTime        @default(now())
- updatedAt          DateTime        @updatedAt
+  recipeId Int
+  recipe   Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+  userId   Int
+  user     User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Like {
- id                 Int             @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
- userId             Int
- user               User            @relation(fields: [userId], references: [userId])
- recipeId           Int
- recipe             Recipe          @relation(fields: [recipeId], references: [recipeId])
- 
- createdAt          DateTime        @default(now())
+  userId   Int
+  user     User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  recipeId Int
+  recipe   Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }

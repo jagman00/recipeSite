@@ -5,9 +5,8 @@ const prisma = require("../prisma");
 const authenticateUser = require('../middleware/authenticateUser');
 const authenticateAdmin = require('../middleware/authenticateAdmin');
 
-
 // GET /api/users
-// Get all users (admin only)
+// Get all users (by admin only)
 router.get("/", authenticateAdmin, async(req,res,next)=>{
     try {
         const users = await prisma.user.findMany({
@@ -27,7 +26,15 @@ router.get("/:id", async(req,res,next)=>{
     try {
         const user = await prisma.user.findUnique({
             where:{userId: parseInt(id)},
-            include:{recipes:true},
+            select:{
+                userId:true, 
+                name:true, 
+                email:true, 
+                profileUrl:true, 
+                userTitle:true, 
+                bio:true, 
+                createdAt:true,
+            },           
         });
 
         if(!user) return res.status(404).json({message: "User not found"});
@@ -45,8 +52,18 @@ router.get("/:id/recipes", async(req,res,next)=>{
     try {
         const recipes = await prisma.recipe.findMany({
             where:{userId: parseInt(id)},
-            include:{user:true},
-        });
+            include:{
+                user: {select:{
+                    userId:true, 
+                    name:true,
+                    email:true,
+                    profileUrl:true,
+                    userTitle:true,
+                    createdAt:true,
+                    updatedAt:true,
+                }
+                },
+        }});
 
         if(!recipes) return res.status(404).json({message: "Recipes not found"});
 
@@ -57,12 +74,15 @@ router.get("/:id/recipes", async(req,res,next)=>{
     }
 }); 
 
-// PUT /api/users/:id *
+// PATCH /api/users/:id *
 // Update a user profile by id (only the user)
-router.put("/:id", authenticateUser, async(req,res,next)=>{
+router.patch("/:id", authenticateUser, async(req,res,next)=>{
     const {id} = req.params;
     const {name, email, profileUrl, userTitle, bio} = req.body;
     try {
+        if(req.user.userId !== parseInt(id)){
+            return res.status(403).json({message: "You are not authorized to update this user's profile"});
+        }
         const updatedUser = await prisma.user.update({
             where:{userId: parseInt(id)},
             data:{name, email, profileUrl, userTitle, bio},
@@ -75,8 +95,8 @@ router.put("/:id", authenticateUser, async(req,res,next)=>{
 });
 
 // DELETE /api/users/:id
-// Delete a user by id (by the user or an admin) //need to cased delete on schema
-router.delete("/:id", authenticateUser||authenticateAdmin , async(req,res,next)=>{
+// Delete a user by id (by the user or an admin) 
+router.delete("/:id", authenticateUser||authenticateAdmin, async(req,res,next)=>{
     const {id} = req.params;
     try {
         const user = await prisma.user.findUnique({
@@ -84,6 +104,11 @@ router.delete("/:id", authenticateUser||authenticateAdmin , async(req,res,next)=
         });
         if(!user) return res.status(404).json({message: "User not found"});
 
+        // Check if the user is the owner of the account or an admin
+        if (parseInt(id) !== req.user.userId && !req.user.isAdmin) {
+            return res.status(403).json({ message: "You are not authorized to delete this account" });
+        }
+        
         await prisma.user.delete({
             where:{userId: parseInt(id)},
         });
@@ -95,33 +120,41 @@ router.delete("/:id", authenticateUser||authenticateAdmin , async(req,res,next)=
     }
 });
 
-// Delete a recipe (restricted to the recipe’s creator).
+// Delete a recipe (by the user) 
 // DELETE /api/users/:id/recipes/:recipeId
-router.delete("/:id/recipes/:recipeId", authenticateUser, async(req,res,next)=>{
-    const {id, recipeId} = req.params;
-    try {
-        const recipe = await prisma.recipe.findUnique({
-            where:{recipeId: parseInt(recipeId)},
-        });
+// router.delete("/:id/recipes/:recipeId", authenticateUser, async(req,res,next)=>{
+//     const {id, recipeId} = req.params;
+//     try {
+//         const recipe = await prisma.recipe.findUnique({
+//             where:{recipeId: parseInt(recipeId)},
+//         });
 
-        if(!recipe) return res.status(404).json({message: "Recipe not found"});
+//         if(!recipe) return res.status(404).json({message: "Recipe not found"});
 
-        await prisma.recipe.delete({
-            where:{recipeId: parseInt(recipeId)},
-        });
+//         if (req.user.userId !== parseInt(id)) {
+//             return res.status(403).json({ message: "You are not authorized to delete this recipe" });
+//         }
 
-        res.status(204).json({message: "Recipe deleted"});
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({message: "Fail to delete recipe"});
-    }
-});
+//         await prisma.recipe.delete({
+//             where:{recipeId: parseInt(recipeId)},
+//         });
 
-// Get all bookmarks of a specific user
+//         res.status(204).json({message: "Recipe deleted"});
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({message: "Fail to delete recipe"});
+//     }
+// });
+
+// Get all bookmarks of a specific user (only by the user) (admin cannot access)
 // GET /api/users/:id/bookmarks
-router.get("/:id/bookmarks", async(req,res,next)=>{
+router.get("/:id/bookmarks", authenticateUser, async(req,res,next)=>{
     const {id} = req.params;
     try {
+        if(req.user.userId !== parseInt(id)){
+            return res.status(403).json({message: "You are not authorized to view this user's bookmarks"});
+        }
+
         const bookmarks = await prisma.bookmark.findMany({
             where:{userId: parseInt(id)},
             include:{
@@ -133,11 +166,13 @@ router.get("/:id/bookmarks", async(req,res,next)=>{
         }
     });
 
-        if(!bookmarks) return res.status(404).json({message: "Bookmarks not found"});
+    if(!bookmarks) return res.status(404).json({message: "Bookmarks not found"});
 
-        res.status(200).json(bookmarks);
+    res.status(200).json(bookmarks);
     } catch (error) {
         console.error(error);
         res.status(500).json({message: "Fail to fetch bookmarks"});
     }
 });
+
+
