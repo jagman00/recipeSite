@@ -6,6 +6,7 @@ require('dotenv').config();
 const authenticateUser = require('../middleware/authenticateUser');
 const authenticateAdmin = require('../middleware/authenticateAdmin');
 const { use } = require("react");
+const { comment } = require("../../yarnia.CAPSTONE/prisma");
 
 // Create new recipe by authenticated user /*create ingredients inclusively*/
 // POST /api/recipes
@@ -83,6 +84,12 @@ router.get("/:id", async (req, res, next) => {
                     },
                 },
                 ingredients: true, /* Include related ingredients */
+                _count: { /* Include count of comments, bookmarks, and likes */
+                    select: { 
+                        bookmarks: true,
+                        likes: true,
+                    }, 
+                },
         }});
 
         if (!recipe) {
@@ -94,7 +101,6 @@ router.get("/:id", async (req, res, next) => {
         res.status(500).json({ message: "Failed to fetch a recipe" });
     }
 });
-
 
 // Update recipe /*edit ingredients inclusively*/
 // PUT /api/recipes/:id
@@ -166,5 +172,24 @@ router.delete("/:id", authenticateUser, async (req, res, next) => {
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ message: "Failed to delete recipe" });
+    }
+});
+
+// Retrieve all ingredients for a recipe
+// GET /api/recipes/:id/ingredients
+router.get("/:id/ingredients", async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const ingredients = await prisma.ingredient.findMany({
+            where: { recipeId: parseInt(id) },
+        });
+
+        if (!ingredients) {
+            return res.status(404).json({ message: "Ingredients not found" });
+        }
+
+        res.status(200).json(ingredients);
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch ingredients" });
     }
 });

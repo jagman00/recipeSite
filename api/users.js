@@ -120,32 +120,6 @@ router.delete("/:id", authenticateUser||authenticateAdmin, async(req,res,next)=>
     }
 });
 
-// Delete a recipe (by the user) 
-// DELETE /api/users/:id/recipes/:recipeId
-// router.delete("/:id/recipes/:recipeId", authenticateUser, async(req,res,next)=>{
-//     const {id, recipeId} = req.params;
-//     try {
-//         const recipe = await prisma.recipe.findUnique({
-//             where:{recipeId: parseInt(recipeId)},
-//         });
-
-//         if(!recipe) return res.status(404).json({message: "Recipe not found"});
-
-//         if (req.user.userId !== parseInt(id)) {
-//             return res.status(403).json({ message: "You are not authorized to delete this recipe" });
-//         }
-
-//         await prisma.recipe.delete({
-//             where:{recipeId: parseInt(recipeId)},
-//         });
-
-//         res.status(204).json({message: "Recipe deleted"});
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({message: "Fail to delete recipe"});
-//     }
-// });
-
 // Get all bookmarks of a specific user (only by the user) (admin cannot access)
 // GET /api/users/:id/bookmarks
 router.get("/:id/bookmarks", authenticateUser, async(req,res,next)=>{
