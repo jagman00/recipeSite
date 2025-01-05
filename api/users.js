@@ -149,4 +149,46 @@ router.get("/:id/bookmarks", authenticateUser, async(req,res,next)=>{
     }
 });
 
+// GET /api/users/:id/comments
+// Get all comments created by a specific user
+router.get("/:id/comments", authenticateUser, async (req, res, next) => {
+    const { id } = req.params; // User ID from request parameters
+
+    try {
+        // Check if the authenticated user matches the requested user ID or is an admin
+        if (req.user.userId !== parseInt(id) && !req.user.isAdmin) {
+            return res.status(403).json({ message: "You are not authorized to view this user's comments." });
+        }
+
+        // Fetch all comments for the given user ID
+        const comments = await prisma.comment.findMany({
+            where: { userId: parseInt(id) },
+            include: {
+                recipe: { // Include associated recipe details
+                    select: {
+                        recipeId: true,
+                        title: true,
+                    }
+                },
+                user: { // Include user details
+                    select: {
+                        userId: true,
+                        name: true,
+                        profileUrl: true,
+                    }
+                }
+            }
+        });
+
+        // If no comments are found
+        if (!comments || comments.length === 0) {
+            return res.status(404).json({ message: "No comments found for this user." });
+        }
+
+        res.status(200).json(comments);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Failed to fetch comments." });
+    }
+});
 
