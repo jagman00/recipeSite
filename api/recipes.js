@@ -340,3 +340,37 @@ router.delete("/:recipeId/comments/:id", authenticateUser, async (req, res, next
         res.status(500).json({ message: "Failed to delete comment." });
     }
 });
+
+// Like a recipe
+// POST /api/recipes/:id/like
+router.post("/:id/like", authenticateUser, async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        await prisma.like.create({
+            data: {
+                userId: req.user.userId,
+                recipeId: parseInt(id),
+            },
+        });
+        res.status(201).json({ message: "Recipe liked successfully" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Unlike a recipe
+// DELETE /api/recipes/:id/like
+router.delete("/:id/like", authenticateUser, async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        await prisma.like.deleteMany({
+            where: {
+                userId: req.user.userId,
+                recipeId: parseInt(id),
+            },
+        });
+        res.status(200).json({ message: "Recipe unliked successfully" });
+    } catch (error) {
+        next(error);
+    }
+});
