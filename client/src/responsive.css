@@ -1,5 +1,3 @@
-/* Screen adjustments */
-
 /* Global Reset for Consistency Across Browsers */
 * {
   margin: 0;
@@ -7,24 +5,27 @@
   box-sizing: border-box; /* Include padding and border in width/height calculations */
 }
 
-/* Body adjustments for full height and centering */
+/* Body adjustments for background image */
 body, html {
   height: 100%;
   width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   overflow-x: hidden; /* Prevent horizontal scrolling */
-  display: flex;
-  justify-content: center;
-  align-items: center; 
 }
 
-/* Ensure parent container covers full viewport */
+/* Background image styling */
 .background {
+  background-image: url('./assets/Background.jpg'); /* Update path if needed */
+  background-size: cover; /* Ensures it covers the viewport */
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100vw;
+  height: 100vh; /* Full viewport height */
   display: flex;
   justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh; /* Full viewport height */
-  padding: 20px;
+  align-items: center; /* Centers content vertically and horizontally */
 }
 
 /* Register Form Responsive Fixes */
@@ -34,12 +35,12 @@ body, html {
   align-items: center;
   flex-direction: column;
   padding: 20px;
-  width: 100%; 
-  max-width: 400px; 
-  margin: 0 auto; 
+  width: 100%;
+  max-width: 400px; /* Prevent it from growing too wide */
+  margin: 0 auto;
   box-sizing: border-box;
-  background: white; 
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  background: white; /* Ensure visibility against background */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add slight shadow for separation */
   border-radius: 8px;
 }
 
@@ -62,7 +63,7 @@ input, button {
 @media (max-width: 500px) {
   .form-container {
     padding: 10px;
-    width: 90%; 
+    width: 90%; /* Slightly smaller width for very small screens */
   }
 
   input, button {
@@ -71,7 +72,7 @@ input, button {
   }
 }
 
-/* Adjust navbar for small screens */
+/* Navbar adjustments */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;
@@ -82,9 +83,6 @@ input, button {
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 0; 
-    margin: 0;  
-    box-sizing: border-box; 
   }
 
   #userIconContainer {
@@ -118,6 +116,7 @@ input, button {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background: white;
 }
+
 
 /* Responsive adjustments for buttons and links */
 @media (max-width: 768px) {
