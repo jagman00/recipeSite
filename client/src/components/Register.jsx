@@ -37,38 +37,51 @@ const RegisterUser = ({ setToken }) => {
   };
 
   return (
-    <div className="form-container"> {/* Added form-container class */}
-      <h2>Register User</h2>
+    <div className="registerComponent">
+      <h2 className="header">Take Your Seat at<br /> the Round Table</h2>
+      <div className="introText">
+        Step into the grand halls of Camelot,<br /> where recipes are treasures,<br /> and every meal is a quest worth savoring.<br /> Join the round table of culinary legends<br /> and share your feasts with the realm!
+      </div>
+
       <form onSubmit={handleRegister}>
         <div>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            placeholder="Knight Lancelot"
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+          <label htmlFor="name">
+            <span>Username:</span> 
+            <input
+              type="text"
+              id="name"
+              value={name}
+              placeholder="Sir Lancelot"
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </label>
         </div>
         <div>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            placeholder="Lancelot44@camelot.com"
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <label htmlFor="email">
+            <span>Email:</span>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              placeholder="lancelot44@camelot.com"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
         </div>
         <div>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            placeholder="Your secret phrase"
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <label htmlFor="password">
+            <span>Password:</span>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              placeholder="Your Secret Phrase"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </label>
         </div>
         <button type="submit">Register</button>
       </form>

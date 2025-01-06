@@ -58,7 +58,7 @@ const RecipesList = () => {
   };
 
   return (
-    <div>
+    <div className="recipes">
       <h2>Recipes</h2>
       <div className="recipe-list">
         {recipes.map((recipe) => (
@@ -66,24 +66,25 @@ const RecipesList = () => {
             <Link to={`/recipe/${recipe.recipeId}`} state={{ page }}>
               <h3>{recipe.title}</h3>
               <img
-              src={recipe.recipeUrl}
-              className="image"
-              loading="lazy"/>
+                src={recipe.recipeUrl}
+                className="image"
+                loading="lazy"
+              />
               <p>{recipe.description}</p>
               <p>Likes: {recipe._count.likes}</p>
               <p>Bookmarks: {recipe._count.bookmarks}</p>
             </Link>
           </div>
         ))}
-      </div>
-      <div className="pagination">
-        <button onClick={handlePreviousPage} disabled={page === 1}>
-          Previous
-        </button>
-        <span>{`Page ${page} of ${totalPages}`}</span>
-        <button onClick={handleNextPage} disabled={page === totalPages}>
-          Next
-        </button>
+        <div className="pagination">
+          <button onClick={handlePreviousPage} disabled={page === 1}>
+            Previous
+          </button>
+          <span id="paginationNumbers">{`Page ${page} of ${totalPages}`}</span>
+          <button onClick={handleNextPage} disabled={page === totalPages}>
+            Next
+          </button>
+        </div>
       </div>
     </div>
   );

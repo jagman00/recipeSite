@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import '../App.css'
 import React from 'react'
-import userIcon from '../assets/UserIcon.png';
+import userIcon from '../assets/UserIconWhite.png';
 import logoIcon from '../assets/RoundTable.png';
 import { jwtDecode } from "jwt-decode";
 
@@ -33,7 +33,6 @@ function Navbar({ setToken }) {
 
   return (
     <nav className="navbar">
-
         <Link to='/'>
           <div id="logoContainer">
             <img id="logoIcon" src={logoIcon} alt="Website logo" />
@@ -61,13 +60,13 @@ function Navbar({ setToken }) {
         :
         (
           <>
-              <Link id="userIcon" to='/login'>
-                <div id="userIconContainer">
-                  <img src={userIcon} alt="User icon" />
-                  <span>Login</span>
-                </div>
-              </Link>
-              <Link to="/register">Register</Link>
+            <Link id="userIcon" to='/login'>
+              <div id="userIconContainer">
+                <img id="helmetIcon" src={userIcon} alt="User icon" />
+                <span>Login</span>
+              </div>
+            </Link>
+            <Link id="registerText" to="/register">Register</Link>
           </>
         )
         }
