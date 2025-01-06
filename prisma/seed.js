@@ -63,7 +63,7 @@ for (let i = 0; i < userCount; i++) {
           title: faker.food.dish(3),
           description: faker.food.description(2),
           servingSize: faker.number.int({ min: 1, max: 10 }),
-          recipeUrl: faker.internet.url(),
+          recipeUrl: faker.image.urlLoremFlickr(),
           steps: faker.lorem.paragraphs(2),
           userId: faker.helpers.arrayElement(users).userId,
         },
