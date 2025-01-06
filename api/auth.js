@@ -21,18 +21,32 @@ const createToken = (user) => {
 // POST /api/auth/register
 router.post("/register", async(req,res,next)=>{
     const {name, email, password, isAdmin} = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
     try {
-        const newUser = await prisma.user.create({
+        // Validate input
+        if (!name || !email || !password) {
+            return res.status(400).json({message: "Name, email and password are required."})
+        }
+        
+        // Check if the user already exists
+        const existingUser = await prisma.user.findUnique({
+            where:{email}
+        })
+        if (existingUser) {
+            return res.status(400).json({message: "A user with this email already exist."})
+        }
+        
+        // Create a new user with hashed password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await prisma.user.create({
             data:{
                 name,
                 email,
                 password: hashedPassword,
                 isAdmin,
-            }
+            },
         });
 
-        const token = createToken(newUser);
+        const token = createToken(user);
         res.status(201).json(token);
     } catch (error) {
         next(error);
@@ -45,7 +59,7 @@ router.post("/login", async(req,res,next)=>{
     const {email, password} = req.body; //unique email
     try {
         const user = await prisma.user.findUnique({
-            where:{email} 
+            where:{email}, 
         });
 
         if(!user){ 

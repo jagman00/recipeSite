@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { fetchRegister } from "../API/index.js"; // Importing the fetchRegister function
 import { useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
-const RegisterUser = () => {
+const RegisterUser = ({ setToken }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [token, setToken] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
@@ -22,8 +22,11 @@ const RegisterUser = () => {
       if (response !== undefined) {
         setSuccessMessage("User registered successfully!");
         setToken(response);
-        localStorage.setItem("token", response)
-        navigate('/user/me');
+
+        // Save the token in localStorage
+        localStorage.setItem("token", response); 
+
+        navigate('/user');
       } else {
         setErrorMessage(response?.message || "Registration failed.");
       }
@@ -73,6 +76,10 @@ const RegisterUser = () => {
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
     </div>
   );
+};
+
+RegisterUser.propTypes = {
+  setToken: PropTypes.func.isRequired,
 };
 
 export default RegisterUser;
