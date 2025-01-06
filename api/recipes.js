@@ -57,9 +57,15 @@ router.get("/", async (req, res, next) => {
                     }, 
                 },
             },
-
+            orderBy: {
+                createdAt: "desc", // Order by the newest recipe first
+              },
         });
-        res.status(200).json(recipes);
+
+        // Count the total number of recipes
+        const recipeCount = await prisma.recipe.count();
+
+        res.status(200).json({recipes, recipeCount});
     } catch (error) {
         res.status(500).json({ message: "Failed to fetch recipes" });
     }
@@ -88,7 +94,8 @@ router.get("/:id", async (req, res, next) => {
                         likes: true,
                     }, 
                 },
-        }});
+            },
+        });
 
         if (!recipe) {
             return res.status(404).json({ message: "Recipe not found" });
@@ -145,7 +152,7 @@ router.put("/:id", authenticateUser, async (req, res, next) => {
     }
 });
 
-// Delete recipe (only by the user or admin)
+// Delete recipe (by the user or admin)
 // DELETE /api/recipes/:id
 router.delete("/:id", authenticateUser, async (req, res, next) => {
     const { id } = req.params;
@@ -167,7 +174,7 @@ router.delete("/:id", authenticateUser, async (req, res, next) => {
             where: { recipeId: parseInt(id) },
         });
 
-        res.status(204).send();
+        res.status(204).end();
     } catch (error) {
         res.status(500).json({ message: "Failed to delete recipe" });
     }
@@ -210,7 +217,10 @@ router.get("/:id/comments", authenticateUser, async (req, res, next) => {
                         userTitle: true,
                     }
                 }
-            }
+            },
+            orderBy: {
+                updatedAt: "desc", // Order by newest updated comment first
+            },
         });
 
         if (!comments || comments.length === 0) {
@@ -282,8 +292,8 @@ router.put("/:recipeId/comments/:id", authenticateUser, async (req, res, next) =
             return res.status(404).json({ message: "Comment not found." });
         }
 
-        // Check authorization
-        if (comment.userId !== req.user.userId && !req.user.isAdmin) {
+        // Check authorization (can edit ony by owner)
+        if (comment.userId !== req.user.userId) {
             return res.status(403).json({ message: "Unauthorized to update this comment." });
         }
 
@@ -291,7 +301,7 @@ router.put("/:recipeId/comments/:id", authenticateUser, async (req, res, next) =
         const updatedComment = await prisma.comment.update({
             where: { id: parseInt(id) },
             data: { text },
-        });
+        }); //frontend need comment writer info or not??
 
         res.status(200).json(updatedComment);
     } catch (error) {
@@ -302,7 +312,7 @@ router.put("/:recipeId/comments/:id", authenticateUser, async (req, res, next) =
 
 // DELETE /api/recipes/:recipeId/comments/:id
 // Delete a specific comment for a recipe
-router.delete("/:recipeId/comments/:id", authenticateAdmin, async (req, res, next) => {
+router.delete("/:recipeId/comments/:id", authenticateUser, async (req, res, next) => {
     const { id } = req.params; // Comment ID
 
     try {
@@ -312,6 +322,11 @@ router.delete("/:recipeId/comments/:id", authenticateAdmin, async (req, res, nex
 
         if (!comment) {
             return res.status(404).json({ message: "Comment not found." });
+        }
+
+        // Check authorization (can delete by owner and admin)
+        if (comment.userId !== req.user.userId && !req.user.isAdmin) {
+            return res.status(403).json({ message: "Unauthorized to update this comment." });
         }
 
         // Delete the comment

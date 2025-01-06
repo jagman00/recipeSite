@@ -7,7 +7,7 @@ const authenticateAdmin = require("../middleware/authenticateAdmin");
 
 // Get all comments
 // GET /api/comments
-router.get("/", authenticateUser, async (req, res) => {
+router.get("/", authenticateAdmin, async (req, res) => {
   try {
     const comments = await prisma.comment.findMany({
       include: {
@@ -22,8 +22,15 @@ router.get("/", authenticateUser, async (req, res) => {
           },
         },
       },
+      orderBy: {
+        updatedAt: "desc", // Order by newest updated comment first
+      },
     });
-    res.json(comments);
+
+    // Count the total number of comments
+    const commentCount = await prisma.comment.count();
+
+    res.status(200).json({comments, commentCount});
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch comments." });
   }
@@ -59,7 +66,7 @@ router.get("/:id", authenticateUser, async (req, res) => {
   }
 });
 
-// Delete a specific comment
+// Delete a specific comment regardless of ownership (only by admin)
 // DELETE /api/comments/:id
 router.delete("/:id", authenticateAdmin, async (req, res) => {
   const { id } = req.params; 
