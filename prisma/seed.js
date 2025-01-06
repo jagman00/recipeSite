@@ -54,7 +54,7 @@ for (let i = 0; i < userCount; i++) {
 
   // Seed Recipes
   const recipes = [];
-  const recipeCount = faker.number.int({ min: 10, max: 30 });
+  const recipeCount = faker.number.int({ min: 20, max: 50 });
   console.log(`Seeding ${recipeCount} recipes...`);
   for (let i = 0; i < recipeCount; i++) {
     recipes.push(
@@ -98,17 +98,43 @@ for (let i = 0; i < userCount; i++) {
 
   // Seed Categories
   const categories = [];
-  const categoryCount = faker.number.int({ min: 3, max: 15 });
+  const categoryCount = faker.number.int({ min: 24, max: 24 });
   console.log(`Seeding ${categoryCount} categories...`);
   for (let i = 0; i < categoryCount; i++) {
     categories.push(
       await prisma.category.create({
         data: {
-          categoryName: faker.food.ethnicCategory(),
-        },
-      })
-    );
-  }
+          categoryName: faker.helpers.arrayElement([
+    'Italian Cuisine',
+    'French Cuisine',
+    'Chinese Cuisine',
+    'Japanese Cuisine',
+    'Mexican Cuisine',
+    'Indian Cuisine',
+    'Thai Cuisine',
+    'Greek Cuisine',
+    'Spanish Cuisine',
+    'Mediterranean Cuisine',
+    'Middle Eastern Cuisine',
+    'Korean Cuisine',
+    'Vietnamese Cuisine',
+    'American Cuisine',
+    'British Cuisine',
+    'German Cuisine',
+    'Caribbean Cuisine',
+    'Brazilian Cuisine',
+    'African Cuisine',
+    'Turkish Cuisine',
+    'Russian Cuisine',
+    'Portuguese Cuisine',
+    'Filipino Cuisine',
+    'Peruvian Cuisine',
+    'Moroccan Cuisine'
+])
+       }
+    })
+  );
+}
 
   // Link Recipes and Categories
   console.log('Linking recipes with categories...');
@@ -156,7 +182,7 @@ for (let i = 0; i < userCount; i++) {
   for (let i = 0; i < commentCount; i++) {
     await prisma.comment.create({
       data: {
-        text: faker.lorem.sentence(),
+        text: faker.food.adjective(),
         userId: faker.helpers.arrayElement(users).userId,
         recipeId: faker.helpers.arrayElement(recipes).recipeId,
       },
