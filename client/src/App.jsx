@@ -11,6 +11,7 @@ import './App.css'
 import React from 'react'
 import { useEffect } from 'react'
 import { jwtDecode } from "jwt-decode";
+import "./responsive.css";
 
 function App() {
   const [token, setToken] = useState(null);
