@@ -206,8 +206,8 @@ router.get("/:id/ingredients", async (req, res, next) => {
 });
 
 // GET /api/recipes/:id/comments
-// Get all comments for a specific recipe
-router.get("/:id/comments", authenticateUser, async (req, res, next) => {
+// Get all comments for a specific recipe (should be able to see by all users)
+router.get("/:id/comments", async (req, res, next) => {
     const { id } = req.params;
 
     try {
@@ -230,12 +230,12 @@ router.get("/:id/comments", authenticateUser, async (req, res, next) => {
         });
 
         if (!comments || comments.length === 0) {
-            return res.status(404).json({ message: "No comments found for this recipe." });
+            return res.status(404).json({ message: "There is no comment for this recipe." });
         }
 
         res.status(200).json(comments);
     } catch (error) {
-        console.error(error);
+        console.error("Error getting comment list:", error);
         res.status(500).json({ message: "Failed to fetch comments." });
     }
 });
@@ -273,7 +273,7 @@ router.post("/:id/comments", authenticateUser, async (req, res, next) => {
 
         res.status(201).json(newComment);
     } catch (error) {
-        console.error(error);
+        console.error("Error creating a comment:", error);
         res.status(500).json({ message: "Failed to create comment." });
     }
 });
@@ -311,13 +311,13 @@ router.put("/:recipeId/comments/:id", authenticateUser, async (req, res, next) =
 
         res.status(200).json(updatedComment);
     } catch (error) {
-        console.error(error);
+        console.error("Error updating a comment:", error);
         res.status(500).json({ message: "Failed to update comment." });
     }
 });
 
 // DELETE /api/recipes/:recipeId/comments/:id
-// Delete a specific comment for a recipe
+// Delete a specific comment for a recipe (by author or admin)
 router.delete("/:recipeId/comments/:id", authenticateUser, async (req, res, next) => {
     const { id } = req.params; // Comment ID
 
@@ -332,7 +332,7 @@ router.delete("/:recipeId/comments/:id", authenticateUser, async (req, res, next
 
         // Check authorization (can delete by owner and admin)
         if (comment.userId !== req.user.userId && !req.user.isAdmin) {
-            return res.status(403).json({ message: "Unauthorized to update this comment." });
+            return res.status(403).json({ message: "Unauthorized to delete this comment." });
         }
 
         // Delete the comment
@@ -342,7 +342,7 @@ router.delete("/:recipeId/comments/:id", authenticateUser, async (req, res, next
 
         res.status(204).end();
     } catch (error) {
-        console.error(error);
+        console.error("Error deleting a comment:", error);
         res.status(500).json({ message: "Failed to delete comment." });
     }
 });

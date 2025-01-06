@@ -64,7 +64,7 @@ const LoginUser = ({ setToken }) => {
   );
 };
 
-LoginUser.propTypes = {
+LoginUser.propTypes = { //
   setToken: PropTypes.func.isRequired,
 };
 
