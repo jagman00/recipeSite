@@ -11,13 +11,17 @@ router.get("/", authenticateAdmin, async (req, res) => {
   try {
     const comments = await prisma.comment.findMany({
       include: {
-        recipe: true, 
+        recipe: {
+          select: {
+            recipeId: true,
+            title: true,
+          },
+        },
         user: {
           select: {
-            id: true,
+            userId: true,
             name: true,
             userTitle: true,
-            bio: true,
             profileUrl: true,
           },
         },
@@ -32,37 +36,8 @@ router.get("/", authenticateAdmin, async (req, res) => {
 
     res.status(200).json({comments, commentCount});
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch comments." });
-  }
-});
-
-// Get a specific comment
-// GET /api/comments/:id
-router.get("/:id", authenticateUser, async (req, res) => {
-  const { id } = req.params; 
-  try {
-    const comment = await prisma.comment.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        recipe: true, 
-        user: {
-          select: {
-            id: true,
-            name: true,
-            userTitle: true,
-            bio: true,
-            profileUrl: true,
-          },
-        },
-      },
-    });
-    if (comment) {
-      res.json(comment);
-    } else {
-      res.status(404).json({ error: "Comment not found." });
-    }
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch comment." });
+    console.error("Error fetching comments:", error);
+    res.status(500).json({ error: "Failed to fetch the comments." });
   }
 });
 
@@ -83,6 +58,39 @@ router.delete("/:id", authenticateAdmin, async (req, res) => {
     });
     res.status(204).end(); // No content response
   } catch (error) {
+    console.error("Error deleting a comment:", error);
     res.status(500).json({ error: "Failed to delete comment." });
   }
 });
+
+
+// // Get a specific comment
+// // GET /api/comments/:id
+// router.get("/:id", authenticateUser, async (req, res) => {
+//   const { id } = req.params; 
+//   try {
+//     const comment = await prisma.comment.findUnique({
+//       where: { id: parseInt(id) },
+//       include: {
+//         recipe: true, 
+//         user: {
+//           select: {
+//             id: true,
+//             name: true,
+//             userTitle: true,
+//             bio: true,
+//             profileUrl: true,
+//           },
+//         },
+//       },
+//     });
+//     if (comment) {
+//       res.json(comment);
+//     } else {
+//       res.status(404).json({ error: "Comment not found." });
+//     }
+//   } catch (error) {
+//     console.error("Error fetching a comment:", error);
+//     res.status(500).json({ error: "Failed to fetch comment." });
+//   }
+// });

@@ -1,6 +1,6 @@
 # recipeSite
 
-If there any schema.prisma update
+If there any changes and update in schema.prisma
 try running 
 npx prisma generate 
 npx prisma db push
