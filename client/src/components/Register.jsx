@@ -37,7 +37,7 @@ const RegisterUser = ({ setToken }) => {
   };
 
   return (
-    <div>
+    <div className="form-container"> {/* Added form-container class */}
       <h2>Register User</h2>
       <form onSubmit={handleRegister}>
         <div>
