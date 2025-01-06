@@ -1,0 +1,104 @@
+/* Screen adjustments */
+
+/* Global Reset for Consistency Across Browsers */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Include padding and border in width/height calculations */
+}
+
+/* Adjust navbar for small screens */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  #searchbarContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0; 
+    margin: 0;  
+    box-sizing: border-box; /* Ensure padding doesn't add width */
+  }
+
+  #userIconContainer {
+    margin-top: 10px;
+  }
+}
+
+/* Make recipes grid responsive */
+@media (max-width: 768px) {
+  .recipes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* Form adjustments for smaller screens */
+@media (max-width: 500px) {
+  form {
+    width: 90%;
+  }
+
+  input, button {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+/* Responsive adjustments for search bar and button */
+@media (max-width: 768px) {
+  #searchbarContainer {
+    display: flex;
+    flex-direction: column; /* Stack search bar and button vertically */
+    width: 100%;
+    align-items: stretch; 
+    gap: 0; 
+  }
+
+  #searchbar {
+    width: 100%; /* Make search bar full width */
+    padding: 5px 10px;
+    font-size: 16px;
+    box-sizing: border-box; 
+    margin-bottom: 10px; 
+  }
+
+  #searchbarContainer button {
+    width: auto; /* Allow button to shrink naturally */
+    max-width: 100%; 
+    padding: 5px 10px;
+    font-size: 16px;
+    border: 1px solid var(--black); 
+    box-sizing: border-box; 
+  }
+}
+
+/* Utility Classes */
+.text-center {
+  text-align: center;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+/* Body adjustments to prevent gaps */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
