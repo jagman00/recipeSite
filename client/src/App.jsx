@@ -41,10 +41,9 @@ function App() {
   }, []);
 
   return (
-      <div className="background">
-        
+      <div className="background">  
         <Router>
-        <Navbar setToken={setToken} />
+          <Navbar setToken={setToken} />
           <Routes>
             <Route path="/user" element={<User />} />
             <Route path="/admin" element={<AdminDashboard />} />

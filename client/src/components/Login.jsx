@@ -35,26 +35,37 @@ const LoginUser = ({ setToken }) => {
   };
 
   return (
-    <div>
-      <h2>Login User</h2>
+    <div className="loginComponent">
+      <h2 className="header">Welcome, Noble Chef!</h2>
+      <div className="introText">
+        Enter the secret words that grant you passage.
+      </div>
       <form onSubmit={handleLogin}>
         <div>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            placeholder ='kingArthur@camelot.com'
-            onChange={(e) => setEmail(e.target.value)}
-            required />
+          <label htmlFor="email">
+            <span>Email:</span>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              placeholder ='kingarthur@camelot.com'
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
+          </label>
         </div>
         <div>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            placeholder ='drawbridge passcode'
-            onChange={(e) => setPassword(e.target.value)}
-            required />
+          <label htmlFor="password">
+            <span>Password:</span>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              placeholder ='Drawbridge Passcode'
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+            />
+          </label>
         </div>
         <button type="submit">Login</button>
       </form>
