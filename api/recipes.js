@@ -374,3 +374,75 @@ router.delete("/:id/like", authenticateUser, async (req, res, next) => {
         next(error);
     }
 });
+
+// Get all bookmarks of a specific user
+// GET /api/users/:userId/bookmarks
+router.get("/users/:userId/bookmarks", authenticateUser, async (req, res, next) => {
+    const { userId } = req.params;
+    if (req.user.userId !== parseInt(userId)) {
+        return res.status(403).json({ message: "Unauthorized access" });
+    }
+    try {
+        const bookmarks = await prisma.bookmark.findMany({
+            where: { userId: parseInt(userId) },
+            include: { recipe: true },
+        });
+        res.status(200).json(bookmarks);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Save a recipe (Bookmark)
+// POST /api/recipes/:id/bookmarks
+router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        await prisma.bookmark.create({
+            data: {
+                userId: req.user.userId,
+                recipeId: parseInt(id),
+            },
+        });
+        res.status(201).json({ message: "Recipe bookmarked successfully" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Remove a bookmark
+// DELETE /api/recipes/:id/bookmarks
+router.delete("/:id/bookmarks", authenticateUser, async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        await prisma.bookmark.deleteMany({
+            where: {
+                userId: req.user.userId,
+                recipeId: parseInt(id),
+            },
+        });
+        res.status(200).json({ message: "Bookmark removed successfully" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Delete a bookmark of a specific user
+// DELETE /api/users/:userId/bookmarks/:recipeId
+router.delete("/users/:userId/bookmarks/:recipeId", authenticateUser, async (req, res, next) => {
+    const { userId, recipeId } = req.params;
+    if (req.user.userId !== parseInt(userId)) {
+        return res.status(403).json({ message: "Unauthorized access" });
+    }
+    try {
+        await prisma.bookmark.deleteMany({
+            where: {
+                userId: parseInt(userId),
+                recipeId: parseInt(recipeId),
+            },
+        });
+        res.status(200).json({ message: "User's bookmark deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+});
