@@ -33,7 +33,7 @@ async function main() {
 
 // Seed Users /*MODIFIED*/ hashed for bcrypt
 const users = [];
-const userCount = faker.number.int({ min: 10, max: 15 });
+const userCount = faker.number.int({ min: 30, max: 65 });
 console.log(`Seeding ${userCount} users...`);
 for (let i = 0; i < userCount; i++) {
   const hashedPassword = await bcrypt.hash(faker.internet.password(), 10);
@@ -54,7 +54,7 @@ for (let i = 0; i < userCount; i++) {
 
   // Seed Recipes
   const recipes = [];
-  const recipeCount = faker.number.int({ min: 20, max: 50 });
+  const recipeCount = faker.number.int({ min: 30, max: 70 });
   console.log(`Seeding ${recipeCount} recipes...`);
   for (let i = 0; i < recipeCount; i++) {
     recipes.push(
@@ -73,7 +73,7 @@ for (let i = 0; i < userCount; i++) {
             `https://i.ibb.co/3sTMf6n/download-4.jpg`,
             `https://i.ibb.co/tmMW5kb/download-5.jpg`,
             `https://i.ibb.co/CbvkzRy/images-2.jpg`,]),
-          steps: faker.lorem.paragraphs(2),
+          steps: faker.food.description(2),
           userId: faker.helpers.arrayElement(users).userId,
         },
       })
@@ -151,7 +151,7 @@ for (let i = 0; i < userCount; i++) {
   }
 
   // Seed Bookmarks /*MODIFIED*/ avoid duplicate bookmarks
-  const bookmarkCount = faker.number.int({ min: 2, max: 10 });
+  const bookmarkCount = faker.number.int({ min: 50, max: 70 });
   console.log(`Seeding ${bookmarkCount} bookmarks...`);
   for (let i = 0; i < bookmarkCount; i++) {
     const randomUserId = faker.helpers.arrayElement(users).userId;
@@ -177,7 +177,7 @@ for (let i = 0; i < userCount; i++) {
   }
 
   // Seed Comments
-  const commentCount = faker.number.int({ min: 10, max: 20 });
+  const commentCount = faker.number.int({ min: 120, max: 150 });
   console.log(`Seeding ${commentCount} comments`);
   for (let i = 0; i < commentCount; i++) {
     await prisma.comment.create({
@@ -190,7 +190,7 @@ for (let i = 0; i < userCount; i++) {
   }
 
   // Seed Likes /*MODIFIED*/ avoid duplicate likes
-  const likeCount = faker.number.int({ min: 20, max: 100 });
+  const likeCount = faker.number.int({ min: 80, max: 100 });
   console.log(`Seeding ${likeCount} likes`);
   for (let i = 0; i < likeCount; i++) {
     const randomUserId = faker.helpers.arrayElement(users).userId;
@@ -216,7 +216,7 @@ for (let i = 0; i < userCount; i++) {
   }
 
   // Seed User Followers /*MODIFIED*/ avoid duplicate follow relationships
-  const followCount = faker.number.int({ min: 5, max: 19 });
+  const followCount = faker.number.int({ min: 25, max: 50 });
   console.log(`Seeding ${followCount} followers`);
   for (let i = 0; i < followCount; i++) {
     const followFromUser = faker.helpers.arrayElement(users);
