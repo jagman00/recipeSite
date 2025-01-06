@@ -38,6 +38,10 @@ const RecipesList = () => {
           <div key={recipe.recipeId} className="recipe-item">
             <Link to={`/recipe/${recipe.recipeId}`}>
               <h3>{recipe.title}</h3>
+              <img
+              src={recipe.recipeUrl}
+              className="image"
+              loading="lazy"/>
               <p>{recipe.description}</p>
               <p>Likes: {recipe._count.likes}</p>
               <p>Bookmarks: {recipe._count.bookmarks}</p>
