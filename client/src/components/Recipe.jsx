@@ -28,9 +28,14 @@ const Recipe = () => {
       <h2>{recipe.title}</h2>
       <p>{recipe.description}</p>
       <p>Serving Size: {recipe.servingSize}</p>
-      <p>Recipe URL: <a href={recipe.recipeUrl} target="_blank" rel="noopener noreferrer">{recipe.recipeUrl}</a></p>
+      {/* <p><img href={recipe.recipeUrl} target="_blank" rel="noopener noreferrer">{recipe.recipeUrl}</img></p> */}
+      <img
+              src={recipe.recipeUrl}
+              className="image"
+              loading="lazy"
+            />
       <h3>Steps</h3>
-        <p>{recipe.steps}</p>
+      <p>{recipe.steps}</p>
       <h3>Ingredients</h3>
       <ul>
         {recipe.ingredients.map((ingredient, index) => (
