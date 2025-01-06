@@ -7,6 +7,70 @@
   box-sizing: border-box; /* Include padding and border in width/height calculations */
 }
 
+/* Body adjustments for full height and centering */
+body, html {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+}
+
+/* Ensure parent container covers full viewport */
+.background {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  padding: 20px;
+}
+
+/* Register Form Responsive Fixes */
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  width: 100%; 
+  max-width: 400px; 
+  margin: 0 auto; 
+  box-sizing: border-box;
+  background: white; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  border-radius: 8px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px; /* Add consistent spacing */
+}
+
+/* Inputs and buttons responsive design */
+input, button {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 500px) {
+  .form-container {
+    padding: 10px;
+    width: 90%; 
+  }
+
+  input, button {
+    font-size: 14px;
+    padding: 8px; /* Compact padding for smaller devices */
+  }
+}
+
 /* Adjust navbar for small screens */
 @media (max-width: 768px) {
   .navbar {
@@ -20,7 +84,7 @@
     width: 100%;
     padding: 0; 
     margin: 0;  
-    box-sizing: border-box; /* Ensure padding doesn't add width */
+    box-sizing: border-box; 
   }
 
   #userIconContainer {
@@ -34,46 +98,6 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
-  }
-}
-
-/* Form adjustments for smaller screens */
-@media (max-width: 500px) {
-  form {
-    width: 90%;
-  }
-
-  input, button {
-    font-size: 14px;
-    padding: 10px;
-  }
-}
-
-/* Responsive adjustments for search bar and button */
-@media (max-width: 768px) {
-  #searchbarContainer {
-    display: flex;
-    flex-direction: column; /* Stack search bar and button vertically */
-    width: 100%;
-    align-items: stretch; 
-    gap: 0; 
-  }
-
-  #searchbar {
-    width: 100%; /* Make search bar full width */
-    padding: 5px 10px;
-    font-size: 16px;
-    box-sizing: border-box; 
-    margin-bottom: 10px; 
-  }
-
-  #searchbarContainer button {
-    width: auto; /* Allow button to shrink naturally */
-    max-width: 100%; 
-    padding: 5px 10px;
-    font-size: 16px;
-    border: 1px solid var(--black); 
-    box-sizing: border-box; 
   }
 }
 
@@ -95,10 +119,27 @@
   background: white;
 }
 
-/* Body adjustments to prevent gaps */
-body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+/* Responsive adjustments for buttons and links */
+@media (max-width: 768px) {
+  button, a {
+    font-size: 14px; 
+    padding: 8px 12px; 
+    text-align: center; 
+  }
+
+  #userIconContainer span {
+    font-size: 14px; /* Reduce font size inside user icon container */
+  }
+
+  .navbar a {
+    font-size: 14px; 
+    padding: 5px 10px; 
+  }
+}
+
+@media (max-width: 500px) {
+  button, a {
+    font-size: 12px; 
+    padding: 6px 10px;
+  }
 }
