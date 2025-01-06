@@ -11,8 +11,15 @@ router.get("/", authenticateAdmin, async(req,res,next)=>{
     try {
         const users = await prisma.user.findMany({
             include:{recipes:true},
+            orderBy: {
+                createdAt: "desc", // Order by the newest member first
+              },
         });
-        res.status(200).json(users);
+
+        // Count the total number of users
+        const userCount = await prisma.user.count();
+
+        res.status(200).json({users, userCount});
     } catch (error) {
         console.error(error);
         res.status(500).json({message: "Fail to fetch users"});
@@ -63,7 +70,11 @@ router.get("/:id/recipes", async(req,res,next)=>{
                     updatedAt:true,
                 }
                 },
-        }});
+            },
+            orderBy: {
+                updatedAt: "desc", // Order by newest updated comment first
+            },
+        });
 
         if(!recipes) return res.status(404).json({message: "Recipes not found"});
 
@@ -113,7 +124,7 @@ router.delete("/:id", authenticateUser||authenticateAdmin, async(req,res,next)=>
             where:{userId: parseInt(id)},
         });
 
-        res.status(204).json({message: "User deleted"});
+        res.status(204).end();
     } catch (error) {
         console.error(error);
         res.status(500).json({message: "Fail to delete user"});
@@ -177,7 +188,10 @@ router.get("/:id/comments", authenticateUser, async (req, res, next) => {
                         profileUrl: true,
                     }
                 }
-            }
+            },
+            orderBy: {
+                updatedAt: "desc", // Order by newest updated comment first
+            },
         });
 
         // If no comments are found
