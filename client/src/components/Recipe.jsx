@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { fetchRecipe } from "../API/index.js";
 
 const Recipe = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  //get the page state from the location
+  const currentPage = location.state?.page || 1;
 
   useEffect(() => {
     const getRecipe = async () => {
@@ -31,6 +35,7 @@ const Recipe = () => {
       <img
               src={recipe.recipeUrl}
               className="image"
+              alt={recipe.title} //alt text for accessibility
               loading="lazy"
             />
       <h3>Steps</h3>
@@ -62,6 +67,8 @@ const Recipe = () => {
       ) : (
         <p>No comments yet.</p>
       )}
+        {/* Back to Recipe List Button */}
+        <button onClick={()=> navigate(`/?page=${currentPage}`)}>Back to Recipes</button>
     </div>
   );
 };
