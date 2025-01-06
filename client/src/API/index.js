@@ -62,17 +62,17 @@ export async function fetchUser(token) {
 }
 
 // fetch all recipes
-export const fetchRecipes = async (page) => {
+export const fetchRecipes = async (page, limit = 10) => {
     try {
-      const response = await fetch(`${API_URL}/recipes?page=${page}&limit=10`);
+      const response = await fetch(`${API_URL}/recipes?page=${page}&limit=${limit}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch recipes');
+      }
       const data = await response.json();
-      return {
-        recipes: data.recipes,
-        recipeCount: data.recipeCount,
-      };
+      return data;
     } catch (error) {
-      console.error("Failed to fetch recipes", error);
-      throw error;  // Re-throw the error to handle it in the component
+      console.error('Error in fetchRecipes:', error);
+      throw error;
     }
   };
 
