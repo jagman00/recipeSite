@@ -61,13 +61,29 @@ export async function fetchUser(token) {
     }
 }
 
-// //fetch all recipes
-// export async function fetchAllRecipes() {
-//     try {
-//         const response = await fetch(`${API_URL}/recipes`);
-//         const result = await response.json();
-//         return result;
-//     } catch (error) {
-//         console.error(error);
-//     }
-// }
+// fetch all recipes
+export const fetchRecipes = async (page) => {
+    try {
+      const response = await fetch(`${API_URL}/recipes?page=${page}&limit=10`);
+      const data = await response.json();
+      return {
+        recipes: data.recipes,
+        recipeCount: data.recipeCount,
+      };
+    } catch (error) {
+      console.error("Failed to fetch recipes", error);
+      throw error;  // Re-throw the error to handle it in the component
+    }
+  };
+
+  //fetch recipe from id
+  export const fetchRecipe = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/recipes/${id}`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch recipe", error);
+      throw error; // Re-throw the error so it can be handled in the component
+    }
+  };

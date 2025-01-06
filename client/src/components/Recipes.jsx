@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { fetchRecipes } from "../API/index.js";
 
 const RecipesList = () => {
   const [recipes, setRecipes] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+
   useEffect(() => {
-    const fetchRecipes = async () => {
+    const getRecipes = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/recipes?page=${page}&limit=10`);
-        const data = await response.json();
+        const data = await fetchRecipes(page);  // Call the imported fetchRecipes function
         setRecipes(data.recipes);
         setTotalPages(Math.ceil(data.recipeCount / 10)); // Assuming the count of recipes is returned
       } catch (error) {
@@ -18,7 +19,7 @@ const RecipesList = () => {
       }
     };
 
-    fetchRecipes();
+    getRecipes();
   }, [page]);
 
   const handleNextPage = () => {
