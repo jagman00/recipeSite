@@ -60,3 +60,14 @@ export async function fetchUser(token) {
         console.error(error);        
     }
 }
+
+// //fetch all recipes
+// export async function fetchAllRecipes() {
+//     try {
+//         const response = await fetch(`${API_URL}/recipes`);
+//         const result = await response.json();
+//         return result;
+//     } catch (error) {
+//         console.error(error);
+//     }
+// }
