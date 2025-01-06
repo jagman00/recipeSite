@@ -340,6 +340,7 @@ router.delete("/:recipeId/comments/:id", authenticateUser, async (req, res, next
         res.status(500).json({ message: "Failed to delete comment." });
     }
 });
+
 // Like a recipe
 // POST /api/recipes/:id/like
 router.post("/:id/like", authenticateUser, async (req, res, next) => {
@@ -373,6 +374,7 @@ router.delete("/:id/like", authenticateUser, async (req, res, next) => {
         next(error);
     }
 });
+
 // Get all bookmarks of a specific user
 // GET /api/users/:userId/bookmarks
 router.get("/users/:userId/bookmarks", authenticateUser, async (req, res, next) => {
