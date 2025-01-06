@@ -3,7 +3,7 @@ import { fetchRegister } from "../API/index.js"; // Importing the fetchRegister 
 import { useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 
-const RegisterUser = ({setUser}) => {
+const RegisterUser = ({ setToken }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -19,17 +19,16 @@ const RegisterUser = ({setUser}) => {
     try {
       const response = await fetchRegister(name, email, password);
       
-      if (response.token !== undefined) {
+      if (response !== undefined) {
         setSuccessMessage("User registered successfully!");
-        setUser(response.user);
+        setToken(response);
 
-        // Save the token and user in localStorage
-        localStorage.setItem("token", response.token)
-        localStorage.setItem("user", response.user)
+        // Save the token in localStorage
+        localStorage.setItem("token", response); 
 
-        navigate('/user/me');
+        navigate('/user');
       } else {
-        setErrorMessage(response.token?.message || "Registration failed.");
+        setErrorMessage(response?.message || "Registration failed.");
       }
     } catch (error) {
       console.error("Registration Error:", error);
@@ -78,9 +77,9 @@ const RegisterUser = ({setUser}) => {
     </div>
   );
 };
-RegisterUser.propTypes = {
-  setUser: PropTypes.func.isRequired,
-};
 
+RegisterUser.propTypes = {
+  setToken: PropTypes.func.isRequired,
+};
 
 export default RegisterUser;

@@ -5,8 +5,6 @@ const prisma = require("../prisma");
 require('dotenv').config();
 const authenticateUser = require('../middleware/authenticateUser');
 const authenticateAdmin = require('../middleware/authenticateAdmin');
-const { use } = require("react");
-const { comment } = require("../../yarnia.CAPSTONE/prisma");
 
 // Create new recipe by authenticated user /*create ingredients inclusively*/
 // POST /api/recipes

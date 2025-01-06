@@ -11,6 +11,11 @@ export async function fetchRegister(name, email, password) {
             },
             body: JSON.stringify({ name, email, password }),
         });
+
+        if (!response.ok) {
+            throw new Error("Registeration Error!");
+        }
+
         const result = await response.json();
         return result;
     } catch (error) {
@@ -28,6 +33,11 @@ export async function fetchLogin(email, password) {
             },
             body: JSON.stringify({ email, password }),
         });
+
+        if (!response.ok) {
+            throw new Error("Login Error!");
+        }
+
         const result = await response.json();
         return result;
     } catch (error) {

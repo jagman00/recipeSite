@@ -34,6 +34,7 @@ const GetUser = () => {
   return (
     <div>
       <h2>Welcome, User!</h2>
+      <img src={userInfo?.profileUrl} alt="" />
 
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       {userInfo ? (
@@ -44,6 +45,19 @@ const GetUser = () => {
           <p><strong>Title:</strong> {userInfo.userTitle || "Not provided"}</p>
           <p><strong>Bio:</strong> {userInfo.bio || "Not provided"}</p>
           <p><strong>Admin:</strong> {userInfo.isAdmin ? "Yes" : "No"}</p>
+          <h3>User Recipes:</h3>
+          <div className="cardsContainer">
+                {
+                    userInfo.recipes.map((recipe)=>{
+                        return (
+                            <div key={recipe.recipeId} className="bookCard">
+                                <h3>{recipe.title}</h3>
+                                <img src={recipe.recipeUrl} alt="" /> 
+                            </div>
+                        )
+                    })
+                }
+            </div>
         </div>
       ) : (
         <p>Loading user information...</p>

@@ -18,7 +18,7 @@ model User {
   name       String
   email      String  @unique
   password   String
-  profileUrl String?
+  profileUrl String @default("https://img.freepik.com/premium-vector/knight-minimalist-line-art-icon-logo-symbol_925376-269058.jpg?w=1060")
   isAdmin    Boolean @default(false)
   userTitle  String?
   bio        String?
@@ -54,7 +54,7 @@ model Recipe {
   title       String
   description String?
   servingSize Int?
-  recipeUrl   String?
+  recipeUrl   String @default("https://i.ytimg.com/vi/CPbKkb1hn7I/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBCWAzNKtwroNf1JzxKUvJEM5H4Wg")
   steps       String
 
   userId Int

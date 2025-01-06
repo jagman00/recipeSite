@@ -1,18 +1,35 @@
 import { useState } from "react";
+import PropTypes from 'prop-types';
 import { Link, useNavigate } from 'react-router-dom'
 
 import '../App.css'
 import React from 'react'
 import userIcon from '../assets/UserIcon.png';
-import logoIcon from '../assets/RoundTable.png'
+import logoIcon from '../assets/RoundTable.png';
+import { jwtDecode } from "jwt-decode";
 
-function Navbar() {
-    const token = localStorage.getItem("token");
+function Navbar({ setToken }) {
+  const token = localStorage.getItem("token"); // Get the token from localStorage if any
+  let isValidAdmin = false; // Default value for admin check
 
-    const handleLogout = () => {
-        localStorage.clear();
-        setToken(null);
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token); // Decode the token
+      isValidAdmin = decodedToken.isAdmin || false; // Check if the user is an admin
+    } catch (error) {
+      console.error("Invalid token:", error.message); 
+      localStorage.clear(); // Clear invalid token from storage
     }
+  }
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+      localStorage.clear(); 
+      setToken(null);
+      navigate('/login');
+  }
+
 
   return (
     <nav className="navbar">
@@ -29,30 +46,36 @@ function Navbar() {
         </div>
         {token?
         (
-            <>
-                <Link id="userIcon" to="/" onClick={()=>handleLogout()}>
-                  <div id="userIconContainer">
-                    <img src={userIcon} alt="User icon" />
-                    <span>Logout</span>
-                  </div>
-                </Link>
-            </>
+          <>
+              <Link id="userIcon" to="/" onClick={()=>handleLogout()}>
+                <div id="userIconContainer">
+                  <img src={userIcon} alt="User icon" />
+                  <span>Logout</span>
+                </div>
+              </Link>
+              {isValidAdmin && (
+                <Link to="/admin">Admin Dashboard</Link>
+              )}
+          </>
         )
         :
         (
-            <>
-                <Link id="userIcon" to='/login'>
-                  <div id="userIconContainer">
-                    <img src={userIcon} alt="User icon" />
-                    <span>Login</span>
-                  </div>
-                </Link>
-                <Link to="/register">Register</Link>
-            </>
+          <>
+              <Link id="userIcon" to='/login'>
+                <div id="userIconContainer">
+                  <img src={userIcon} alt="User icon" />
+                  <span>Login</span>
+                </div>
+              </Link>
+              <Link to="/register">Register</Link>
+          </>
         )
         }
     </nav>
   )
 }
 
-export default Navbar
+Navbar.propTypes = {
+  setToken: PropTypes.func.isRequired,
+};
+export default Navbar;
