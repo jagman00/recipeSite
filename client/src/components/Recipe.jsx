@@ -27,33 +27,39 @@ const Recipe = () => {
   if (!recipe) return <p>Loading...</p>;
 
   return (
-    <div>
-      <h2>{recipe.title}</h2>
-      <p>{recipe.description}</p>
-      <p>Serving Size: {recipe.servingSize}</p>
-      {/* <p><img href={recipe.recipeUrl} target="_blank" rel="noopener noreferrer">{recipe.recipeUrl}</img></p> */}
-      <img
-              src={recipe.recipeUrl}
-              className="image"
-              alt={recipe.title} //alt text for accessibility
-              loading="lazy"
-            />
+    <div id="recipeComponent">
+      <div id="recipeHeaderContainer">
+        <div id="recipeHeaderImg">
+          <img
+            src={recipe.recipeUrl}
+            className="image"
+            alt={recipe.title} //alt text for accessibility
+            loading="lazy"
+          />
+        </div>
+        <div id="recipeHeaderInfo">
+          <h2 className="header">{recipe.title}</h2>
+          <p>{recipe.description}</p>
+          <p>Serving Size: {recipe.servingSize}</p>
+          {/* <p><img href={recipe.recipeUrl} target="_blank" rel="noopener noreferrer">{recipe.recipeUrl}</img></p> */}
+          <div id="recipeIconContainer">
+            <p className="recipeIcon"><img src="../src/assets/likesIcon.png" alt="like icon" /> {recipe._count.likes}</p>
+            <p className="recipeIcon"><img src="../src/assets/bookmarksIcon.png" alt="like icon" /> {recipe._count.bookmarks}</p>
+          </div>
+        </div>
+      </div>
+      <div id="ingredientsContainer">
+        <h3>Ingredients</h3>
+        <ul id="ingredientsList">
+          {recipe.ingredients.map((ingredient, index) => (
+            <li key={index}>
+              {ingredient.quantityAmount} {ingredient.quantityUnit} of {ingredient.ingredientName}
+            </li>
+          ))}
+        </ul>
+      </div>
       <h3>Steps</h3>
       <p>{recipe.steps}</p>
-      <h3>Ingredients</h3>
-      <ul>
-        {recipe.ingredients.map((ingredient, index) => (
-          <li key={index}>
-            {ingredient.quantityAmount} {ingredient.quantityUnit} of {ingredient.ingredientName}
-          </li>
-        ))}
-      </ul>
-
-      <div>
-        <p>Likes: {recipe._count.likes}</p>
-        <p>Bookmarks: {recipe._count.bookmarks}</p>
-      </div>
-
       <h3>Comments</h3>
       {recipe.comments && recipe.comments.length > 0 ? (
         <ul>
@@ -67,8 +73,8 @@ const Recipe = () => {
       ) : (
         <p>No comments yet.</p>
       )}
-        {/* Back to Recipe List Button */}
-        <button onClick={()=> navigate(`/?page=${currentPage}`)}>Back to Recipes</button>
+      {/* Back to Recipe List Button */}
+      <button onClick={()=> navigate(`/?page=${currentPage}`)}>Back to Recipes</button>
     </div>
   );
 };

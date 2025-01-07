@@ -127,16 +127,20 @@ const RecipesList = () => {
         {recipes.map((recipe) => (
           <div key={recipe.recipeId} className="recipe-item">
             <Link to={`/recipe/${recipe.recipeId}`} state={{ page }}>
-              <h3>{recipe.title}</h3>
-              <img
-                src={recipe.recipeUrl}
-                className="image"
-                alt={recipe.title}
-                loading="lazy"
-              />
-              <p>{recipe.description}</p>
-              <p>Likes: {recipe._count.likes || 0}</p>
-              <p>Bookmarks: {recipe._count.bookmarks}</p>
+              <div id="imgContainer">
+                <img
+                  src={recipe.recipeUrl}
+                  className="image"
+                  loading="lazy"
+                />
+              </div>
+              <div id="recipeBar">
+                <h3>{recipe.title}</h3>
+                <div id="likesAndBookmarks">
+                  <p><img src="../src/assets/likesIcon.png" alt="likes" /> {recipe._count.likes}</p>
+                  <p><img src="../src/assets/bookmarksIcon.png" alt="likes" />{recipe._count.bookmarks}</p>
+                </div>
+              </div>
             </Link>
           </div>
         ))}

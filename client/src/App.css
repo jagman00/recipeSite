@@ -8,7 +8,6 @@
 body {
     font-family: "EB Garamond", serif;
     margin: 0;
-    overflow: scroll;
 }
 .header {
     font-family: "Uncial Antiqua", serif;
@@ -139,7 +138,7 @@ input::placeholder {
     margin: 240px auto 100px;
     text-align: center;
     align-self: flex-start;
-    width: 80%;
+    width: 1400px;
     height: auto;
     font-family: "EB Garamond", serif;
     z-index: 1;
@@ -152,19 +151,72 @@ input::placeholder {
     margin-top: 80px;
 }
 .recipe-list {
-    margin: 10px 0 50px 0;
+    margin: 50px 0 50px 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(300px, 1fr));
+    
 }
-.recipe-list a {
+.recipe-item {
+    width: 400px;
+    height: 450px;
+    justify-self: center;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+}
+.recipe-item a {
     padding: 0 20px 0 20px;
     text-decoration: none;
     color: var(--black);
+    display: flex;
+    flex-direction: column;
 }
 .recipe-list a:visited,
 .recipe-list a:active {
     color: var(--black);
 }
-.recipe-item a h3 {
+#imgContainer {
+    width: 400px;
+    height: 300px;
+    margin: 0 auto;
+}
+#imgContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+#recipeBar h3 {
     font-size: 36px;
+    margin: 0;
+    text-align: left;
+}
+.recipe-item a p {
+    font-size: 24px;
+    max-width: 300px;
+}
+#recipeBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+#recipeBar img {
+    height: 36px;
+}
+#recipeBar p {
+    display: flex;
+    align-items: center;
+}
+#likesAndBookmarks {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.pagination {
+    grid-column: 1 / -1;
+}
+.pagination span {
+    font-weight: bold;
 }
 .pagination button {
     padding: 7px 10px 7px 10px;
@@ -185,6 +237,79 @@ input::placeholder {
 #paginationNumbers {
     margin: 0 20px 0 20px;
     font-size: 24px;
+}
+/*Recipe Component styling*/
+#recipeComponent {
+    background-image: url('./assets/largeParchmentBackground.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0 auto;
+    padding: 20px 10px 20px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    width: 700px;
+    height: auto;
+    backdrop-filter: blur(0);
+    box-shadow: 0 0 10px var(--black);
+    border-radius: 2px;
+}
+#recipeHeaderContainer {
+    margin: 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+#recipeHeaderInfo {
+    text-align: left;
+}
+#recipeIconContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.recipeIcon {
+    display: flex;
+    align-items: center
+}
+.recipeIcon img {
+    height: 36px;
+}
+#recipeComponent button {
+    padding: 7px 10px 7px 10px;
+    font-size: 24px;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 10px;
+    width: 200px;
+    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
+    color: var(--white);
+    margin: 30px auto 0;
+}
+#recipeComponent button:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
+}
+#recipeComponent p,
+#ingredientsList {
+    font-size: 24px;
+}
+#ingredientsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+#ingredientsList {
+    list-style-position: inside;
+    display: block;
+    width: auto;
+    text-align: left;
+    margin-left: 20px;
 }
 /*Login component styling*/
 .loginComponent {
@@ -321,4 +446,54 @@ input::placeholder {
     text-align: right;
     width: 124px;
     margin-right: 10px;
+}
+/*User component styling*/
+#userContainer {
+    background-image: url('./assets/largeParchmentBackground.jpg');
+    width: 700px;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 10px var(--black);
+}
+#userProfilePicContainer {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+#userProfilePicContainer img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 2px var(--black);
+}
+#userContainer h3 {
+    font-size: 36px;
+}
+#userContainer p {
+    font-size: 24px;
+}
+#userPicAndDetailsContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 50px;
+    margin: 50px 0 50px;
+}
+#userDetailsContainer {
+    max-width: 300px;
+    word-wrap: break-word;
+}
+#profileBorder {
+    background-image: url('./assets/silverBackground.jpg');
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 50%;
+    width: 240px;
+    height: 240px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

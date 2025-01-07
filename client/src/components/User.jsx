@@ -33,19 +33,26 @@ const GetUser = () => {
 
   return (
     <div>
-      <h2>Welcome, User!</h2>
-      <img src={userInfo?.profileUrl} alt="" />
-
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       {userInfo ? (
-        <div>
-          <h3>User Details:</h3>
-          <p><strong>Name:</strong> {userInfo.name}</p>
-          <p><strong>Email:</strong> {userInfo.email}</p>
-          <p><strong>Title:</strong> {userInfo.userTitle || "Not provided"}</p>
-          <p><strong>Bio:</strong> {userInfo.bio || "Not provided"}</p>
-          <p><strong>Admin:</strong> {userInfo.isAdmin ? "Yes" : "No"}</p>
-          <h3>User Recipes:</h3>
+        <div id="userContainer">
+          <div id="userPicAndDetailsContainer">
+            <div id="profileBorder">
+              <div id="userProfilePicContainer">
+                <img src={userInfo?.profileUrl} alt="" />
+              </div>
+            </div>
+            <div id="userDetailsContainer">
+              <h3 className="header">User Details</h3>
+              <p><strong>Name:</strong> {userInfo.name}</p>
+              <p><strong>Email:</strong> {userInfo.email}</p>
+              <p><strong>Title:</strong> {userInfo.userTitle || "Not provided"}</p>
+              <p><strong>Bio:</strong> {userInfo.bio || "Not provided"}
+              </p>
+              <p><strong>Admin:</strong> {userInfo.isAdmin ? "Yes" : "No"}</p>
+            </div>
+          </div>
+          <h3 className="header">Your Recipes</h3>
           <div className="cardsContainer">
                 {
                     userInfo.recipes.map((recipe)=>{
