@@ -94,10 +94,23 @@ router.get("/:id", async (req, res, next) => {
                     },
                 },
                 ingredients: true, /* Include related ingredients */
+                comments: {
+                    include: {
+                        user: {
+                            select: {
+                                userId: true,
+                                name: true,
+                                profileUrl: true,
+                                userTitle: true,
+                            }
+                        }
+                    }
+                },
                 _count: { /* Include count of comments, bookmarks, and likes */
                     select: { 
                         bookmarks: true,
                         likes: true,
+                        comments: true,
                     }, 
                 },
             },

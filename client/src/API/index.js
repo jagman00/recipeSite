@@ -76,7 +76,7 @@ export const fetchRecipes = async (page, limit = 10) => {
     }
   };
 
-  //fetch recipe from id
+  //fetch a single recipe by id
   export const fetchRecipe = async (id) => {
     try {
       const response = await fetch(`${API_URL}/recipes/${id}`);
