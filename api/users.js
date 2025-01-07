@@ -19,7 +19,7 @@ router.get("/", authenticateAdmin, async (req, res, next) => {
     // Count the total number of users
     const userCount = await prisma.user.count();
 
-    res.status(200).json({ users, userCount });
+    res.status(200).json({ userCount,users });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Fail to fetch users" });
@@ -79,7 +79,11 @@ router.get("/:id/recipes", async (req, res, next) => {
 
     if (!recipes) return res.status(404).json({ message: "Recipes not found" });
 
-    res.status(200).json(recipes);
+    const recipeCount = await prisma.recipe.count({
+      where: { userId: parseInt(id) },
+    });
+
+    res.status(200).json({recipeCount,recipes});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Fail to fetch recipes" });
@@ -169,7 +173,11 @@ router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
     if (!bookmarks)
       return res.status(404).json({ message: "Bookmarks not found" });
 
-    res.status(200).json(bookmarks);
+    const bookmarkCount = await prisma.bookmark.count({
+        where: { userId: parseInt(id) },
+        });
+
+    res.status(200).json({bookmarkCount,bookmarks});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Fail to fetch bookmarks" });
@@ -223,7 +231,11 @@ router.get("/:id/comments", authenticateUser, async (req, res, next) => {
         .json({ message: "No comments found for this user." });
     }
 
-    res.status(200).json(comments);
+    const commentCount = await prisma.comment.count({
+        where: { userId: parseInt(id) },
+        });
+
+    res.status(200).json({commentCount,comments});
   } catch (error) {
     console.error("Error in getting a comment:", error);
     res.status(500).json({ message: "Failed to fetch comments." });

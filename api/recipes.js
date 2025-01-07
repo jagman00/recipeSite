@@ -40,13 +40,13 @@ router.post("/", authenticateUser, async (req, res, next) => {
 // GET /api/recipes
 router.get("/", async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const limit = parseInt(req.query.limit) || 10; 
+    const skip = (page - 1) * limit; // Calculate the offset
 
     try {
         const recipes = await prisma.recipe.findMany({
-            skip,
-            take: limit,
+            skip, // Skip this number of recipes
+            take: limit, // Limit the number of recipes per page
             include: { /* Include related user details */
                 user: {
                     select: {
@@ -71,7 +71,7 @@ router.get("/", async (req, res, next) => {
         // Count the total number of recipes
         const recipeCount = await prisma.recipe.count();
 
-        res.status(200).json({recipes, recipeCount});
+        res.status(200).json({recipeCount, recipes});
     } catch (error) {
         res.status(500).json({ message: "Failed to fetch recipes" });
     }
@@ -246,7 +246,11 @@ router.get("/:id/comments", async (req, res, next) => {
             return res.status(404).json({ message: "There is no comment for this recipe." });
         }
 
-        res.status(200).json(comments);
+        const commentCount = await prisma.comment.count({
+            where: { recipeId: parseInt(id) },
+        });
+
+        res.status(200).json({commentCount,comments});
     } catch (error) {
         console.error("Error getting comment list:", error);
         res.status(500).json({ message: "Failed to fetch comments." });
