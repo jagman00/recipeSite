@@ -118,7 +118,7 @@ router.patch("/:id", authenticateUser, async (req, res, next) => {
 // Delete a user by id (by the user or an admin)
 router.delete(
   "/:id",
-  authenticateUser || authenticateAdmin,
+  authenticateUser,
   async (req, res, next) => {
     const { id } = req.params;
     try {
@@ -146,7 +146,7 @@ router.delete(
   }
 );
 
-// Get all bookmarks of a specific user (only by the user) (admin cannot access)
+// Get all bookmarked recipes of a specific user (only by the user) (admin cannot access)
 // GET /api/users/:id/bookmarks
 router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
   const { id } = req.params;
@@ -164,20 +164,29 @@ router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
       include: {
         recipe: {
           include: {
-            user: { select: { userId: true, name: true } },
+            user: { 
+                select: { userId: true, name: true, profileUrl:true } 
+            },
+            _count: { 
+                select: { likes: true, bookmarks:true ,comments: true }
+            },
           },
         },
       },
+      orderBy: { createdAt: "desc" },
     });
 
     if (!bookmarks)
       return res.status(404).json({ message: "Bookmarks not found" });
 
+    // Extract only recipes from the bookmarks
+    const recipes = bookmarks.map((bookmark) => bookmark.recipe);
+
     const bookmarkCount = await prisma.bookmark.count({
         where: { userId: parseInt(id) },
         });
 
-    res.status(200).json({bookmarkCount,bookmarks});
+    res.status(200).json({bookmarkCount,recipes});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Fail to fetch bookmarks" });
