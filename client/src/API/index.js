@@ -87,3 +87,38 @@ export const fetchRecipes = async (page, limit = 10) => {
       throw error; // Re-throw the error so it can be handled in the component
     }
   };
+
+  //fetch categories 
+  export const fetchCategories = async () => {
+    try {
+        const response = await fetch(`${API_URL}/categories`);
+        //console.log(response);
+        
+        if (!response.ok) {
+            throw new Error('Error in fetchCategories');
+        }
+        const data = await response.json();
+        console.log(data);
+        
+        return data.categories;
+    } catch (error) {
+        console.error('Error in fetchCategories', error);
+        throw error;
+    }
+  };
+
+  //get category by id
+  export const fetchCategoryById = async (categoryId) => {
+    try {
+      const response = await fetch(`${API_URL}/categories/${categoryId}/recipes`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch category");
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching category by ID:", error);
+      throw error;
+    }
+  };
+  

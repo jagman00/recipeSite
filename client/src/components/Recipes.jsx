@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { fetchRecipes } from "../API/index.js";
+import { fetchCategories } from "../API/index.js";
+import { fetchCategoryById } from "../API/index.js";
 
 const RecipesList = () => {
   const [recipes, setRecipes] = useState([]);
-  //const [page, setPage] = useState(1);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,25 +27,68 @@ const RecipesList = () => {
 
   const [page, setPage] = useState(getPageFromQuery());
 
+  //update page state when the URL query changes
   useEffect(() => {
-    //update page state when the URL query changes
     setPage(getPageFromQuery());
   }, [location.search]);
 
   useEffect(() => {
     const getRecipes = async () => {
       try {
+        if (selectedCategoryId) {
+          const data = await fetchCategoryById(selectedCategoryId);
+          setRecipes(data.recipes);
+          setTotalPages(1); // resets pagination for filtered results
+        } else {
         const data = await fetchRecipes(page);  // Call the imported fetchRecipes function
         setRecipes(data.recipes);
         setTotalPages(Math.ceil(data.recipeCount / 10)); // calculate total pages
-      } catch (error) {
+      } 
+    } catch (error) {
         console.error("Failed to fetch recipes", error);
       }
     };
     getRecipes();
-  }, [page]);
+  }, [page, selectedCategoryId]);
 
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const data = await fetchCategories();
+        //console.log('data:', data);
+        setCategories(data);
+        //console.log('categories state:',categories);
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+      }
+    };
+    getCategories();
+  }, []);
 
+  const handleCategoryChange = async (event) => {
+    const categoryId = event.target.value; // Get selected category ID
+    setSelectedCategoryId(categoryId); // Update state with selected category
+  
+    if (categoryId) {
+      try {
+        const data = await fetchCategoryById(categoryId); // Fetch recipes for selected category
+        setRecipes(data.recipes); // Update the recipes state
+        setTotalPages(1); // Reset pagination for filtered results
+      } catch (error) {
+        console.error("Failed to fetch recipes by category", error);
+      }
+    } else {
+      // Reset to all recipes if "All Categories" is selected
+      try {
+        const data = await fetchRecipes(page); // Fetch all recipes
+        setRecipes(data.recipes);
+        setTotalPages(Math.ceil(data.recipeCount / 10));
+      } catch (error) {
+        console.error("Failed to fetch all recipes", error);
+      }
+    }
+  };
+  
   const handleNextPage = () => {
     if (page < totalPages) {
       const nextPage = page + 1;
@@ -60,6 +106,23 @@ const RecipesList = () => {
   return (
     <div className="recipes">
       <h2>Recipes</h2>
+            {/* Category Dropdown */}
+        <div className="category-filter">
+          <label htmlFor="category">Filter by Category:</label>
+          <select
+            id="category"
+            value={selectedCategoryId}
+            onChange={handleCategoryChange} // Call the updated function//
+            >
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.categoryName}
+              </option>
+            ))}
+          </select>
+        </div>
+          {/*Recipe list */}
       <div className="recipe-list">
         {recipes.map((recipe) => (
           <div key={recipe.recipeId} className="recipe-item">
@@ -68,14 +131,16 @@ const RecipesList = () => {
               <img
                 src={recipe.recipeUrl}
                 className="image"
+                alt={recipe.title}
                 loading="lazy"
               />
               <p>{recipe.description}</p>
-              <p>Likes: {recipe._count.likes}</p>
+              <p>Likes: {recipe._count.likes || 0}</p>
               <p>Bookmarks: {recipe._count.bookmarks}</p>
             </Link>
           </div>
         ))}
+        {!selectedCategoryId && (
         <div className="pagination">
           <button onClick={handlePreviousPage} disabled={page === 1}>
             Previous
@@ -85,6 +150,7 @@ const RecipesList = () => {
             Next
           </button>
         </div>
+        )}
       </div>
     </div>
   );

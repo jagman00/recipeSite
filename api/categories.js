@@ -8,7 +8,7 @@ const authenticateAdmin = require('../middleware/authenticateAdmin');
 
 // Get all categories
 // GET /api/categories
-router.get('/', authenticateUser, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
         const categories = await prisma.category.findMany({
             orderBy: { categoryName: 'asc' }
@@ -60,7 +60,13 @@ router.get('/:id/recipes', async (req, res) => {
                 categories: { 
                     some: { id: parseInt(id) } 
                 } },
-            include: { user: true, ingredients: true },
+            include: { user: true, ingredients: true,
+                _count: {
+                    select: {
+                        likes: true,
+                        bookmarks: true,
+                },
+              }, },
             orderBy: { createdAt: "desc"},
         });
 
