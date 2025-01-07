@@ -10,6 +10,7 @@ const Recipe = () => {
 
   //get the page state from the location
   const currentPage = location.state?.page || 1;
+  const currentCategory = location.state?.selectedCategoryId || "";
 
   useEffect(() => {
     const getRecipe = async () => {
@@ -41,7 +42,6 @@ const Recipe = () => {
           <h2 className="header">{recipe.title}</h2>
           <p>{recipe.description}</p>
           <p>Serving Size: {recipe.servingSize}</p>
-          {/* <p><img href={recipe.recipeUrl} target="_blank" rel="noopener noreferrer">{recipe.recipeUrl}</img></p> */}
           <div id="recipeIconContainer">
             <p className="recipeIcon"><img src="../src/assets/likesIcon.png" alt="like icon" /> {recipe._count.likes}</p>
             <p className="recipeIcon"><img src="../src/assets/bookmarksIcon.png" alt="like icon" /> {recipe._count.bookmarks}</p>
@@ -74,7 +74,10 @@ const Recipe = () => {
         <p>No comments yet.</p>
       )}
       {/* Back to Recipe List Button */}
-      <button onClick={()=> navigate(`/?page=${currentPage}`)}>Back to Recipes</button>
+      <button onClick={()=> navigate(`/?page=${currentPage}`,
+      {state: {selectedCategoryId: currentCategory, page: currentPage},
+      })
+    }>Back to Recipes</button>
     </div>
   );
 };

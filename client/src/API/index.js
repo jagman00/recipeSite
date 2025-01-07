@@ -92,14 +92,12 @@ export const fetchRecipes = async (page, limit = 10) => {
   export const fetchCategories = async () => {
     try {
         const response = await fetch(`${API_URL}/categories`);
-        //console.log(response);
-        
+        //console.log(response);  
         if (!response.ok) {
             throw new Error('Error in fetchCategories');
         }
         const data = await response.json();
-        console.log(data);
-        
+        //console.log(data);
         return data.categories;
     } catch (error) {
         console.error('Error in fetchCategories', error);
