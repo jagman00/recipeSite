@@ -96,46 +96,46 @@ for (let i = 0; i < userCount; i++) {
     }
   }
 
-  // Seed Categories
-  const categories = [];
-  const categoryCount = faker.number.int({ min: 24, max: 24 });
-  console.log(`Seeding ${categoryCount} categories...`);
-  for (let i = 0; i < categoryCount; i++) {
-    categories.push(
-      await prisma.category.create({
-        data: {
-          categoryName: faker.helpers.arrayElement([
-    'Italian Cuisine',
-    'French Cuisine',
-    'Chinese Cuisine',
-    'Japanese Cuisine',
-    'Mexican Cuisine',
-    'Indian Cuisine',
-    'Thai Cuisine',
-    'Greek Cuisine',
-    'Spanish Cuisine',
-    'Mediterranean Cuisine',
-    'Middle Eastern Cuisine',
-    'Korean Cuisine',
-    'Vietnamese Cuisine',
-    'American Cuisine',
-    'British Cuisine',
-    'German Cuisine',
-    'Caribbean Cuisine',
-    'Brazilian Cuisine',
-    'African Cuisine',
-    'Turkish Cuisine',
-    'Russian Cuisine',
-    'Portuguese Cuisine',
-    'Filipino Cuisine',
-    'Peruvian Cuisine',
-    'Moroccan Cuisine'
-])
-       }
-    })
-  );
+// Seed Categories
+const categories = [
+  'Italian Cuisine',
+  'French Cuisine',
+  'Chinese Cuisine',
+  'Japanese Cuisine',
+  'Mexican Cuisine',
+  'Indian Cuisine',
+  'Thai Cuisine',
+  'Greek Cuisine',
+  'Spanish Cuisine',
+  'Mediterranean Cuisine',
+  'Middle Eastern Cuisine',
+  'Korean Cuisine',
+  'Vietnamese Cuisine',
+  'American Cuisine',
+  'British Cuisine',
+  'German Cuisine',
+  'Caribbean Cuisine',
+  'Brazilian Cuisine',
+  'African Cuisine',
+  'Turkish Cuisine',
+  'Russian Cuisine',
+  'Portuguese Cuisine',
+  'Filipino Cuisine',
+  'Peruvian Cuisine',
+  'Moroccan Cuisine'
+];
+
+console.log(`Seeding ${categories.length} categories...`);
+
+for (const categoryName of categories) {
+  await prisma.category.create({
+    data: {
+      categoryName,
+    },
+  });
 }
 
+console.log('All categories have been seeded successfully!');
   // Link Recipes and Categories
   console.log('Linking recipes with categories...');
   for (const recipe of recipes) {
