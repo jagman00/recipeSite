@@ -36,7 +36,7 @@ function Navbar({ setToken }) {
         <Link to='/'>
           <div id="logoContainer">
             <img id="logoIcon" src={logoIcon} alt="Website logo" />
-            <span id="logoText">Recipe Round Table</span>
+            <span className="header" id="logoText">Recipe Round Table</span>
           </div>
         </Link>
         <div id="searchbarContainer">
