@@ -12,6 +12,30 @@ const Recipe = () => {
   const currentPage = location.state?.page || 1;
   const currentCategory = location.state?.selectedCategoryId || "";
 
+  function timeAgo(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+  
+    const intervals = {
+      year: 31536000,
+      month: 2592000,
+      week: 604800,
+      day: 86400,
+      hour: 3600,
+      minute: 60,
+      second: 1,
+    };
+  
+    for (const [unit, value] of Object.entries(intervals)) {
+      const count = Math.floor(seconds / value);
+      if (count >= 1) {
+        return `${count} ${unit}${count > 1 ? 's' : ''} ago`;
+      }
+    }
+    return 'just now';
+  }
+
   useEffect(() => {
     const getRecipe = async () => {
       try {
@@ -58,21 +82,23 @@ const Recipe = () => {
           ))}
         </ul>
       </div>
-      <h3>Steps</h3>
+      <h3 className="recipeSpace">Directions</h3>
       <p>{recipe.steps}</p>
-      <h3>Comments</h3>
-      {recipe.comments && recipe.comments.length > 0 ? (
-        <ul>
-          {recipe.comments.map((comment, index) => (
-            <li key={index}>
-              <p>{comment.text}</p>
-              <p><strong>{comment.user.name}</strong> - {comment.updatedAt}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No comments yet.</p>
-      )}
+      <div id="commentsContainer">
+        <h3 className="recipeSpace">Comments</h3>
+        {recipe.comments && recipe.comments.length > 0 ? (
+          <ul id="commentsList">
+            {recipe.comments.map((comment, index) => (
+              <li key={index}>
+                <p className="commentSpace"><strong>{comment.user.name}</strong> - {timeAgo(comment.updatedAt)}</p>
+                <p>{comment.text}</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No comments yet.</p>
+        )}
+      </div>
       {/* Back to Recipe List Button */}
       <button onClick={()=> navigate(`/?page=${currentPage}`,
       {state: {selectedCategoryId: currentCategory, page: currentPage},
