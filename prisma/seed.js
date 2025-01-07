@@ -95,7 +95,6 @@ for (let i = 0; i < userCount; i++) {
       });
     }
   }
-
 // Seed Categories
 const categories = [
   'Italian Cuisine',
@@ -128,27 +127,33 @@ const categories = [
 console.log(`Seeding ${categories.length} categories...`);
 
 for (const categoryName of categories) {
-  await prisma.category.create({
-    data: {
-      categoryName,
-    },
+  await prisma.category.upsert({
+    where: { categoryName }, // Use the unique field
+    update: {}, // No updates if it already exists
+    create: { categoryName },
   });
 }
 
 console.log('All categories have been seeded successfully!');
-  // Link Recipes and Categories
-  console.log('Linking recipes with categories...');
-  for (const recipe of recipes) {
-    const selectedCategories = faker.helpers.arrayElements(categories, faker.number.int({ min: 1, max: 3 }));
-    await prisma.recipe.update({
-      where: { recipeId: recipe.recipeId },
-      data: {
-        categories: {
-          connect: selectedCategories.map((category) => ({ id: category.id })),
-        },
+
+
+// Link Recipes with a Single Unique Category
+console.log('Linking each recipe with one unique category...');
+
+for (const recipe of recipes) {
+  const randomCategory = faker.helpers.arrayElement(categories); // Pick one random category
+  
+  await prisma.recipe.update({
+    where: { recipeId: recipe.recipeId },
+    data: {
+      categories: {
+        set: [{ categoryName: randomCategory }], // Assign a single category
       },
-    });
-  }
+    },
+  });
+}
+
+console.log('Each recipe has been linked to one unique category!');
 
   // Seed Bookmarks /*MODIFIED*/ avoid duplicate bookmarks
   const bookmarkCount = faker.number.int({ min: 50, max: 70 });
