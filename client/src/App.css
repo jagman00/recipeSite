@@ -145,6 +145,21 @@ input::placeholder {
     border-radius: 2px;
     box-shadow: 0 0 10px var(--black);
 }
+.category-filter {
+    font-size: 24px;
+    font-weight: 500;
+}
+.category-filter select {
+    font-size: 24px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--black);
+    font-family: "EB Garamond", serif;
+    font-weight: 500;
+}
+.category-filter select:hover {
+    cursor: pointer;
+}
 .recipes h2 {
     font-family: "Uncial Antiqua", serif;
     font-size: 60px;
@@ -154,7 +169,6 @@ input::placeholder {
     margin: 50px 0 50px 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(300px, 1fr));
-    
 }
 .recipe-item {
     width: 400px;
@@ -211,12 +225,13 @@ input::placeholder {
     display: flex;
     flex-direction: row;
     gap: 10px;
+    margin-top: 4px;
 }
 .pagination {
     grid-column: 1 / -1;
 }
 .pagination span {
-    font-weight: bold;
+    font-weight: 500;
 }
 .pagination button {
     padding: 7px 10px 7px 10px;
@@ -244,26 +259,39 @@ input::placeholder {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    margin: 0 auto;
+    margin: 200px auto 100px;
     padding: 20px 10px 20px 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    width: 700px;
+    width: 800px;
     height: auto;
     backdrop-filter: blur(0);
     box-shadow: 0 0 10px var(--black);
     border-radius: 2px;
+    align-self: flex-start;
 }
 #recipeHeaderContainer {
     margin: 30px;
     display: flex;
     flex-direction: row;
+    align-items: flex-start;
     gap: 30px;
 }
 #recipeHeaderInfo {
     text-align: left;
+}
+#recipeHeaderImg {
+    height: auto;
+    width: 240px;
+    aspect-ratio: 1/1;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+#recipeHeaderImg img {
+    height: 100%;
+    width: 100%;
 }
 #recipeIconContainer {
     display: flex;
@@ -276,6 +304,9 @@ input::placeholder {
 }
 .recipeIcon img {
     height: 36px;
+}
+.recipeSpace {
+    margin-top: 20px;
 }
 #recipeComponent button {
     padding: 7px 10px 7px 10px;
@@ -310,6 +341,21 @@ input::placeholder {
     width: auto;
     text-align: left;
     margin-left: 20px;
+}
+#commentsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+#commentsList {
+    list-style: none;
+    text-align: left;
+    display: block;
+    width: auto;
+}
+#commentsList li:not(:first-child) {
+    margin-top: 10px;
 }
 /*Login component styling*/
 .loginComponent {
@@ -497,94 +543,97 @@ input::placeholder {
     justify-content: center;
     align-items: center;
 }
-
+/*Admin dashboard component styling*/
 .adminDashboard {
-  padding: 20px;
-  text-align: center;
-  color: rgb(0, 0, 0);
+    text-align: center;
+    width: 700px;
 }
-
+.adminDashboard h2 {
+    font-size: 36px;
+}
 .combinedChartContainer {
-  margin-top: 20px;
-  padding: 20px;
-  background-image: url('./assets/largeParchmentBackground.jpg');
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  width: 80%;
-  margin: 0 auto;
+    margin-top: 20px;
+    padding: 20px;
+    background-image: url('./assets/largeParchmentBackground.jpg');
+    border-radius: 2px;
+    margin: 0 auto;
+    box-shadow: 0 0 10px var(--black);
 }
-
 .combinedChart {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    font-size: 24px;
 }
-
+.combinedChart span {
+        font-size: 24px;
+        width: auto;
+}
 .barRow {
-  display: flex;
-  align-items: center;
-  margin: 5px 0;
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
 }
-
 .barLabel {
-  width: 100px;
-  text-align: right;
-  margin-right: 10px;
-  font-size: 14px;
-  font-weight: bold;
+    width: 100px;
+    text-align: right;
+    margin-right: 10px;
+    font-size: 14px;
+    font-weight: bold;
 }
-
 .bar {
-  height: 20px;
-  background-color: #4CAF50;
-  color: rgb(0, 0, 0);
-  text-align: center;
-  line-height: 20px;
-  border-radius: 5px;
-  transition: width 0.5s ease;
+    height: 20px;
+    background-color: #4CAF50;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    line-height: 20px;
+    border-radius: 5px;
+    transition: width 0.5s ease;
 }
-
 .createCategoryContainer {
-  margin-top: 30px;
-  padding: 20px;
-  text-align: center;
-  background-image: url('./assets/largeParchmentBackground.jpg');
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  width: 80%;
-  margin: 20px auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center; 
-  justify-content: center; 
-  gap: 10px; 
+    margin-top: 30px;
+    padding: 20px;
+    text-align: center;
+    background-image: url('./assets/largeParchmentBackground.jpg');
+    border-radius: 2px;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px;
+    box-shadow: 0 0 10px var(--black);
 }
-
 .createCategoryContainer input {
-  padding: 10px;
-  width: 300px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  text-align: center;
+    padding: 10px;
+    width: 300px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--black);
+    font-size: 24px;
 }
-
+.createCategoryContainer input:focus {
+    outline: none;
+}
 .createCategoryContainer button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4CAF50;
-  color: black;
-  cursor: pointer;
-  text-align: center;
-  margin-top: 10px;
+    padding: 7px 10px 7px 10px;
+    font-size: 24px;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 10px;
+    width: 200px;
+    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
+    color: var(--white);
 }
-
 .createCategoryContainer button:hover {
-  background-color: #45a049;
-}
+    cursor: pointer;
 
+    box-shadow: 0 0 2px var(--black);
+}
 .createCategoryContainer p {
-  margin-top: 10px;
-  font-size: 16px;
+    margin-top: 10px;
+    font-size: 16px;
 }

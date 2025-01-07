@@ -95,25 +95,23 @@ const RecipesList = () => {
   return (
     <div className="recipes">
       <h2>Recipes</h2>
-
-      {/* Category Dropdown */}
-      <div className="category-filter">
-        <label htmlFor="category">Filter by Category:</label>
-        <select
-          id="category"
-          value={selectedCategoryId}
-          onChange={handleCategoryChange}
-        >
-          <option value="">All Categories</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.categoryName}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Recipe List */}
+            {/* Category Dropdown */}
+        <div className="category-filter">
+          <label htmlFor="category">Filter by Category: </label>
+          <select
+            id="category"
+            value={selectedCategoryId}
+            onChange={handleCategoryChange} // Call the updated function//
+            >
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.categoryName}
+              </option>
+            ))}
+          </select>
+        </div>
+          {/*Recipe list */}
       <div className="recipe-list">
         {recipes.map((recipe) => (
           <div key={recipe.recipeId} className="recipe-item">

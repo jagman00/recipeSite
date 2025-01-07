@@ -91,14 +91,13 @@ function AdminDashboard() {
 
   return (
     <div className="adminDashboard">
-      <h1>Admin Dashboard</h1>
-
       <div className="combinedChartContainer">
+        <h1 className="header">Admin Dashboard</h1>
         <h2>Overview</h2>
         <div className="combinedChart">
           {/* Total Users */}
           <div className="barRow">
-            <span className="barLabel">Users</span>
+            <span className="barLabel">Registered Users</span>
             <div className="bar" style={{ width: `${totalUsers * 5}px` }}>
               {totalUsers}
             </div>
@@ -106,7 +105,7 @@ function AdminDashboard() {
 
           {/* Total Recipes */}
           <div className="barRow">
-            <span className="barLabel">Recipes</span>
+            <span className="barLabel">Uploaded Recipes</span>
             <div className="bar" style={{ width: `${totalRecipes * 5}px` }}>
               {totalRecipes}
             </div>
@@ -115,7 +114,7 @@ function AdminDashboard() {
           {/* Monthly Registrations */}
           {monthlyRegistrations.map((data, index) => (
             <div key={index} className="barRow">
-              <span className="barLabel">{data.month}</span>
+              <span className="barLabel">Registrations in {data.month}</span>
               <div className="bar" style={{ width: `${data.count * 5}px` }}>
                 {data.count}
               </div>
