@@ -150,6 +150,10 @@ router.delete(
 // GET /api/users/:id/bookmarks
 router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
   const { id } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10; 
+  const skip = (page - 1) * limit; // Calculate the offset
+  
   try {
     if (req.user.userId !== parseInt(id)) {
       return res
@@ -174,6 +178,8 @@ router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
         },
       },
       orderBy: { createdAt: "desc" },
+      skip, // Skip this number of recipes
+      take: limit, // Limit the number of recipes per page
     });
 
     if (!bookmarks)
