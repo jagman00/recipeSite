@@ -82,7 +82,7 @@ model Ingredient {
 
 model Category {
   id           Int      @id @default(autoincrement())
-  categoryName String
+  categoryName String   @unique
   recipes      Recipe[] //Many to many Relation to Recipe model //will allow search by category name
 }
 
@@ -120,4 +120,6 @@ model Like {
   recipe   Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+
+  @@unique([userId, recipeId])// Enforce unique likes for each user-recipe pair
 }

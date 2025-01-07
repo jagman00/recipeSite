@@ -5,6 +5,7 @@ const prisma = require("../prisma");
 require('dotenv').config();
 const authenticateUser = require('../middleware/authenticateUser');
 const authenticateAdmin = require('../middleware/authenticateAdmin');
+const { parse } = require("dotenv");
 
 // Create new recipe by authenticated user /*create ingredients inclusively*/
 // POST /api/recipes
@@ -40,13 +41,13 @@ router.post("/", authenticateUser, async (req, res, next) => {
 // GET /api/recipes
 router.get("/", async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const limit = parseInt(req.query.limit) || 10; 
+    const skip = (page - 1) * limit; // Calculate the offset
 
     try {
         const recipes = await prisma.recipe.findMany({
-            skip,
-            take: limit,
+            skip, // Skip this number of recipes
+            take: limit, // Limit the number of recipes per page
             include: { /* Include related user details */
                 user: {
                     select: {
@@ -71,7 +72,7 @@ router.get("/", async (req, res, next) => {
         // Count the total number of recipes
         const recipeCount = await prisma.recipe.count();
 
-        res.status(200).json({recipes, recipeCount});
+        res.status(200).json({recipeCount, recipes});
     } catch (error) {
         res.status(500).json({ message: "Failed to fetch recipes" });
     }
@@ -94,10 +95,23 @@ router.get("/:id", async (req, res, next) => {
                     },
                 },
                 ingredients: true, /* Include related ingredients */
+                comments: {
+                    include: {
+                        user: {
+                            select: {
+                                userId: true,
+                                name: true,
+                                profileUrl: true,
+                                userTitle: true,
+                            }
+                        }
+                    }
+                },
                 _count: { /* Include count of comments, bookmarks, and likes */
                     select: { 
                         bookmarks: true,
                         likes: true,
+                        comments: true,
                     }, 
                 },
             },
@@ -233,7 +247,11 @@ router.get("/:id/comments", async (req, res, next) => {
             return res.status(404).json({ message: "There is no comment for this recipe." });
         }
 
-        res.status(200).json(comments);
+        const commentCount = await prisma.comment.count({
+            where: { recipeId: parseInt(id) },
+        });
+
+        res.status(200).json({commentCount,comments});
     } catch (error) {
         console.error("Error getting comment list:", error);
         res.status(500).json({ message: "Failed to fetch comments." });
@@ -347,108 +365,161 @@ router.delete("/:recipeId/comments/:id", authenticateUser, async (req, res, next
     }
 });
 
-// Like a recipe
+// Like/Unlike a recipe (toggle like) by authenticated user
 // POST /api/recipes/:id/like
 router.post("/:id/like", authenticateUser, async (req, res, next) => {
     const { id } = req.params;
-    try {
-        await prisma.like.create({
-            data: {
-                userId: req.user.userId,
-                recipeId: parseInt(id),
-            },
-        });
-        res.status(201).json({ message: "Recipe liked successfully" });
-    } catch (error) {
-        next(error);
-    }
-});
+    const userId = req.user.userId;
 
-// Unlike a recipe
-// DELETE /api/recipes/:id/like
-router.delete("/:id/like", authenticateUser, async (req, res, next) => {
-    const { id } = req.params;
     try {
-        await prisma.like.deleteMany({
+        const existingLike = await prisma.like.findFirst({
             where: {
-                userId: req.user.userId,
+                userId: parseInt(userId),
                 recipeId: parseInt(id),
             },
         });
-        res.status(200).json({ message: "Recipe unliked successfully" });
-    } catch (error) {
-        next(error);
-    }
-});
 
-// Get all bookmarks of a specific user
-// GET /api/users/:userId/bookmarks
-router.get("/users/:userId/bookmarks", authenticateUser, async (req, res, next) => {
-    const { userId } = req.params;
-    if (req.user.userId !== parseInt(userId)) {
-        return res.status(403).json({ message: "Unauthorized access" });
-    }
-    try {
-        const bookmarks = await prisma.bookmark.findMany({
-            where: { userId: parseInt(userId) },
-            include: { recipe: true },
+        if (existingLike) { // Unlike if already liked
+            await prisma.like.delete({
+                where: {
+                    userId_recipeId: {
+                        userId: parseInt(userId),
+                        recipeId: parseInt(id),
+                    },
+                },
+            });
+        } else { // Like if not liked yet
+            await prisma.like.create({
+                data: {
+                    userId: req.user.userId,
+                    recipeId: parseInt(id),
+                },
+            });
+        }
+
+        const likeCount = await prisma.like.count({
+            where: { recipeId: parseInt(id) },
         });
-        res.status(200).json(bookmarks);
+
+        res.status(200).json({ likeCount, message: 'Like status toggled successfully.' });
     } catch (error) {
-        next(error);
+        console.error('Error toggling like status:', error);
+        res.status(500).json({ message: 'Failed to toggle like status.' });
     }
 });
 
-// Save a recipe (Bookmark)
+// // Unlike a recipe 
+// // DELETE /api/recipes/:id/like
+// router.delete("/:id/like", authenticateUser, async (req, res, next) => {
+//     const { id } = req.params;
+//     try {
+//         await prisma.like.deleteMany({
+//             where: {
+//                 userId: req.user.userId,
+//                 recipeId: parseInt(id),
+//             },
+//         });
+//         res.status(200).json({ message: "Recipe unliked successfully" });
+//     } catch (error) {
+//         next(error);
+//     }
+// }); // combined with like/unlike
+
+// // Get all bookmarks of a specific user
+// // GET /api/users/:userId/bookmarks
+// router.get("/users/:userId/bookmarks", authenticateUser, async (req, res, next) => {
+//     const { userId } = req.params;
+//     if (req.user.userId !== parseInt(userId)) {
+//         return res.status(403).json({ message: "Unauthorized access" });
+//     }
+//     try {
+//         const bookmarks = await prisma.bookmark.findMany({
+//             where: { userId: parseInt(userId) },
+//             include: { recipe: true },
+//         });
+//         res.status(200).json(bookmarks);
+//     } catch (error) {
+//         next(error);
+//     }
+// }); // already included in user.js
+
+// Save/Unsave a recipe (Bookmark)
 // POST /api/recipes/:id/bookmarks
 router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
     const { id } = req.params;
-    try {
-        await prisma.bookmark.create({
-            data: {
-                userId: req.user.userId,
-                recipeId: parseInt(id),
-            },
-        });
-        res.status(201).json({ message: "Recipe bookmarked successfully" });
-    } catch (error) {
-        next(error);
-    }
-});
+    const userId = req.user.userId;
 
-// Remove a bookmark
-// DELETE /api/recipes/:id/bookmarks
-router.delete("/:id/bookmarks", authenticateUser, async (req, res, next) => {
-    const { id } = req.params;
     try {
-        await prisma.bookmark.deleteMany({
-            where: {
-                userId: req.user.userId,
-                recipeId: parseInt(id),
-            },
-        });
-        res.status(200).json({ message: "Bookmark removed successfully" });
-    } catch (error) {
-        next(error);
-    }
-});
-
-// Delete a bookmark of a specific user
-// DELETE /api/users/:userId/bookmarks/:recipeId
-router.delete("/users/:userId/bookmarks/:recipeId", authenticateUser, async (req, res, next) => {
-    const { userId, recipeId } = req.params;
-    if (req.user.userId !== parseInt(userId)) {
-        return res.status(403).json({ message: "Unauthorized access" });
-    }
-    try {
-        await prisma.bookmark.deleteMany({
+        const existingBookmark = await prisma.bookmark.findFirst({
             where: {
                 userId: parseInt(userId),
-                recipeId: parseInt(recipeId),
+                recipeId: parseInt(id),
             },
         });
-        res.status(200).json({ message: "User's bookmark deleted successfully" });
+
+        if (existingBookmark) { // Unsave if already saved
+            await prisma.bookmark.delete({
+                where: {
+                    userId_recipeId: {
+                        userId: parseInt(userId),
+                        recipeId: parseInt(id),
+                    },
+                },
+            });
+        } else { // Save if not saved yet
+            await prisma.bookmark.create({
+                data: {
+                    userId: parseInt(userId),
+                    recipeId: parseInt(id),
+                },
+            });
+        }
+
+        const bookmarkCount = await prisma.bookmark.count({
+            where: { recipeId: parseInt(id) },
+        });
+
+        res.status(200).json({ bookmarkCount, message: 'Bookmark status toggled successfully.' });
     } catch (error) {
-        next(error);
+        console.error('Error toggling bookmark status:', error);
+        res.status(500).json({ message: 'Failed to toggle bookmark status.' });
     }
+
 });
+
+// // Remove a bookmark
+// // DELETE /api/recipes/:id/bookmarks
+// router.delete("/:id/bookmarks", authenticateUser, async (req, res, next) => {
+//     const { id } = req.params;
+//     try {
+//         await prisma.bookmark.deleteMany({
+//             where: {
+//                 userId: req.user.userId,
+//                 recipeId: parseInt(id),
+//             },
+//         });
+//         res.status(200).json({ message: "Bookmark removed successfully" });
+//     } catch (error) {
+//         next(error);
+//     }
+// }); // combined with save/unsave
+
+// // Delete a bookmark of a specific user
+// // DELETE /api/users/:userId/bookmarks/:recipeId
+// router.delete("/users/:userId/bookmarks/:recipeId", authenticateUser, async (req, res, next) => {
+//     const { userId, recipeId } = req.params;
+//     if (req.user.userId !== parseInt(userId)) {
+//         return res.status(403).json({ message: "Unauthorized access" });
+//     }
+//     try {
+//         await prisma.bookmark.deleteMany({
+//             where: {
+//                 userId: parseInt(userId),
+//                 recipeId: parseInt(recipeId),
+//             },
+//         });
+//         res.status(200).json({ message: "User's bookmark deleted successfully" });
+//     } catch (error) {
+//         next(error);
+//     }
+// }); // not necessary anymore if the user untoggle the bookmark

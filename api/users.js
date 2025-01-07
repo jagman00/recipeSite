@@ -19,7 +19,7 @@ router.get("/", authenticateAdmin, async (req, res, next) => {
     // Count the total number of users
     const userCount = await prisma.user.count();
 
-    res.status(200).json({ users, userCount });
+    res.status(200).json({ userCount,users });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Fail to fetch users" });
@@ -79,7 +79,11 @@ router.get("/:id/recipes", async (req, res, next) => {
 
     if (!recipes) return res.status(404).json({ message: "Recipes not found" });
 
-    res.status(200).json(recipes);
+    const recipeCount = await prisma.recipe.count({
+      where: { userId: parseInt(id) },
+    });
+
+    res.status(200).json({recipeCount,recipes});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Fail to fetch recipes" });
@@ -114,7 +118,7 @@ router.patch("/:id", authenticateUser, async (req, res, next) => {
 // Delete a user by id (by the user or an admin)
 router.delete(
   "/:id",
-  authenticateUser || authenticateAdmin,
+  authenticateUser,
   async (req, res, next) => {
     const { id } = req.params;
     try {
@@ -142,10 +146,14 @@ router.delete(
   }
 );
 
-// Get all bookmarks of a specific user (only by the user) (admin cannot access)
+// Get all bookmarked recipes of a specific user (only by the user) (admin cannot access)
 // GET /api/users/:id/bookmarks
 router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
   const { id } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10; 
+  const skip = (page - 1) * limit; // Calculate the offset
+  
   try {
     if (req.user.userId !== parseInt(id)) {
       return res
@@ -160,16 +168,31 @@ router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
       include: {
         recipe: {
           include: {
-            user: { select: { userId: true, name: true } },
+            user: { 
+                select: { userId: true, name: true, profileUrl:true } 
+            },
+            _count: { 
+                select: { likes: true, bookmarks:true ,comments: true }
+            },
           },
         },
       },
+      orderBy: { createdAt: "desc" },
+      skip, // Skip this number of recipes
+      take: limit, // Limit the number of recipes per page
     });
 
     if (!bookmarks)
       return res.status(404).json({ message: "Bookmarks not found" });
 
-    res.status(200).json(bookmarks);
+    // Extract only recipes from the bookmarks
+    const recipes = bookmarks.map((bookmark) => bookmark.recipe);
+
+    const bookmarkCount = await prisma.bookmark.count({
+        where: { userId: parseInt(id) },
+        });
+
+    res.status(200).json({bookmarkCount,recipes});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Fail to fetch bookmarks" });
@@ -223,7 +246,11 @@ router.get("/:id/comments", authenticateUser, async (req, res, next) => {
         .json({ message: "No comments found for this user." });
     }
 
-    res.status(200).json(comments);
+    const commentCount = await prisma.comment.count({
+        where: { userId: parseInt(id) },
+        });
+
+    res.status(200).json({commentCount,comments});
   } catch (error) {
     console.error("Error in getting a comment:", error);
     res.status(500).json({ message: "Failed to fetch comments." });

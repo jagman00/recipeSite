@@ -95,60 +95,65 @@ for (let i = 0; i < userCount; i++) {
       });
     }
   }
+// Seed Categories
+const categories = [
+  'Italian Cuisine',
+  'French Cuisine',
+  'Chinese Cuisine',
+  'Japanese Cuisine',
+  'Mexican Cuisine',
+  'Indian Cuisine',
+  'Thai Cuisine',
+  'Greek Cuisine',
+  'Spanish Cuisine',
+  'Mediterranean Cuisine',
+  'Middle Eastern Cuisine',
+  'Korean Cuisine',
+  'Vietnamese Cuisine',
+  'American Cuisine',
+  'British Cuisine',
+  'German Cuisine',
+  'Caribbean Cuisine',
+  'Brazilian Cuisine',
+  'African Cuisine',
+  'Turkish Cuisine',
+  'Russian Cuisine',
+  'Portuguese Cuisine',
+  'Filipino Cuisine',
+  'Peruvian Cuisine',
+  'Moroccan Cuisine'
+];
 
-  // Seed Categories
-  const categories = [];
-  const categoryCount = faker.number.int({ min: 24, max: 24 });
-  console.log(`Seeding ${categoryCount} categories...`);
-  for (let i = 0; i < categoryCount; i++) {
-    categories.push(
-      await prisma.category.create({
-        data: {
-          categoryName: faker.helpers.arrayElement([
-    'Italian Cuisine',
-    'French Cuisine',
-    'Chinese Cuisine',
-    'Japanese Cuisine',
-    'Mexican Cuisine',
-    'Indian Cuisine',
-    'Thai Cuisine',
-    'Greek Cuisine',
-    'Spanish Cuisine',
-    'Mediterranean Cuisine',
-    'Middle Eastern Cuisine',
-    'Korean Cuisine',
-    'Vietnamese Cuisine',
-    'American Cuisine',
-    'British Cuisine',
-    'German Cuisine',
-    'Caribbean Cuisine',
-    'Brazilian Cuisine',
-    'African Cuisine',
-    'Turkish Cuisine',
-    'Russian Cuisine',
-    'Portuguese Cuisine',
-    'Filipino Cuisine',
-    'Peruvian Cuisine',
-    'Moroccan Cuisine'
-])
-       }
-    })
-  );
+console.log(`Seeding ${categories.length} categories...`);
+
+for (const categoryName of categories) {
+  await prisma.category.upsert({
+    where: { categoryName }, // Use the unique field
+    update: {}, // No updates if it already exists
+    create: { categoryName },
+  });
 }
 
-  // Link Recipes and Categories
-  console.log('Linking recipes with categories...');
-  for (const recipe of recipes) {
-    const selectedCategories = faker.helpers.arrayElements(categories, faker.number.int({ min: 1, max: 3 }));
-    await prisma.recipe.update({
-      where: { recipeId: recipe.recipeId },
-      data: {
-        categories: {
-          connect: selectedCategories.map((category) => ({ id: category.id })),
-        },
+console.log('All categories have been seeded successfully!');
+
+
+// Link Recipes with a Single Unique Category
+console.log('Linking each recipe with one unique category...');
+
+for (const recipe of recipes) {
+  const randomCategory = faker.helpers.arrayElement(categories); // Pick one random category
+  
+  await prisma.recipe.update({
+    where: { recipeId: recipe.recipeId },
+    data: {
+      categories: {
+        set: [{ categoryName: randomCategory }], // Assign a single category
       },
-    });
-  }
+    },
+  });
+}
+
+console.log('Each recipe has been linked to one unique category!');
 
   // Seed Bookmarks /*MODIFIED*/ avoid duplicate bookmarks
   const bookmarkCount = faker.number.int({ min: 50, max: 70 });
