@@ -34,7 +34,7 @@ router.get("/", authenticateAdmin, async (req, res) => {
     // Count the total number of comments
     const commentCount = await prisma.comment.count();
 
-    res.status(200).json({comments, commentCount});
+    res.status(200).json({commentCount,comments});
   } catch (error) {
     console.error("Error fetching comments:", error);
     res.status(500).json({ error: "Failed to fetch the comments." });
