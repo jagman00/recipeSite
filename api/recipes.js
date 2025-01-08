@@ -528,3 +528,67 @@ router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
 //         next(error);
 //     }
 // }); // not necessary anymore if the user untoggle the bookmark
+
+// Recipe Steps by ID
+// GET /api/recipes/:id/steps
+router.get("/:id/steps", async (req, res, next) => {
+    const { id } = req.params;
+
+    try {
+        const recipe = await prisma.recipe.findUnique({
+            where: { recipeId: parseInt(id) },
+            select: { steps: true }
+        });
+
+        if (!recipe) {
+            return res.status(404).json({ message: "Recipe not found" });
+        }
+
+        const steps = Array.isArray(recipe.steps) ? recipe.steps : [];
+        res.status(200).json({
+            recipeId: id,
+            steps: recipe.steps
+        });
+    } catch (error) {
+        console.error("Error fetching recipe steps:", error);
+        res.status(500).json({ message: "Failed to fetch recipe steps." });
+    }
+});
+
+// Update Recipe Steps
+// POST /api/recipes/:id/steps
+router.post("/:id/steps", authenticateUser, async (req, res, next) => {
+    const { id } = req.params;
+    const { steps } = req.body;
+
+    if (!Array.isArray(steps) || !steps.every(step => step.stepNumber && step.instruction)) {
+        return res.status(400).json({ message: "Steps must be an array of objects with 'stepNumber' and 'instruction' fields." });
+    }
+
+    try {
+        const recipe = await prisma.recipe.findUnique({
+            where: { recipeId: parseInt(id) }
+        });
+
+        if (!recipe) {
+            return res.status(404).json({ message: "Recipe not found." });
+        }
+
+        if (recipe.userId !== req.user.userId && !req.user.isAdmin) {
+            return res.status(403).json({ message: "Unauthorized to update this recipe." });
+        }
+
+        const updatedRecipe = await prisma.recipe.update({
+            where: { recipeId: parseInt(id) },
+            data: { steps }
+        });
+
+        res.status(200).json({
+            message: "Recipe steps updated successfully.",
+            steps: updatedRecipe.steps
+        });
+    } catch (error) {
+        console.error("Error updating recipe steps:", error);
+        res.status(500).json({ message: "Failed to update recipe steps." });
+    }
+});

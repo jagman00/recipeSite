@@ -52,11 +52,64 @@ for (let i = 0; i < userCount; i++) {
   );
 }
 
+// hard coded example steps for recipe seed
+const exampleSteps = [
+  [
+      { stepNumber: 1, instruction: "Preheat the oven to 350°F (175°C)." },
+      { stepNumber: 2, instruction: "Chop the vegetables into small pieces." },
+      { stepNumber: 3, instruction: "Boil water and cook pasta for 10 minutes." },
+      { stepNumber: 4, instruction: "Sauté onions and garlic in a pan until golden brown." },
+      { stepNumber: 5, instruction: "Mix all ingredients in a large bowl." },
+      { stepNumber: 6, instruction: "Bake in the oven for 25 minutes or until golden." },
+      { stepNumber: 7, instruction: "Let the dish cool for 5 minutes before serving." }
+  ],
+  [
+      { stepNumber: 1, instruction: "Wash and rinse the rice thoroughly." },
+      { stepNumber: 2, instruction: "Marinate the chicken with spices and let it sit for 30 minutes." },
+      { stepNumber: 3, instruction: "Heat oil in a skillet and cook the chicken until browned." },
+      { stepNumber: 4, instruction: "Add rice and stir well with the chicken." },
+      { stepNumber: 5, instruction: "Pour in chicken broth and bring to a boil." },
+      { stepNumber: 6, instruction: "Cover and simmer for 20 minutes." },
+      { stepNumber: 7, instruction: "Garnish with fresh cilantro and serve hot." }
+  ],
+  [
+      { stepNumber: 1, instruction: "Whisk together eggs, milk, and a pinch of salt in a bowl." },
+      { stepNumber: 2, instruction: "Heat a non-stick pan over medium heat." },
+      { stepNumber: 3, instruction: "Pour the egg mixture into the pan." },
+      { stepNumber: 4, instruction: "Add diced tomatoes, onions, and spinach on top." },
+      { stepNumber: 5, instruction: "Fold the omelet in half and cook for another 2 minutes." },
+      { stepNumber: 6, instruction: "Serve with toasted bread and avocado slices." },
+      { stepNumber: 7, instruction: "Enjoy your healthy breakfast!" }
+  ],
+  [
+      { stepNumber: 1, instruction: "Season the steak with salt, pepper, and olive oil." },
+      { stepNumber: 2, instruction: "Preheat a grill pan over high heat." },
+      { stepNumber: 3, instruction: "Grill the steak for 4-5 minutes on each side." },
+      { stepNumber: 4, instruction: "Let the steak rest for 5 minutes before slicing." },
+      { stepNumber: 5, instruction: "Prepare a side salad with fresh greens and dressing." },
+      { stepNumber: 6, instruction: "Serve steak slices on a plate with the salad." },
+      { stepNumber: 7, instruction: "Drizzle with balsamic glaze before serving." }
+  ],
+  [
+      { stepNumber: 1, instruction: "Preheat your waffle iron." },
+      { stepNumber: 2, instruction: "In a large bowl, mix flour, sugar, baking powder, and salt." },
+      { stepNumber: 3, instruction: "Add milk, eggs, and melted butter to the dry mix." },
+      { stepNumber: 4, instruction: "Whisk until smooth and lump-free." },
+      { stepNumber: 5, instruction: "Pour batter into the preheated waffle iron." },
+      { stepNumber: 6, instruction: "Cook waffles until golden brown and crispy." },
+      { stepNumber: 7, instruction: "Serve with maple syrup and fresh berries." }
+  ]
+];
+
   // Seed Recipes
   const recipes = [];
   const recipeCount = faker.number.int({ min: 30, max: 70 });
   console.log(`Seeding ${recipeCount} recipes...`);
   for (let i = 0; i < recipeCount; i++) {
+    const selectedSteps = faker.helpers.arrayElement(exampleSteps).map((step, index) => ({
+      stepNumber: index + 1,
+      instruction: step.instruction
+  }));
     recipes.push(
       await prisma.recipe.create({
         data: {
@@ -72,8 +125,12 @@ for (let i = 0; i < userCount; i++) {
             `https://i.ibb.co/25mc2hz/download-3.jpg`,
             `https://i.ibb.co/3sTMf6n/download-4.jpg`,
             `https://i.ibb.co/tmMW5kb/download-5.jpg`,
-            `https://i.ibb.co/CbvkzRy/images-2.jpg`,]),
-          steps: faker.food.description(2),
+            `https://i.ibb.co/CbvkzRy/images-2.jpg`,
+            `https://i.ibb.co/KLd9fP0/download.jpg`,
+            `https://i.ibb.co/rQNWj4z/images.jpg`,
+            `https://i.ibb.co/RB3cjwr/istockphoto-1214416414-612x612.jpg`,
+            `https://i.ibb.co/DzdttwP/shoyu-ramen-20181227133143.jpg`]),
+          steps: selectedSteps,
           userId: faker.helpers.arrayElement(users).userId,
         },
       })
