@@ -81,6 +81,7 @@ const RecipesList = () => {
   const handleNextPage = () => {
     if (page < totalPages) {
       const nextPage = page + 1;
+      setPage(nextPage);
       navigate(`?page=${nextPage}`, { state: { selectedCategoryId, page: nextPage } });
     }
   };
@@ -88,6 +89,7 @@ const RecipesList = () => {
   const handlePreviousPage = () => {
     if (page > 1) {
       const previousPage = page - 1;
+      setPage(previousPage);
       navigate(`?page=${previousPage}`, { state: { selectedCategoryId, page: previousPage } });
     }
   };
