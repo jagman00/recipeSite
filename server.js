@@ -14,6 +14,24 @@ app.use(cors());
 //   })
 //);
 
+// Health Check Endpoint
+let errorLogs = []; // Store logs globally 
+
+app.get("/api/health", (req, res) => {
+  const hasErrors = errorLogs.length > 0;
+  res.status(200).json({
+    status: hasErrors ? "issues" : "ok",
+    logs: errorLogs,
+  });
+});
+
+// Log errors
+app.use((err, req, res, next) => {
+  errorLogs.push(err.message);
+  res.status(500).json({ message: "Internal server error" });
+});
+
+
 // Mount the API router at /api
 app.use("/api", require("./api/router"));
 
@@ -27,3 +45,4 @@ app.use((err, req, res, next) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });
+
