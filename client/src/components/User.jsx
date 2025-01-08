@@ -1,27 +1,56 @@
 import React, { useEffect, useState } from "react";
-import { fetchUser } from "../API/index.js"; // Importing the fetchUser function
+import { fetchUser, updateUser } from "../API/index.js"; // Importing the fetchUser function
+import { jwtDecode } from "jwt-decode";
+import { Link, useNavigate } from "react-router-dom";
 
-const GetUser = () => {
-  const [userInfo, setUserInfo] = useState(null);
+const GetUser = ({setToken}) => {
+  const [userInfo, setUserInfo] = useState({
+    recipes: [], // Ensure recipes is always an array
+  });
   const [errorMessage, setErrorMessage] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false); // Track admin status
+  const [userId, setUserId] = useState(null); // Store userId
+  const [editMode, setEditMode] = useState(false); // Track edit mode
+  const [editProfile, setEditProfile] = useState({}); // Editable profile fields
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Assuming the token is stored in localStorage
+    const token = localStorage.getItem("token");
     if (token) {
-      fetchLoggedInUser(token);
+      try {
+        const decodedToken = jwtDecode(token); // Decode the token
+        setIsAdmin(decodedToken.isAdmin || false); // Set admin status
+        setUserId(decodedToken.userId); // Extract and set userId
+        setLoggedIn(true); // User is logged in
+        fetchLoggedInUser(token);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        setErrorMessage("Invalid authentication token. Please log in again.");
+        localStorage.clear();
+        setLoggedIn(false);
+      }
     } else {
-      setErrorMessage("No authentication token found. Please log in.");
+      setLoggedIn(false);
     }
   }, []);
 
   const fetchLoggedInUser = async (token) => {
     setErrorMessage("");
-    setUserInfo(null);
+    setUserInfo({
+      recipes: [], // Ensure recipes is an array
+    });
 
     try {
       const response = await fetchUser(token);
       if (response !== undefined) {
         setUserInfo(response);
+        setEditProfile({
+          name: response.name,
+          email: response.email,
+          userTitle: response.userTitle || "",
+          bio: response.bio || "",
+        });
       } else {
         setErrorMessage(response?.message || "Unable to fetch user information.");
       }
@@ -31,45 +60,151 @@ const GetUser = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    setLoggedIn(false);
+    setUserInfo({
+      recipes: [], // Reset recipes
+    });
+    navigate("/login");
+  };
+
+  const handleLogin = () => {
+    navigate("/login");
+  };
+
+  const handleEditToggle = () => {
+    setEditMode(!editMode);
+  };
+
+  const handleProfileChange = (e) => {
+    const { name, value } = e.target;
+    setEditProfile((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveProfile = async () => {
+    // Use the current values from the form (stored in the editProfile state)
+    const updatedProfile = {
+      name: editProfile.name, // Get the updated name from the form
+      email: editProfile.email, // Get the updated email from the form
+      profileUrl: editProfile.profileUrl || userInfo.profileUrl, // Only update if the profileUrl was changed
+      userTitle: editProfile.userTitle, // Get the updated userTitle from the form
+      bio: editProfile.bio, // Get the updated bio from the form
+    };
+  
+    try {
+      const updatedUser = await updateUser(userId, updatedProfile);
+
+      console.log("User updated successfully:", updatedUser);
+      setUserInfo(updatedUser); // Update the user info in the state
+      // Fetch the updated user again to ensure consistency
+      await fetchLoggedInUser(localStorage.getItem("token"));
+      setEditMode(false); // Exit edit mode after saving
+    } catch (error) {
+      console.error("Error saving profile changes:", error);
+    }
+  };
+  
   return (
     <div>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
-      {userInfo ? (
-        <div id="userContainer">
-          <div id="userPicAndDetailsContainer">
-            <div id="profileBorder">
-              <div id="userProfilePicContainer">
-                <img src={userInfo?.profileUrl} alt="" />
+      {loggedIn ? (
+        userInfo ? (
+          <div id="userContainer">
+            <div id="userPicAndDetailsContainer">
+              <div id="profileBorder">
+                <div id="userProfilePicContainer">
+                  <img src={userInfo?.profileUrl} alt="User Profile" />
+                </div>
+              </div>
+              <div id="userDetailsContainer">
+                <h3 className="header">User Details</h3>
+                {editMode ? (
+                  <form>
+                    <label>
+                      <strong>Name:</strong>
+                      <input
+                        type="text"
+                        name="name"
+                        value={editProfile.name}
+                        onChange={handleProfileChange}/>
+                    </label>
+                    <label>
+                      <strong>Email:</strong>
+                      <input
+                        type="email"
+                        name="email"
+                        value={editProfile.email}
+                        onChange={handleProfileChange}/>
+                    </label>
+                    <label>
+                      <strong>Title:</strong>
+                      <input
+                        type="text"
+                        name="userTitle"
+                        value={editProfile.userTitle}
+                        onChange={handleProfileChange}/>
+                    </label>
+                    <label>
+                      <strong>Bio:</strong>
+                      <textarea
+                        name="bio"
+                        rows="4"
+                        cols="39"
+                        value={editProfile.bio}
+                        onChange={handleProfileChange}/>
+                    </label>
+                    <div>
+                      <button type="button" onClick={handleSaveProfile}>
+                        Save
+                      </button>
+                      <button type="button" onClick={handleEditToggle}>
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <p><strong>Name:</strong> {userInfo.name}</p>
+                    <p><strong>Email:</strong> {userInfo.email}</p>
+                    <p><strong>Title:</strong> {userInfo.userTitle || "Not provided"}</p>
+                    <p><strong>Bio:</strong> {userInfo.bio || "Not provided"}</p>
+                    {isAdmin && <p><strong>Admin:</strong> Yes</p>}
+                    <button onClick={handleEditToggle}>Edit Profile</button>
+                  </>
+                )}
               </div>
             </div>
-            <div id="userDetailsContainer">
-              <h3 className="header">User Details</h3>
-              <p><strong>Name:</strong> {userInfo.name}</p>
-              <p><strong>Email:</strong> {userInfo.email}</p>
-              <p><strong>Title:</strong> {userInfo.userTitle || "Not provided"}</p>
-              <p><strong>Bio:</strong> {userInfo.bio || "Not provided"}
-              </p>
-              <p><strong>Admin:</strong> {userInfo.isAdmin ? "Yes" : "No"}</p>
-            </div>
+            <button onClick={handleLogout} id="logoutButton">
+              Logout
+            </button>
+            <h3 className="header">Your Recipes</h3>
+            {userInfo.recipes && userInfo.recipes.length > 0 ? (
+              <div className="cardsContainer">
+                {userInfo.recipes.map((recipe) => (
+                  <div key={recipe.recipeId} className="bookCard">
+                    <div className="userRecipeImgContainer">
+                      <img src={recipe.recipeUrl} alt={recipe.title} />
+                    </div>
+                    <h4>{recipe.title}</h4>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No recipes found.</p>
+            )}
           </div>
-          <h3 className="header">Your Recipes</h3>
-          <div className="cardsContainer">
-                {
-                    userInfo.recipes.map((recipe)=>{
-                        return (
-                            <div key={recipe.recipeId} className="bookCard">
-                                <div className="userRecipeImgContainer">
-                                  <img src={recipe.recipeUrl} alt="" />
-                                </div> 
-                                <h4>{recipe.title}</h4>
-                            </div>
-                        )
-                    })
-                }
-            </div>
-        </div>
+        ) : (
+          <p>Loading user information...</p>
+        )
       ) : (
-        <p>Loading user information...</p>
+        <div className="loginComponent">
+          <p><strong>You are not logged in. Please log in to view your profile.</strong></p>
+          <br />
+          <button onClick={handleLogin} id="loginButton">
+            Login
+          </button>
+        </div>
       )}
     </div>
   );
