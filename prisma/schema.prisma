@@ -55,7 +55,7 @@ model Recipe {
   description String?
   servingSize Int?
   recipeUrl   String @default("https://i.ytimg.com/vi/CPbKkb1hn7I/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBCWAzNKtwroNf1JzxKUvJEM5H4Wg")
-  steps       String
+  steps       Json @default("[]")
 
   userId Int
   user   User @relation(fields: [userId], references: [userId], onDelete: Cascade)
