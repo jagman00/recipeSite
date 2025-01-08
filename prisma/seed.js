@@ -47,6 +47,7 @@ for (let i = 0; i < userCount; i++) {
         isAdmin: faker.datatype.boolean(),
         userTitle: faker.person.jobTitle(), // Adding userTitle
         bio: faker.lorem.paragraph(),      // Adding bio
+        createdAt: faker.date.past({ years: 2 })
       },
     })
   );
@@ -132,6 +133,7 @@ const exampleSteps = [
             `https://i.ibb.co/DzdttwP/shoyu-ramen-20181227133143.jpg`]),
           steps: selectedSteps,
           userId: faker.helpers.arrayElement(users).userId,
+          createdAt: faker.date.past({ years: 1 })
         },
       })
     );
@@ -140,7 +142,7 @@ const exampleSteps = [
   // Seed Ingredients
   console.log('Seeding ingredients for each recipe...');
   for (const recipe of recipes) {
-    const ingredientCount = faker.number.int({ min: 1, max: 6 });
+    const ingredientCount = faker.number.int({ min: 3, max: 6 });
     for (let i = 0; i < ingredientCount; i++) {
       await prisma.ingredient.create({
         data: {
@@ -247,6 +249,7 @@ console.log('Each recipe has been linked to one unique category!');
         text: faker.food.adjective(),
         userId: faker.helpers.arrayElement(users).userId,
         recipeId: faker.helpers.arrayElement(recipes).recipeId,
+        createdAt: faker.date.past({ years: 1 })
       },
     });
   }
