@@ -58,8 +58,10 @@ const GetUser = () => {
                     userInfo.recipes.map((recipe)=>{
                         return (
                             <div key={recipe.recipeId} className="bookCard">
-                                <h3>{recipe.title}</h3>
-                                <img src={recipe.recipeUrl} alt="" /> 
+                                <div className="userRecipeImgContainer">
+                                  <img src={recipe.recipeUrl} alt="" />
+                                </div> 
+                                <h4>{recipe.title}</h4>
                             </div>
                         )
                     })

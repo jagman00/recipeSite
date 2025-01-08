@@ -144,83 +144,79 @@ function AdminDashboard() {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div className="adminDashboard">
-      <h1>Admin Dashboard</h1>
-
-      {/* Overview Section */}
-      <div className="combinedChartContainer">
-        <h2>Overview</h2>
-        <div className="combinedChart">
-          <div className="barRow">
-            <span className="barLabel">Users:</span>
-            <div className="bar" style={{ width: `${totalUsers * 5}px` }}>
-              {totalUsers}
-            </div>
-          </div>
-          <div className="barRow">
-            <span className="barLabel">Recipes:</span>
-            <div className="bar" style={{ width: `${totalRecipes * 5}px` }}>
-              {totalRecipes}
-            </div>
-          </div>
-          {monthlyRegistrations.map((data, index) => (
-            <div key={index} className="barRow">
-              <span className="barLabel">{data.month}:</span>
-              <div className="bar" style={{ width: `${data.count * 5}px` }}>
-                {data.count}
+    <div>
+      <h1 id="adminHeader">Admin Dashboard</h1>
+      <div className="adminDashboard">
+        {/* Overview Section */}
+        <div className="combinedChartContainer adminCard">
+          <h2>Overview</h2>
+          <div className="combinedChart">
+            <div className="barRow">
+              <span className="barLabel">Users:</span>
+              <div className="bar" style={{ width: `${totalUsers * 5}px` }}>
+                {totalUsers}
               </div>
             </div>
+            <div className="barRow">
+              <span className="barLabel">Recipes:</span>
+              <div className="bar" style={{ width: `${totalRecipes * 5}px` }}>
+                {totalRecipes}
+              </div>
+            </div>
+            {monthlyRegistrations.map((data, index) => (
+              <div key={index} className="barRow">
+                <span className="barLabel">{data.month}:</span>
+                <div className="bar" style={{ width: `${data.count * 5}px` }}>
+                  {data.count}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Recent Users */}
+        <div className="recentUsers adminCard">
+          <h2>Recent Registrations</h2>
+          {recentUsers.map((user) => (
+            <p key={user.userId}>
+              {user.name} - {user.email}
+            </p>
           ))}
         </div>
-      </div>
-
-      {/* Recent Users */}
-      <div className="recentUsers">
-        <h2>Recent Registrations</h2>
-        {recentUsers.map((user) => (
-          <p key={user.userId}>
-            {user.name} - {user.email}
-          </p>
-        ))}
-      </div>
-
-      {/* Top Recipes */}
-      <div className="topRecipes">
-        <h2>Top Recipes</h2>
-        {topRecipes.map((recipe) => (
-          <p key={recipe.recipeId}>{recipe.title}</p>
-        ))}
-      </div>
-
-      {/* Recent Comments */}
-      <div className="recentComments">
-        <h2>Recent Comments</h2>
-        {recentComments.map((comment) => (
-          <p key={comment.id}>{comment.text}</p>
-        ))}
-      </div>
-
-      {/* System Health */}
-      <div className="systemHealth">
-        <h2>System Health</h2>
-        <p>Status: {serverHealth}</p>
-        <h3>Error Logs:</h3>
-        {errorLogs.map((log, index) => (
-          <p key={index}>{log}</p>
-        ))}
-      </div>
-
-      {/* Create New Category */}
-      <div className="createCategoryContainer">
-        <h2>Create New Category</h2>
-        <input
-          type="text"
-          value={newCategory}
-          onChange={(e) => setNewCategory(e.target.value)}
-          placeholder="Enter category name"
-        />
-        <button onClick={createCategory}>Create Category</button>
-        {categoryMessage && <p>{categoryMessage}</p>}
+        {/* Top Recipes */}
+        <div className="topRecipes adminCard">
+          <h2>Top Recipes</h2>
+          {topRecipes.map((recipe) => (
+            <p key={recipe.recipeId}>{recipe.title}</p>
+          ))}
+        </div>
+        {/* Recent Comments */}
+        <div className="recentComments adminCard">
+          <h2>Recent Comments</h2>
+          {recentComments.map((comment) => (
+            <p key={comment.id}>{comment.text}</p>
+          ))}
+        </div>
+        {/* System Health */}
+        <div className="systemHealth adminCard">
+          <h2>System Health</h2>
+          <p>Status: {serverHealth}</p>
+          <h3>Error Logs:</h3>
+          {errorLogs.map((log, index) => (
+            <p key={index}>{log}</p>
+          ))}
+        </div>
+        {/* Create New Category */}
+        <div className="createCategoryContainer adminCard">
+          <h2>Create New Category</h2>
+          <input
+            type="text"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            placeholder="Enter category name"
+          />
+          <button onClick={createCategory}>Create Category</button>
+          {categoryMessage && <p>{categoryMessage}</p>}
+        </div>
       </div>
     </div>
   );
