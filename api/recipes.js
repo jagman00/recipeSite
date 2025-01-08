@@ -365,7 +365,7 @@ router.delete("/:recipeId/comments/:id", authenticateUser, async (req, res, next
     }
 });
 
-// Like/Unlike a recipe (toggle like) by authenticated user
+// Like/Unlike a recipe by authenticated user (toggle) 
 // POST /api/recipes/:id/like
 router.post("/:id/like", authenticateUser, async (req, res, next) => {
     const { id } = req.params;
@@ -378,6 +378,8 @@ router.post("/:id/like", authenticateUser, async (req, res, next) => {
                 recipeId: parseInt(id),
             },
         });
+
+        let likeStatus = false;
 
         if (existingLike) { // Unlike if already liked
             await prisma.like.delete({
@@ -395,13 +397,14 @@ router.post("/:id/like", authenticateUser, async (req, res, next) => {
                     recipeId: parseInt(id),
                 },
             });
+            likeStatus = true;
         }
 
         const likeCount = await prisma.like.count({
             where: { recipeId: parseInt(id) },
         });
 
-        res.status(200).json({ likeCount, message: 'Like status toggled successfully.' });
+        res.status(200).json({ likeStatus, message: 'Like status updated',likeCount });
     } catch (error) {
         console.error('Error toggling like status:', error);
         res.status(500).json({ message: 'Failed to toggle like status.' });
@@ -443,7 +446,7 @@ router.post("/:id/like", authenticateUser, async (req, res, next) => {
 //     }
 // }); // already included in user.js
 
-// Save/Unsave a recipe (Bookmark)
+// Bookmark/UnBookmark a recipe by authenticated user (toggle)
 // POST /api/recipes/:id/bookmarks
 router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
     const { id } = req.params;
@@ -456,6 +459,8 @@ router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
                 recipeId: parseInt(id),
             },
         });
+
+        let bookmarkStatus = false;
 
         if (existingBookmark) { // Unsave if already saved
             await prisma.bookmark.delete({
@@ -473,18 +478,18 @@ router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
                     recipeId: parseInt(id),
                 },
             });
+            bookmarkStatus = true;
         }
 
         const bookmarkCount = await prisma.bookmark.count({
             where: { recipeId: parseInt(id) },
         });
 
-        res.status(200).json({ bookmarkCount, message: 'Bookmark status toggled successfully.' });
+        res.status(200).json({ bookmarkStatus, message: 'Bookmark status updated', bookmarkCount });
     } catch (error) {
         console.error('Error toggling bookmark status:', error);
         res.status(500).json({ message: 'Failed to toggle bookmark status.' });
     }
-
 });
 
 // // Remove a bookmark
