@@ -240,16 +240,24 @@ console.log('Each recipe has been linked to one unique category!');
     }
   }
 
-  // Seed Comments
+  // ***** Seed Comments
+
+  // const createdAt = faker.date.past({ years: 1 });
+  // const updatedAt = faker.date.between({ from: createdAt, to: new Date() });
+
   const commentCount = faker.number.int({ min: 120, max: 150 });
   console.log(`Seeding ${commentCount} comments`);
   for (let i = 0; i < commentCount; i++) {
+    const createdAt = faker.date.past({ years: 1 });
+    const updatedAt = faker.date.between({ from: createdAt, to: new Date() });
+    
     await prisma.comment.create({
       data: {
         text: faker.food.adjective(),
         userId: faker.helpers.arrayElement(users).userId,
         recipeId: faker.helpers.arrayElement(recipes).recipeId,
-        createdAt: faker.date.past({ years: 1 })
+        createdAt: createdAt,
+        updatedAt: updatedAt,
       },
     });
   }
