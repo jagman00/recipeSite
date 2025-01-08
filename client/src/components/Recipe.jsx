@@ -101,7 +101,7 @@ const Recipe = () => {
             {recipe.comments.map((comment, index) => (
               <li key={index}>
                 <p className="commentSpace"><strong>{comment.user.name}</strong> - {timeAgo(comment.updatedAt)}</p>
-                <p>{comment.text}</p>
+                <p>"{comment.text}"</p>
               </li>
             ))}
           </ul>

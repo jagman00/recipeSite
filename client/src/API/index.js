@@ -62,7 +62,7 @@ export async function fetchUser(token) {
 }
 
 // fetch all recipes
-export const fetchRecipes = async (page, limit = 10) => {
+export const fetchRecipes = async (page, limit = 12) => {
     try {
       const response = await fetch(`${API_URL}/recipes?page=${page}&limit=${limit}`);
       if (!response.ok) {

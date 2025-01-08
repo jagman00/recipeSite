@@ -29,7 +29,7 @@ const RecipesList = () => {
         } else {
           const data = await fetchRecipes(page);
           setRecipes(data.recipes);
-          setTotalPages(Math.ceil(data.recipeCount / 10));
+          setTotalPages(Math.ceil(data.recipeCount / 12));
         }
       } catch (error) {
         console.error("Failed to fetch recipes", error);
@@ -70,7 +70,7 @@ const RecipesList = () => {
       try {
         const data = await fetchRecipes(1);
         setRecipes(data.recipes);
-        setTotalPages(Math.ceil(data.recipeCount / 10));
+        setTotalPages(Math.ceil(data.recipeCount / 12));
       } catch (error) {
         console.error("Failed to fetch all recipes", error);
       }
