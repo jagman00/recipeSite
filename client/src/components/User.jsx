@@ -154,11 +154,11 @@ const GetUser = ({setToken}) => {
                         value={editProfile.bio}
                         onChange={handleProfileChange}/>
                     </label>
-                    <div>
-                      <button type="button" onClick={handleSaveProfile}>
+                    <div id="editBtnContainer">
+                      <button id="editSaveBtn" type="button" onClick={handleSaveProfile}>
                         Save
                       </button>
-                      <button type="button" onClick={handleEditToggle}>
+                      <button id="editCancelBtn" type="button" onClick={handleEditToggle}>
                         Cancel
                       </button>
                     </div>
@@ -170,7 +170,7 @@ const GetUser = ({setToken}) => {
                     <p><strong>Title:</strong> {userInfo.userTitle || "Not provided"}</p>
                     <p><strong>Bio:</strong> {userInfo.bio || "Not provided"}</p>
                     {isAdmin && <p><strong>Admin:</strong> Yes</p>}
-                    <button onClick={handleEditToggle}>Edit Profile</button>
+                    <button id="editProfileBtn" onClick={handleEditToggle}>Edit Profile</button>
                   </>
                 )}
               </div>
@@ -191,7 +191,7 @@ const GetUser = ({setToken}) => {
                 ))}
               </div>
             ) : (
-              <p>No recipes found.</p>
+              <p id="noRecipes">No recipes found.</p>
             )}
           </div>
         ) : (

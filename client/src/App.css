@@ -450,23 +450,6 @@ input::placeholder {
     cursor: pointer;
     box-shadow: 0 0 2px var(--black);
 }
-/*Logout button styling*/
-/* #logoutButton button {
-    padding: 7px 10px 7px 10px;
-    font-size: 24px;
-    color: var(--black);
-    background: none;
-    border: 1px solid var(--black);
-    box-shadow: 0 0 5px var(--black);
-    border-radius: 10px;
-    width: 120px;
-    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
-    color: var(--white);
-}
-#logoutButton button:hover {
-    cursor: pointer;
-    box-shadow: 0 0 2px var(--black);
-} */
 /*Register component styling*/
 .registerComponent {
     background-image: url('./assets/largeParchmentBackground.jpg');
@@ -572,11 +555,58 @@ input::placeholder {
     flex-direction: row;
     align-items: flex-start;
     gap: 50px;
-    margin: 50px 0 50px;
+    margin: 50px 0 20px;
 }
 #userDetailsContainer {
     max-width: 300px;
     word-wrap: break-word;
+}
+#userDetailsContainer input {
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--black);
+    font-family: "EB Garamond", serif;
+    font-size: 20px;
+    font-weight: 500;
+}
+#userDetailsContainer textarea {
+    background: none;
+    border: 1px solid var(--black);
+    font-family: "EB Garamond", serif;
+    font-size: 20px;
+    font-weight: 500;
+    width: 300px;
+    height: 136px;
+    resize: none;
+    padding: 2px;
+}
+#userDetailsContainer input:focus,
+#userDetailsContainer textarea:focus {
+    outline: none;
+}
+#editBtnContainer {
+    display: flex;
+    justify-content: center;
+}
+#editSaveBtn,
+#editCancelBtn {
+    padding: 4px 0 4px;
+    font-size: 24px;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 10px;
+    width: 100px;
+    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
+    color: var(--white);
+    font-family: "EB Garamond", serif;
+    margin: 10px;
+}
+#editSaveBtn:hover,
+#editCancelBtn:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
 }
 #profileBorder {
     background-image: url('./assets/silverBackground.jpg');
@@ -588,10 +618,31 @@ input::placeholder {
     justify-content: center;
     align-items: center;
 }
+#editProfileBtn {
+    padding: 4px 0 4px;
+    font-size: 24px;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 10px;
+    width: 130px;
+    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
+    color: var(--white);
+    font-family: "EB Garamond", serif;
+    margin: 10px;
+}
+#editProfileBtn:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
+}
 .cardsContainer {
     margin: 20px 0 50px 0;
     display: grid;
     grid-template-columns: repeat(3, minmax(200px, 1fr));
+}
+#noRecipes {
+    margin-bottom: 50px;
 }
 .bookCard {
     width: 200px;
@@ -611,6 +662,24 @@ input::placeholder {
     width: 100%;
     object-fit: cover;
 }
+#logoutButton {
+    padding: 4px 0 4px;
+    font-size: 24px;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 10px;
+    width: 100px;
+    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
+    color: var(--white);
+    font-family: "EB Garamond", serif;
+    margin-bottom: 20px;
+}
+#logoutButton:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
+} 
 /*Admin dashboard component styling*/
 .adminDashboard {
     align-self: center;
