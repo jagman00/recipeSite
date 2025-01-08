@@ -90,9 +90,9 @@ router.get("/:id/recipes", async (req, res, next) => {
   }
 });
 
-// PATCH /api/users/:id *
+// PUT /api/users/:id *
 // Update a user profile by id (only the user)
-router.patch("/:id", authenticateUser, async (req, res, next) => {
+router.put("/:id", authenticateUser, async (req, res, next) => {
   const { id } = req.params;
   const { name, email, profileUrl, userTitle, bio } = req.body;
   try {

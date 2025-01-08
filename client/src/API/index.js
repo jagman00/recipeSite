@@ -61,6 +61,37 @@ export async function fetchUser(token) {
     }
 }
 
+//update user info for edit profile page
+export const updateUser = async (userId, updatedProfile) => {
+  try {
+    const token = localStorage.getItem("token"); // Retrieve the authentication token
+    if (!token) {
+      throw new Error("No authentication token found.");
+    }
+
+    const response = await fetch(`${API_URL}/users/${userId}`, {
+      method: "PUT", // Use PATCH as defined in the backend route
+      headers: {
+        "Authorization": `Bearer ${token}`, // Include the token in the Authorization header
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedProfile), // Send the updated profile data as JSON
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to update user profile.");
+    }
+
+    const responseData = await response.json(); // Parse and return the updated user data
+    return responseData;
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    throw error; // Rethrow the error to handle it in the calling function
+  }
+};
+
+
 // fetch all recipes
 export const fetchRecipes = async (page, limit = 12) => {
     try {
