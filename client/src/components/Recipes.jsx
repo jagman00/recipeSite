@@ -5,10 +5,9 @@ import { fetchRecipes, fetchCategories, fetchCategoryById } from "../API/index.j
 const RecipesList = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  // Handle search bar query
-  const searchQuery = location.state?.searchQuery || "";
 
-  // Initialize state from location or fallback to defaults
+  // Extract state from location or fallback to defaults
+  const searchQuery = location.state?.searchQuery || "";
   const initialCategoryId = location.state?.selectedCategoryId || "";
   const initialPage = location.state?.page || 1;
 
@@ -18,86 +17,64 @@ const RecipesList = () => {
   const [page, setPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(1);
 
-    // Fetch all categories
-    useEffect(() => {
-      const getCategories = async () => {
-        try {
-          const data = await fetchCategories();
-          setCategories(data);
-        } catch (error) {
-          console.error("Failed to fetch categories", error);
+  // Fetch all categories
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const data = await fetchCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
+      }
+    };
+    getCategories();
+  }, []);
+
+  // Fetch recipes
+  useEffect(() => {
+    const getRecipes = async () => {
+      try {
+        let data;
+        if (selectedCategoryId) {
+          data = await fetchCategoryById(selectedCategoryId);
+          const filtered = searchQuery
+            ? data.recipes.filter((recipe) =>
+                recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+            : data.recipes;
+          setRecipes(filtered);
+          setTotalPages(1); // No pagination for filtered results
+        } else {
+          data = await fetchRecipes(page);
+          const filtered = searchQuery
+            ? data.recipes.filter((recipe) =>
+                recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+            : data.recipes;
+          setRecipes(filtered);
+          setTotalPages(Math.ceil(data.recipeCount / 12));
         }
-      };
-      getCategories();
-    }, []);
-
-    useEffect(() => {
-      // Fetch recipes based on selected category, search query, and page
-      const getRecipes = async () => {
-        try {
-          let data;
-          if (selectedCategoryId) {
-            data = await fetchCategoryById(selectedCategoryId);
-            const filtered = searchQuery
-              ? data.recipes.filter((recipe) =>
-                  recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
-                )
-              : data.recipes;
-            setRecipes(filtered);
-            setTotalPages(1); // Reset pagination for filtered results
-          } else {
-            data = await fetchRecipes(page);
-            const filtered = searchQuery
-              ? data.recipes.filter((recipe) =>
-                  recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
-                )
-              : data.recipes;
-            setRecipes(filtered);
-            setTotalPages(Math.ceil(data.recipeCount / 12));
-          }
-        } catch (error) {
-          console.error("Failed to fetch recipes", error);
-        }
-      };
-      getRecipes();
-    }, [page, selectedCategoryId, searchQuery]);
-
-
+      } catch (error) {
+        console.error("Failed to fetch recipes", error);
+      }
+    };
+    getRecipes();
+  }, [page, selectedCategoryId, searchQuery]);
 
   // Handle category change
-  const handleCategoryChange = async (event) => {
+  const handleCategoryChange = (event) => {
     const categoryId = event.target.value;
-    setSelectedCategoryId(categoryId); // Update state with selected category
+    setSelectedCategoryId(categoryId);
     setPage(1); // Reset to the first page
     navigate("/", { state: { selectedCategoryId: categoryId, page: 1, searchQuery } });
   };
-
-  //   if (categoryId) {
-  //     try {
-  //       const data = await fetchCategoryById(categoryId);
-  //       setRecipes(data.recipes);
-  //       setTotalPages(1); // Reset pagination for filtered results
-  //     } catch (error) {
-  //       console.error("Failed to fetch recipes by category", error);
-  //     }
-  //   } else {
-  //     // Fetch all recipes if "All Categories" is selected
-  //     try {
-  //       const data = await fetchRecipes(1);
-  //       setRecipes(data.recipes);
-  //       setTotalPages(Math.ceil(data.recipeCount / 12));
-  //     } catch (error) {
-  //       console.error("Failed to fetch all recipes", error);
-  //     }
-  //   }
-  // };
 
   // Handle pagination
   const handleNextPage = () => {
     if (page < totalPages) {
       const nextPage = page + 1;
       setPage(nextPage);
-      navigate(`?page=${nextPage}`, { state: { selectedCategoryId, page: nextPage, searchQuery } });
+      navigate("/", { state: { selectedCategoryId, page: nextPage, searchQuery } });
     }
   };
 
@@ -105,38 +82,34 @@ const RecipesList = () => {
     if (page > 1) {
       const previousPage = page - 1;
       setPage(previousPage);
-      navigate(`?page=${previousPage}`, { state: { selectedCategoryId, page: previousPage, searchQuery } });
+      navigate("/", { state: { selectedCategoryId, page: previousPage, searchQuery } });
     }
   };
 
   return (
     <div className="recipes">
       <h2>Recipes</h2>
-            {/* Category Dropdown */}
-        <div className="category-filter">
-          <label htmlFor="category">Filter by Category: </label>
-          <select
-            id="category"
-            value={selectedCategoryId}
-            onChange={handleCategoryChange} // Call the updated function//
-            >
-            <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.categoryName}
-              </option>
-            ))}
-          </select>
-        </div>
 
+      {/* Category Dropdown */}
+      <div className="category-filter">
+        <label htmlFor="category">Filter by Category: </label>
+        <select id="category" value={selectedCategoryId} onChange={handleCategoryChange}>
+          <option value="">All Categories</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.categoryName}
+            </option>
+          ))}
+        </select>
+      </div>
 
-          {/*Recipe list */}
+      {/* Recipe List */}
       <div className="recipe-list">
         {recipes.map((recipe) => (
           <div key={recipe.recipeId} className="recipe-item">
             <Link
               to={`/recipe/${recipe.recipeId}`}
-              // state={{ selectedCategoryId, page }}
+              state={{ selectedCategoryId, page, searchQuery }}
             >
               <div id="imgContainer">
                 <img
@@ -162,7 +135,7 @@ const RecipesList = () => {
             </Link>
           </div>
         ))}
-       
+
         {/* Pagination */}
         {!selectedCategoryId && !searchQuery && (
           <div className="pagination">
