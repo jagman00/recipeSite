@@ -105,7 +105,10 @@ router.get("/:id", async (req, res, next) => {
                                 userTitle: true,
                             }
                         }
-                    }
+                    },
+                    orderBy: {
+                        createdAt: "desc", // Order by the newest recipe first
+                      },
                 },
                 _count: { /* Include count of comments, bookmarks, and likes */
                     select: { 
@@ -590,5 +593,47 @@ router.post("/:id/steps", authenticateUser, async (req, res, next) => {
     } catch (error) {
         console.error("Error updating recipe steps:", error);
         res.status(500).json({ message: "Failed to update recipe steps." });
+    }
+});
+
+// REPORT
+// Report a recipe by authenticated user
+// POST /api/recipes/:id/report
+router.post("/:id/report", authenticateUser, async (req, res, next) => {
+    const { id } = req.params;
+    const userId = req.user.userId;
+    const { reason } = req.body;
+
+    try {
+        const existingReport = await prisma.recipeReport.findFirst({
+            where: {
+                reporterId: parseInt(userId),
+                recipeId: parseInt(id),
+            },
+          });
+
+        if (existingReport) {
+            return res.status(400).json({ message: "You have already reported this recipe." });
+        }
+
+        const report = await prisma.recipeReport.create({
+            data: {
+                reporterId: parseInt(userId),
+                recipeId: parseInt(id),
+                reason,
+            },
+            include: { recipe: true },
+        });
+
+        const reportCountForThisRecipe = await prisma.recipeReport.count({
+            where: { recipeId: parseInt(id) },
+        });
+
+        const reportStatus = true;
+
+        res.status(201).json({ reportStatus,report, reportCountForThisRecipe});
+    } catch (error) {
+        console.error("Error reporting recipe:", error);
+        res.status(500).json({ message: "Failed to report recipe." });
     }
 });

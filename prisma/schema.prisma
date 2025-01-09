@@ -27,6 +27,8 @@ model User {
   bookmarks Bookmark[]
   comments  Comment[]
   likes     Like[]
+  recipeReports RecipeReport[] // Recipes reported by this user
+  commentReports CommentReport[] // Comments reported by this user
 
   followers UserFollower[] @relation("Followers") // Users who follow this user
   following UserFollower[] @relation("Following") // Users this user is following
@@ -65,6 +67,7 @@ model Recipe {
   bookmarks   Bookmark[]
   comments    Comment[]
   likes       Like[]
+  recipeReports RecipeReport[] // Reports for this recipe
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -107,6 +110,8 @@ model Comment {
   userId   Int
   user     User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
+  commentReports CommentReport[] // Reports for this comment
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -122,4 +127,32 @@ model Like {
   createdAt DateTime @default(now())
 
   @@unique([userId, recipeId])// Enforce unique likes for each user-recipe pair
+}
+
+
+model RecipeReport {
+  reportId    Int      @id @default(autoincrement())
+  reason      String?
+  
+  reporterId  Int
+  reporter    User     @relation(fields: [reporterId], references: [userId])
+  recipeId    Int
+  recipe      Recipe   @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+ 
+  @@unique([reporterId, recipeId]) // Ensure a user can report a recipe only once
+}
+model CommentReport {
+  reportId    Int      @id @default(autoincrement())
+  reason      String?
+  
+  reporterId  Int
+  reporter    User     @relation(fields: [reporterId], references: [userId])
+  commentId   Int
+  comment     Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([reporterId, commentId]) // Ensure a user can report a comment only once
 }
