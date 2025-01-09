@@ -16,37 +16,60 @@ import "./responsive.css";
 
 function App() {
   const [token, setToken] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Check logged in token expiration and auto-logout if expired
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (token) {
       try {
         const decodedUser = jwtDecode(token);
         if (decodedUser.exp * 1000 < Date.now()) { // Token expiration time is in seconds
           localStorage.clear(); 
           setToken(null); 
+          setIsAdmin(false);
           return;
         }
         setToken(token); // Set the token in state
+        setIsAdmin(decodedUser.isAdmin || false);
       } catch (error) {
         console.error("Invalid token:", error);
         localStorage.clear();
         setToken(null);
+        setIsAdmin(false);
+  
       }
     } else {
       setToken(null);
+      
     }
   }, []);
+
+  const navbarKey = token ? `${token}-${isAdmin}` : "no-token";
 
   return (
       <div className="background">  
         <Router>
-          <Navbar token={token} setToken={setToken} />
+          <Navbar key={navbarKey}
+                  token={token}
+                  setToken={(newToken) => {
+            setToken(newToken);
+            if (newToken) {
+              try {
+                const decodedUser = jwtDecode(newToken);
+                setIsAdmin(decodedUser.isAdmin || false);
+              } catch {
+                setIsAdmin(false);
+              }
+            } else {
+              setIsAdmin(false);
+            }
+          }}
+                  isAdmin={isAdmin}
+        />
           <Routes>
             <Route path="/user" element={<User setToken={setToken}/>} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            {isAdmin && <Route path="/admin" element={<AdminDashboard />} />}
             <Route path="/login" element={<Login setToken={setToken}  />} />
             <Route path="/register" element={<Register setToken={setToken}  />} />
             <Route path="/recipe/:id" element={<Recipe />} />
