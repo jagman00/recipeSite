@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { fetchRecipe } from "../API/index.js";
 
 const Recipe = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,7 +18,7 @@ const Recipe = () => {
     const date = new Date(dateString);
     const now = new Date();
     const seconds = Math.floor((now - date) / 1000);
-  
+
     const intervals = {
       year: 31536000,
       month: 2592000,
@@ -26,21 +28,22 @@ const Recipe = () => {
       minute: 60,
       second: 1,
     };
-  
+
     for (const [unit, value] of Object.entries(intervals)) {
       const count = Math.floor(seconds / value);
       if (count >= 1) {
-        return `${count} ${unit}${count > 1 ? 's' : ''} ago`;
+        return `${count} ${unit}${count > 1 ? "s" : ""} ago`;
       }
     }
-    return 'just now';
+    return "just now";
   }
 
   useEffect(() => {
     const getRecipe = async () => {
       try {
-        const data = await fetchRecipe(id);  // Call the imported fetchRecipe function
+        const data = await fetchRecipe(id); // Call the imported fetchRecipe function
         setRecipe(data);
+        setComments(data.comments || []);
       } catch (error) {
         console.error("Failed to fetch recipe", error);
       }
@@ -48,6 +51,34 @@ const Recipe = () => {
 
     getRecipe();
   }, [id]);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!newComment.trim()) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/recipes/${recipe.recipeId}/comments`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ text: newComment }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to post comment");
+
+      const postedComment = await response.json();
+      setComments([...comments, postedComment]); // Append the new comment to the state
+      setNewComment(""); // Clear the input field
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   if (!recipe) return <p>Loading...</p>;
 
@@ -67,8 +98,14 @@ const Recipe = () => {
           <p>{recipe.description}</p>
           <p>Serving Size: {recipe.servingSize}</p>
           <div id="recipeIconContainer">
-            <p className="recipeIcon"><img src="../src/assets/likesIcon.png" alt="like icon" /> {recipe._count.likes}</p>
-            <p className="recipeIcon"><img src="../src/assets/bookmarksIcon.png" alt="like icon" /> {recipe._count.bookmarks}</p>
+            <p className="recipeIcon">
+              <img src="../src/assets/likesIcon.png" alt="like icon" />{" "}
+              {recipe._count.likes}
+            </p>
+            <p className="recipeIcon">
+              <img src="../src/assets/bookmarksIcon.png" alt="like icon" />{" "}
+              {recipe._count.bookmarks}
+            </p>
           </div>
         </div>
       </div>
@@ -77,7 +114,8 @@ const Recipe = () => {
         <ul id="ingredientsList">
           {recipe.ingredients.map((ingredient, index) => (
             <li key={index}>
-              {ingredient.quantityAmount} {ingredient.quantityUnit} of {ingredient.ingredientName}
+              {ingredient.quantityAmount} {ingredient.quantityUnit} of{" "}
+              {ingredient.ingredientName}
             </li>
           ))}
         </ul>
@@ -85,24 +123,27 @@ const Recipe = () => {
       <h3 className="recipeSpace">Directions</h3>
       <div id="stepsListContainer">
         {Array.isArray(recipe.steps) && recipe.steps.length > 0 ? (
-        <ol id="stepsList">
-        {recipe.steps.map((step) => (
-        <li key={step.stepNumber}>
-          <strong>Step {step.stepNumber}:</strong> {step.instruction}
-        </li>
-        ))}
-        </ol>
+          <ol id="stepsList">
+            {recipe.steps.map((step) => (
+              <li key={step.stepNumber}>
+                <strong>Step {step.stepNumber}:</strong> {step.instruction}
+              </li>
+            ))}
+          </ol>
         ) : (
           <p>No steps available for this recipe.</p>
         )}
       </div>
       <div id="commentsContainer">
         <h3 className="recipeSpace">Comments</h3>
-        {recipe.comments && recipe.comments.length > 0 ? (
+        {comments && comments.length > 0 ? (
           <ul id="commentsList">
-            {recipe.comments.map((comment, index) => (
+            {comments.map((comment, index) => (
               <li key={index}>
-                <p className="commentSpace"><strong>{comment.user.name}</strong> - {timeAgo(comment.createdAt)}</p>
+                <p className="commentSpace">
+                  <strong>{comment.user.name}</strong> -{" "}
+                  {timeAgo(comment.createdAt)}
+                </p>
                 <p>{comment.text}</p>
               </li>
             ))}
@@ -110,12 +151,28 @@ const Recipe = () => {
         ) : (
           <p>No comments yet.</p>
         )}
+        <div id="commentSection">
+          <h3>Add a Comment</h3>
+          <form onSubmit={handleCommentSubmit}>
+            <textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write your comment here..."
+            ></textarea>
+            <button type="submit">Post Comment</button>
+          </form>
+        </div>
       </div>
       {/* Back to Recipe List Button */}
-      <button onClick={()=> navigate(`/?page=${currentPage}`,
-      {state: {selectedCategoryId: currentCategory, page: currentPage},
-      })
-    }>Back to Recipes</button>
+      <button
+        onClick={() =>
+          navigate(`/?page=${currentPage}`, {
+            state: { selectedCategoryId: currentCategory, page: currentPage },
+          })
+        }
+      >
+        Back to Recipes
+      </button>
     </div>
   );
 };
