@@ -797,7 +797,7 @@ input::placeholder {
     font-size: 16px;
 }
 /*Mediq queries*/
-@media (max-width: 1440px) {
+@media (max-width: 1236px) {
     #logoText {
         font-size: 24px;
     }
