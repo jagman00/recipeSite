@@ -107,7 +107,7 @@ router.get("/:id", async (req, res, next) => {
                         }
                     },
                     orderBy: {
-                        createdAt: "desc", // Order by the newest recipe first
+                        createdAt: "desc", // Order by the newest comment first
                       },
                 },
                 _count: { /* Include count of comments, bookmarks, and likes */
