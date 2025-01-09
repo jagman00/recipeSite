@@ -5,8 +5,7 @@ import userIcon from "../assets/UserIconWhite.png";
 import logoIcon from "../assets/RoundTable.png";
 import { jwtDecode } from "jwt-decode";
 
-function Navbar({ token, setToken }) {
-  const [isAdmin, setIsAdmin] = useState(false);
+function Navbar({ token, setToken, isAdmin }) {
   const [userId, setUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
@@ -18,7 +17,6 @@ function Navbar({ token, setToken }) {
     if (currentToken) {
       try {
         const decodedToken = jwtDecode(currentToken);
-        setIsAdmin(decodedToken.isAdmin || false);
         setUserId(decodedToken.userId);
       } catch (error) {
         console.error("Error decoding token:", error);
@@ -26,7 +24,7 @@ function Navbar({ token, setToken }) {
         setToken(null);  // Reset token state in parent
       }
     } else {
-      setIsAdmin(false);
+      
       setUserId(null);
     }
   };
@@ -35,6 +33,12 @@ function Navbar({ token, setToken }) {
     if (searchQuery.trim()) {
     navigate("/", { state: { searchQuery } });
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setToken(null);
+    navigate("/"); // Redirect to home page after logout
   };
 
 
@@ -82,16 +86,25 @@ function Navbar({ token, setToken }) {
       </div>
       {token ? (
         <>
-        <Link to="/new-recipe">
-        <button className="postrecipebutton">Add New Recipe!</button>
-      </Link>
+          <Link to="/new-recipe">
+            <button className="postrecipebutton">Add New Recipe!</button>
+          </Link>
           <Link id="userIcon" to={`/user`}>
             <div id="userIconContainer">
               <img src={userIcon} alt="User icon" />
               <span>Profile</span>
             </div>
           </Link>
-          {isAdmin && <Link to="/admin">Admin Dashboard</Link>}
+          {isAdmin && (
+            <Link to="/admin">
+              <button className="adminDashboardButton">Admin Dashboard</button>
+            </Link>
+          )}
+          <button
+            className="logoutButton"
+            onClick={handleLogout}>
+            Logout
+          </button>
         </>
       ) : (
         <>
@@ -101,11 +114,13 @@ function Navbar({ token, setToken }) {
               <span>Login</span>
             </div>
           </Link>
-          <Link id="registerText" to="/register">Register</Link>
+          <Link id="registerText" to="/register">
+            Register
+          </Link>
         </>
       )}
     </nav>
   );
-}
+};
 
 export default Navbar;
