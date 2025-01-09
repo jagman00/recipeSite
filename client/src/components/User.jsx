@@ -176,9 +176,11 @@ const GetUser = ({setToken}) => {
                 )}
               </div>
             </div>
-            <button onClick={handleLogout} id="logoutButton">
+            {!editMode && (
+              <button onClick={handleLogout} id="logoutButton">
               Logout
             </button>
+            )}
             <h3 className="header">Your Recipes</h3>
             {userInfo.recipes && userInfo.recipes.length > 0 ? (
               <div className="cardsContainer">
