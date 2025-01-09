@@ -63,6 +63,7 @@ const GetUser = ({setToken}) => {
   const handleLogout = () => {
     localStorage.clear();
     setLoggedIn(false);
+    setToken(null);
     setUserInfo({
       recipes: [], // Reset recipes
     });

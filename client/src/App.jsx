@@ -23,29 +23,28 @@ function App() {
     if (token) {
       try {
         const decodedUser = jwtDecode(token);
-        //decodedUser = {userId: 35, email: 'goody6@gmail.com', isAdmin: false, iat: 1736115585, exp: 1736137185}
-        
         if (decodedUser.exp * 1000 < Date.now()) { // Token expiration time is in seconds
           localStorage.clear(); 
           setToken(null); 
           return;
         }
-
         setToken(token); // Set the token in state
       } catch (error) {
         console.error("Invalid token:", error);
         localStorage.clear();
         setToken(null);
       }
+    } else {
+      setToken(null);
     }
   }, []);
 
   return (
       <div className="background">  
         <Router>
-          <Navbar setToken={setToken} />
+          <Navbar token={token} setToken={setToken} />
           <Routes>
-            <Route path="/user" element={<User />} />
+            <Route path="/user" element={<User setToken={setToken}/>} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/login" element={<Login setToken={setToken}  />} />
             <Route path="/register" element={<Register setToken={setToken}  />} />
