@@ -83,17 +83,19 @@ const Recipe = () => {
         </ul>
       </div>
       <h3 className="recipeSpace">Directions</h3>
-      {Array.isArray(recipe.steps) && recipe.steps.length > 0 ? (
-      <ol id="stepsList">
-      {recipe.steps.map((step) => (
-      <li key={step.stepNumber}>
-        <strong>Step {step.stepNumber}:</strong> {step.instruction}
-      </li>
-      ))}
-      </ol>
-) : (
-  <p>No steps available for this recipe.</p>
-)}
+      <div id="stepsListContainer">
+        {Array.isArray(recipe.steps) && recipe.steps.length > 0 ? (
+        <ol id="stepsList">
+        {recipe.steps.map((step) => (
+        <li key={step.stepNumber}>
+          <strong>Step {step.stepNumber}:</strong> {step.instruction}
+        </li>
+        ))}
+        </ol>
+        ) : (
+          <p>No steps available for this recipe.</p>
+        )}
+      </div>
       <div id="commentsContainer">
         <h3 className="recipeSpace">Comments</h3>
         {recipe.comments && recipe.comments.length > 0 ? (
