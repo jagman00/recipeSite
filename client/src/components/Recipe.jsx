@@ -80,6 +80,29 @@ const Recipe = () => {
     }
   };
 
+  const handleReportComment = async (commentId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/comments/${commentId}/report`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ reason: "Inappropriate content" }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to report comment");
+
+      alert("Comment reported successfully.");
+    } catch (error) {
+      console.error(error.message);
+      alert("Failed to report comment.");
+    }
+  };
+
   if (!recipe) return <p>Loading...</p>;
 
   return (
@@ -145,6 +168,19 @@ const Recipe = () => {
                   {timeAgo(comment.createdAt)}
                 </p>
                 <p>{comment.text}</p>
+                <img
+                  src="../src/assets/report-flag.png" // Use your report icon image path
+                  alt="Report icon"
+                  title="Report this comment"
+                  className="reportIcon"
+                  onClick={() => handleReportComment(comment.id)}
+                  style={{
+                    cursor: "pointer",
+                    width: "20px",
+                    height: "20px",
+                    marginLeft: "10px",
+                  }}
+                />
               </li>
             ))}
           </ul>
