@@ -7,6 +7,7 @@ import Recipes from './components/Recipes'
 import Register from './components/Register'
 import User from './components/User'
 import AdminDashboard from './components/AdminDashboard'
+import NewRecipe from './components/newRecipe';
 import './App.css'
 import React from 'react'
 import { useEffect } from 'react'
@@ -50,6 +51,7 @@ function App() {
             <Route path="/register" element={<Register setToken={setToken}  />} />
             <Route path="/recipe/:id" element={<Recipe />} />
             <Route path="/" element={<Recipes />} />
+            <Route path="/new-recipe" element={<NewRecipe />} />
           </Routes>
         </Router>
       </div>
