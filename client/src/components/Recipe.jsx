@@ -224,11 +224,9 @@ const Recipe = () => {
             {comments.map((comment, index) => (
               <li key={index}>
                 <p className="commentSpace">
-                  <strong>{comment.user.name}</strong> -{" "}
-                  {timeAgo(comment.createdAt)}
-                </p>
-                <p>{comment.text}</p>
-                <img
+                  <strong>{comment.user.name}</strong>
+                  - {timeAgo(comment.createdAt)}
+                  <img
                   src="../src/assets/report-flag.png" // Use your report icon image path
                   alt="Report icon"
                   title="Report this comment"
@@ -236,11 +234,13 @@ const Recipe = () => {
                   onClick={() => handleReportComment(comment.id)}
                   style={{
                     cursor: "pointer",
-                    width: "20px",
-                    height: "20px",
-                    marginLeft: "10px",
+                    width: "auto",
+                    height: "18px",
+                    marginTop: "3px"
                   }}
                 />
+                </p>
+                <p className="commentText">{comment.text}</p>
               </li>
             ))}
           </ul>
@@ -255,12 +255,12 @@ const Recipe = () => {
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Write your comment here..."
             ></textarea>
-            <button type="submit">Post Comment</button>
+            <button className="recipeBtn" type="submit">Post Comment</button>
           </form>
         </div>
       </div>
       {/* Back to Recipe List Button */}
-      <button
+      <button className="recipeBtn"
         onClick={() =>
           navigate(`/?page=${currentPage}`, {
             state: { selectedCategoryId: currentCategory, page: currentPage },

@@ -80,137 +80,149 @@ const NewRecipe = () => {
 
   return (
     <div className="new-recipe-form">
-      <h2>Create a New Recipe</h2>
+      <h2 className="header">Create a New Recipe</h2>
       <form onSubmit={handleSubmit}>
         {/* Recipe Title */}
         <div>
-          <label htmlFor="title">Title:</label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter recipe title"
-            required
-          />
+          <label htmlFor="title">
+            Title:
+            <input
+              id="title"
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter recipe title"
+              required
+            />
+          </label>
         </div>
 
         {/* Recipe Description */}
         <div>
-          <label htmlFor="description">Description:</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter a brief description"
-            required
-          />
+          <label id="newRecipeDescription" htmlFor="description">
+            Description:
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter a brief description"
+              required
+            />
+          </label>
         </div>
 
         {/* Serving Size */}
         <div>
-          <label htmlFor="servingSize">Serving Size:</label>
-          <select
-            id="servingSize"
-            value={servingSize}
-            onChange={(e) => setServingSize(e.target.value)}
-            required
-          >
-            {Array.from({ length: 10 }, (_, i) => i + 1).map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
+          <label htmlFor="servingSize">
+            Serving Size:
+            <select
+              id="servingSize"
+              value={servingSize}
+              onChange={(e) => setServingSize(e.target.value)}
+              required
+            >
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
 
         {/* Recipe URL */}
         <div>
-          <label htmlFor="recipeUrl">Image URL:</label>
-          <input
-            id="recipeUrl"
-            type="url"
-            value={recipeUrl}
-            onChange={(e) => setRecipeUrl(e.target.value)}
-            placeholder="Enter a URL for the recipe image"
-            required
-          />
+          <label htmlFor="recipeUrl">
+            Image:
+            <input
+              id="recipeUrl"
+              type="url"
+              value={recipeUrl}
+              onChange={(e) => setRecipeUrl(e.target.value)}
+              placeholder="Enter a URL for the recipe image"
+              required
+            />
+          </label>
         </div>
 
         {/* Ingredients */}
         <div>
-          <h3>Ingredients</h3>
-          {ingredients.map((ingredient, index) => (
-            <div key={index} className="ingredient-row">
-              <input
-                type="text"
-                placeholder="Ingredient name"
-                value={ingredient.name}
-                onChange={(e) =>
-                  setIngredients(
-                    ingredients.map((ing, i) =>
-                      i === index ? { ...ing, name: e.target.value } : ing
+          <div>
+            <h3>Ingredients</h3>
+            {ingredients.map((ingredient, index) => (
+            <div className="addIngredientContainer">
+              <div key={index} className="ingredient-row">
+                <input
+                  type="text"
+                  placeholder="Ingredient name"
+                  value={ingredient.name}
+                  onChange={(e) =>
+                    setIngredients(
+                      ingredients.map((ing, i) =>
+                        i === index ? { ...ing, name: e.target.value } : ing
+                      )
                     )
-                  )
-                }
-                required
-              />
-              <input
-                type="text"
-                placeholder="Quantity"
-                value={ingredient.quantity}
-                onChange={(e) =>
-                  setIngredients(
-                    ingredients.map((ing, i) =>
-                      i === index ? { ...ing, quantity: e.target.value } : ing
+                  }
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Quantity"
+                  value={ingredient.quantity}
+                  onChange={(e) =>
+                    setIngredients(
+                      ingredients.map((ing, i) =>
+                        i === index ? { ...ing, quantity: e.target.value } : ing
+                      )
                     )
-                  )
-                }
-                required
-              />
-              <input
-                type="text"
-                placeholder="Unit (e.g., cups, tsp)"
-                value={ingredient.unit}
-                onChange={(e) =>
-                  setIngredients(
-                    ingredients.map((ing, i) =>
-                      i === index ? { ...ing, unit: e.target.value } : ing
+                  }
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Unit (e.g., cups, tsp)"
+                  value={ingredient.unit}
+                  onChange={(e) =>
+                    setIngredients(
+                      ingredients.map((ing, i) =>
+                        i === index ? { ...ing, unit: e.target.value } : ing
+                      )
                     )
-                  )
-                }
-              />
+                  }
+                />
+              </div>
               <button type="button" onClick={() => handleRemoveIngredient(index)}>
-                Remove
+                Remove Ingredient
               </button>
             </div>
           ))}
-          <button type="button" onClick={handleAddIngredient}>
+          </div>
+          <button id="addIngredientBtn" type="button" onClick={handleAddIngredient}>
             Add Ingredient
           </button>
         </div>
 
         {/* Steps */}
         <div>
-          <h3>Steps</h3>
-          {steps.map((step, index) => (
-            <div key={index} className="step-row">
-              <textarea
-                placeholder={`Step ${index + 1}`}
-                value={step}
-                onChange={(e) =>
-                  setSteps(steps.map((s, i) => (i === index ? e.target.value : s)))
-                }
-                required
-              />
-              <button type="button" onClick={() => handleRemoveStep(index)}>
-                Remove
-              </button>
-            </div>
-          ))}
-          <button type="button" onClick={handleAddStep}>
-            Add Step
-          </button>
+            <h3 id="stepsHeader">Steps</h3>
+            {steps.map((step, index) => (
+              <div key={index} className="step-row">
+                <textarea
+                  placeholder={`Step ${index + 1}`}
+                  value={step}
+                  onChange={(e) =>
+                    setSteps(steps.map((s, i) => (i === index ? e.target.value : s)))
+                  }
+                  required
+                />
+                <button id="removeStepBtn" type="button" onClick={() => handleRemoveStep(index)}>
+                  Remove Step
+                </button>
+              </div>
+            ))}
+            <button id="addStepBtn" type="button" onClick={handleAddStep}>
+              Add Step
+            </button>
         </div>
 
         {/* Submit Button */}
