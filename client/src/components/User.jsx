@@ -139,6 +139,14 @@ const GetUser = ({setToken}) => {
                         onChange={handleProfileChange}/>
                     </label>
                     <label>
+                      <strong>Profile Picture URL:</strong>
+                      <input
+                        type="text"
+                        name="profileUrl"
+                        value={editProfile.profileUrl}
+                        onChange={handleProfileChange}/>
+                    </label>
+                    <label>
                       <strong>Title:</strong>
                       <input
                         type="text"

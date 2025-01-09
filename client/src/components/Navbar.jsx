@@ -82,6 +82,9 @@ function Navbar({ token, setToken }) {
       </div>
       {token ? (
         <>
+        <Link to="/new-recipe">
+        <button className="postrecipebutton">Add New Recipe!</button>
+      </Link>
           <Link id="userIcon" to={`/user`}>
             <div id="userIconContainer">
               <img src={userIcon} alt="User icon" />
