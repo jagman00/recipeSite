@@ -7,7 +7,7 @@ import Recipes from './components/Recipes'
 import Register from './components/Register'
 import User from './components/User'
 import AdminDashboard from './components/AdminDashboard'
-import NewRecipe from './components/newRecipe';
+import NewRecipe from './components/NewRecipe';
 import './App.css'
 import React from 'react'
 import { useEffect } from 'react'
