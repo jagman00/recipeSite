@@ -7,6 +7,8 @@ const Recipe = () => {
   const [recipe, setRecipe] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [liked, setLiked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -44,6 +46,8 @@ const Recipe = () => {
         const data = await fetchRecipe(id); // Call the imported fetchRecipe function
         setRecipe(data);
         setComments(data.comments || []);
+        setLiked(data.userHasLiked || false);
+        setBookmarked(data.userHasBookmarked || false);
       } catch (error) {
         console.error("Failed to fetch recipe", error);
       }
@@ -52,11 +56,63 @@ const Recipe = () => {
     getRecipe();
   }, [id]);
 
+  const handleToggleLike = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/recipes/${recipe.recipeId}/like`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+      if (!response.ok) throw new Error("Failed to toggle like");
+      setLiked(!liked); // Toggle the like state
+      setRecipe((prev) => ({
+        ...prev,
+        _count: {
+          ...prev._count,
+          likes: liked 
+            ? prev._count.likes - 1 
+            : prev._count.likes + 1,
+        },
+      }));
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const handleToggleBookmark = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/recipes/${recipe.recipeId}/bookmarks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+      if (!response.ok) throw new Error("Failed to toggle bookmark");
+      setBookmarked(!bookmarked); // Toggle the bookmark state
+      setRecipe((prev) => ({
+        ...prev,
+        _count: {
+          ...prev._count,
+          bookmarks: bookmarked
+            ? prev._count.bookmarks - 1
+            : prev._count.bookmarks + 1,
+        },
+      }));
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-
     if (!newComment.trim()) return;
-
     try {
       const response = await fetch(
         `http://localhost:3000/api/recipes/${recipe.recipeId}/comments`,
@@ -121,14 +177,18 @@ const Recipe = () => {
           <p>{recipe.description}</p>
           <p>Serving Size: {recipe.servingSize}</p>
           <div id="recipeIconContainer">
-            <p className="recipeIcon">
-              <img src="../src/assets/likesIcon.png" alt="like icon" />{" "}
+            <button className="recipeIcon" onClick={handleToggleLike}>
+              <img src={ liked ? "../src/assets/likesIconFilled.png"
+                               : "../src/assets/likesIcon.png"
+              } alt={ liked ? "Liked" : "Like"}/>
               {recipe._count.likes}
-            </p>
-            <p className="recipeIcon">
-              <img src="../src/assets/bookmarksIcon.png" alt="like icon" />{" "}
+            </button>
+            <button className="recipeIcon" onClick={handleToggleBookmark}>
+              <img src={ bookmarked ? "../src/assets/bookmarksIconFilled.png" 
+                               : "../src/assets/bookmarksIcon.png"
+              } alt={ bookmarked ? "Bookmarked" : "Bookmark"}/>
               {recipe._count.bookmarks}
-            </p>
+            </button>
           </div>
         </div>
       </div>
