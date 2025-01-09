@@ -86,25 +86,25 @@ function Navbar({ token, setToken, isAdmin }) {
       </div>
       {token ? (
         <>
-          <Link to="/new-recipe">
-            <button className="postrecipebutton">Add New Recipe!</button>
-          </Link>
           <Link id="userIcon" to={`/user`}>
             <div id="userIconContainer">
               <img src={userIcon} alt="User icon" />
               <span>Profile</span>
             </div>
           </Link>
-          {isAdmin && (
-            <Link to="/admin">
-              <button className="adminDashboardButton">Admin Dashboard</button>
-            </Link>
-          )}
           <button
             className="logoutButton"
             onClick={handleLogout}>
             Logout
           </button>
+          <Link to="/new-recipe">
+            <button className="postrecipebutton">Add New Recipe</button>
+          </Link>
+          {isAdmin && (
+            <Link to="/admin">
+              <button className="adminDashboardButton">Admin Dashboard</button>
+            </Link>
+          )}
         </>
       ) : (
         <>

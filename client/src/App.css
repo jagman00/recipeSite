@@ -6,11 +6,11 @@
     --white: #f8f8f0;
 }
 body {
-    font-family: "EB Garamond", serif;
+    font-family: "EB Garamond", serif; /* Standard font */
     margin: 0;
 }
 .header {
-    font-family: "Uncial Antiqua", serif;
+    font-family: "Uncial Antiqua", serif; /* Font for headers */
 }
 .background {
     margin-top: -30px;
@@ -35,11 +35,12 @@ input::placeholder {
     background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
     position: fixed;
     top: 20px;
-    left: 20px;
+    left: calc(50% - 8.5px);
+    transform: translateX(-50%);
     border-radius: 3px;
     box-shadow: 0 0 12px var(--black);
-    width: calc(100% - 40px);
-    padding: 10px 0 10px 0;
+    width: calc(100vw - 48.5px);
+    padding: 10px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -115,10 +116,10 @@ input::placeholder {
     gap: 10px;
 }
 .navbar > a:first-of-type {
-    flex: 1; /* Take up equal space */
+    flex: 1
 }
 .navbar > searchbarContainer {
-    flex: 2; /* Center the search bar */
+    flex: 2;
 }
 .navbar > a:last-of-type {
     flex: 1;
@@ -132,9 +133,42 @@ input::placeholder {
     font-size: 24px;
     font-family: "Uncial Antiqua", serif;
 }
+.logoutButton {
+    font-size: 24px;
+    font-family: "Uncial Antiqua", serif;
+    background: none;
+    border: none;
+    width: auto;
+    color: var(--white);
+}
+.logoutButton:hover {
+    cursor: pointer;
+}
+.adminDashboardButton {
+    font-size: 16px;
+    font-family: "Uncial Antiqua", serif;
+    background: none;
+    border: none;
+    width: auto;
+    color: var(--white);
+}
+.adminDashboardButton:hover {
+    cursor:pointer;
+}
 #registerText {
     font-size: 24px;
     font-family: "Uncial Antiqua", serif;
+}
+.postrecipebutton {
+    font-family: "Uncial Antiqua", serif;
+    font-size: 24px;
+    width: 240px;
+    background: none;
+    border: none;
+    color: var(--white);
+}
+.postrecipebutton:hover {
+    cursor: pointer;
 }
 /*Recipes component styling*/
 .recipes {
@@ -175,9 +209,9 @@ input::placeholder {
     margin-top: 40px;
 }
 .recipe-list {
-    margin: 50px 50px 50px 50px;
+    margin: 50px;
     display: grid;
-    grid-template-columns: repeat(3, minmax(200px, 1fr));
+    grid-template-columns: repeat(3, minmax(300px, 1fr));
     gap: 50px;
 }
 .recipe-item {
@@ -270,7 +304,7 @@ input::placeholder {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    margin: 200px auto 100px;
+    margin: 160px auto 80px;
     padding: 20px 10px 20px 10px;
     display: flex;
     flex-direction: column;
@@ -315,19 +349,28 @@ input::placeholder {
 #recipeIconContainer {
     display: flex;
     flex-direction: row;
-    gap: 10px;
 }
 .recipeIcon {
     display: flex;
-    align-items: center
+    align-items: center;
+    background: none;
+    border: none;
+    width: auto;
+    font-weight: 500;
+    font-size: 20px;
+    font-family: "EB Garamond", serif;
+    gap: 2px;
+}
+.recipeIcon:hover {
+    cursor: pointer;
 }
 .recipeIcon img {
-    height: 24px;
+    height: 30px;
 }
 .recipeSpace {
     margin-top: 20px;
 }
-#recipeComponent button {
+#recipeComponent .recipeBtn {
     padding: 7px 0 7px 0;
     font-size: 20px;
     color: var(--black);
@@ -342,7 +385,7 @@ input::placeholder {
     font-family: "EB Garamond", serif;
     font-weight: 500;
 }
-#recipeComponent button:hover {
+#recipeComponent .recipeBtn:hover {
     cursor: pointer;
     box-shadow: 0 0 2px var(--black);
 }
@@ -360,9 +403,11 @@ input::placeholder {
 #ingredientsList {
     list-style-position: inside;
     display: block;
+    max-width: 700px;
     width: auto;
     text-align: left;
     margin-left: 20px;
+    max-width: 300px;
 }
 #stepsListContainer {
     display: flex;
@@ -373,8 +418,15 @@ input::placeholder {
 #stepsList {
     list-style: none;
     display: block;
+    max-width: 700px;
     width: auto;
     text-align: left;
+}
+.commentSpace {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
 }
 #commentsContainer {
     display: flex;
@@ -386,10 +438,144 @@ input::placeholder {
     list-style: none;
     text-align: left;
     display: block;
-    width: auto;
+    width: 100%;
+    max-width: 700px;
 }
 #commentsList li:not(:first-child) {
     margin-top: 10px;
+}
+.commentText {
+    word-wrap: break-word;
+}
+#commentSection textarea {
+    background: none;
+    border: 1px solid var(--black);
+    font-family: "EB Garamond", serif;
+    font-size: 20px;
+    font-weight: 500;
+    width: 400px;
+    min-height: 36px;
+    resize: none;
+    padding: 2px;
+}
+#commentSection textarea:focus {
+    outline: none;
+}
+#commentSection textarea::placeholder {
+    color: #4d4d4d;
+}
+/*New recipe component styling*/
+.new-recipe-form {
+    background-image: url('./assets/largeParchmentBackground.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: auto;
+    padding: 50px;
+    box-shadow: 0 0 10px var(--black);
+    border-radius: 2px;
+    align-self: flex-start;
+    margin-top: 160px;
+}
+.new-recipe-form h2 {
+    text-align: center;
+}
+.new-recipe-form h3 {
+    margin-top: 20px;
+}
+.new-recipe-form input,
+.new-recipe-form textarea,
+.new-recipe-form select {
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--black);
+    font-family: "EB Garamond", serif;
+    font-size: 20px;
+    font-weight: 500;
+    resize: none;
+}
+.new-recipe-form input::placeholder,
+.new-recipe-form textarea::placeholder {
+    color: #4d4d4d;
+}
+.new-recipe-form input:focus,
+.new-recipe-form textarea:focus,
+.new-recipe-form select:focus {
+    outline: none;
+}
+#newRecipeDescription {
+    align-items: flex-start;
+}
+#description {
+   width: 340px;
+   border: 1px solid var(--black);
+   padding: 2px;
+}
+.new-recipe-form button {
+    padding: 7px 10px 7px 10px;
+    font-size: 20px;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 5px;
+    width: auto;
+    height: 40px;
+    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
+    color: var(--white);
+    margin: 30px auto 0;
+    font-family: "EB Garamond", serif;
+    font-weight: 500;
+}
+.new-recipe-form button:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
+}
+.new-recipe-form label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+.addIngredientContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+.ingredient-row {
+    display: flex;
+    flex-direction: column;
+    margin: 25px 0 25px;
+}
+.ingredient-row:first-child {
+    margin-top: 0px;
+}
+.addIngredientContainer input {
+    width: auto;
+}
+#addIngredientBtn {
+    margin-top: -25px;
+}
+.step-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 25px 0;
+}
+#removeStepBtn {
+    margin: auto;
+}
+#addStepBtn {
+    margin-top: -25px;
+}
+#stepsHeader {
+    margin-bottom: -10px;
+}
+.step-row textarea {
+    border: 1px solid var(--black);
+    width: 250px;
+    padding: 2px;
 }
 /*Login component styling*/
 .loginComponent {
@@ -535,7 +721,7 @@ input::placeholder {
 /*User component styling*/
 #userContainer {
     background-image: url('./assets/largeParchmentBackground.jpg');
-    width: 600px;
+    width: auto;
     height: auto;
     display: flex;
     flex-direction: column;
@@ -567,7 +753,7 @@ input::placeholder {
     flex-direction: row;
     align-items: flex-start;
     gap: 50px;
-    margin: 50px 0 20px;
+    margin: 50px 50px 20px;
 }
 #userDetailsContainer {
     max-width: 300px;
@@ -809,8 +995,27 @@ input::placeholder {
     font-size: 16px;
 }
 /*Mediq queries*/
-@media (max-width: 1236px) {
-    #logoText {
-        font-size: 24px;
+@media (max-width: 1440px) {
+    
+}
+@media (max-width: 1200px) {
+    .recipe-list {
+        grid-template-columns: repeat(2, minmax(300px, 1fr));
+    }
+}
+@media (max-width: 950px) {
+    .recipe-list {
+        grid-template-columns: repeat(1, minmax(300px, 1fr));
+    }
+    #recipeComponent {
+        margin: 200px 50px 100px;
+    }
+}
+@media (max-width: 768px) {
+    
+  }
+@media (max-width: 600px) {
+    .recipes {
+        margin: 160px 20px 80px;
     }
 }
