@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
 import userIcon from "../assets/UserIconWhite.png";
 import logoIcon from "../assets/RoundTable.png";
@@ -8,6 +8,8 @@ import { jwtDecode } from "jwt-decode";
 function Navbar({ token, setToken }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   const updateTokenState = () => {
     const currentToken = localStorage.getItem("token");
@@ -29,21 +31,36 @@ function Navbar({ token, setToken }) {
     }
   };
 
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+    navigate("/", { state: { searchQuery } });
+    }
+  };
+
+
   useEffect(() => {
     updateTokenState();
 
-    const handleStorageChange = () => {
-      updateTokenState();
-    };
-
-    // Listen for changes to localStorage (such as token update)
-    window.addEventListener("storage", handleStorageChange);
-
+    window.addEventListener("storage", updateTokenState);
     return () => {
-      // Clean up the event listener when the component is unmounted
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("storage", updateTokenState);
     };
-  }, []); // Empty dependency array to run only once on mount
+  }, []);
+
+
+// *** thu token state
+  //   const handleStorageChange = () => {
+  //     updateTokenState();
+  //   };
+
+  //   // Listen for changes to localStorage (such as token update)
+  //   window.addEventListener("storage", handleStorageChange);
+
+  //   return () => {
+  //     // Clean up the event listener when the component is unmounted
+  //     window.removeEventListener("storage", handleStorageChange);
+  //   };
+  // }, []); // Empty dependency array to run only once on mount
 
   return (
     <nav className="navbar">
@@ -54,8 +71,14 @@ function Navbar({ token, setToken }) {
         </div>
       </Link>
       <div id="searchbarContainer">
-        <input id="searchbar" type="text" placeholder="Search for recipes or users" />
-        <button>Search</button>
+        <input
+          id="searchbar"
+          type="text"
+          placeholder="Search for recipes or users"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button onClick={handleSearch}>Search</button>
       </div>
       {token ? (
         <>
