@@ -260,29 +260,19 @@ const handleReportRecipe = async () => {
         </div>
         <div id="recipeHeaderInfo">
           <h2 className="header">{recipe.title}</h2>
-          <p>{recipe.description}</p>
-          <p>Serving Size: {recipe.servingSize}</p>
-
           {/*Author profile - UPDATED*/}
           <div id="authorInfo">
             <Link to={`/author/${recipe.user.userId}`}>
               <div id="authorDetails">
-                <div id="userProfilePicContainer">
-                  <img
-                    src={recipe.user.profileUrl}
-                    alt={recipe.user.name}
-                    className="authorProfilePic"
-                  />
-                </div>
                 <div>
-                  <p><strong>{recipe.user.name}</strong></p>
-                  <p>{recipe.user.userTitle || ""}</p>
+                  <p>by <strong>{recipe.user.name}</strong></p>
                 </div>
               </div>
             </Link>
             <FollowButton authorId={recipe.user.userId} />
           </div>
-
+          <p>{recipe.description}</p>
+          <p>Serving Size: {recipe.servingSize}</p>
           <div id="recipeIconContainer">
             <button className="recipeIcon" onClick={handleToggleLike}>
               <img

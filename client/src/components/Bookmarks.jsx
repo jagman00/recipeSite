@@ -116,11 +116,11 @@ const Bookmarks = () => {
               </div>
             </Link>
 
-            <div id="recipeBar">
+            <div id="recipeBookmarkBar">
                 <h3>{recipe.title}</h3>
                 <button onClick={() => handleRemoveBookmark(recipe.recipeId)}
-                id="logoutButton">Remove Bookmark</button>
-              </div>
+                id="removeBookmarkBtn">Remove Bookmark</button>
+            </div>
           </div>
         ))}
 

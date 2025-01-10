@@ -317,6 +317,14 @@ input::placeholder {
     border-radius: 2px;
     align-self: flex-start;
 }
+#recipeComponent a {
+    text-decoration: none;
+    color: var(--black);
+}
+#recipeComponent a:visited {
+    color: var(--black);
+    text-decoration: none;
+}
 #recipeHeaderContainer {
     margin: 30px;
     display: flex;
@@ -334,9 +342,16 @@ input::placeholder {
 #recipeComponent h3 {
     font-size: 24px;
 }
+#authorInfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
 #recipeHeaderImg {
     height: auto;
-    width: 200px;
+    width: 240px;
     aspect-ratio: 1/1;
     flex-shrink: 0;
     overflow: hidden;
@@ -475,7 +490,7 @@ input::placeholder {
     box-shadow: 0 0 10px var(--black);
     border-radius: 2px;
     align-self: flex-start;
-    margin-top: 160px;
+    margin: 160px auto 100px;
 }
 .new-recipe-form h2 {
     text-align: center;
@@ -512,20 +527,17 @@ input::placeholder {
    padding: 2px;
 }
 .new-recipe-form button {
-    padding: 7px 10px 7px 10px;
     font-size: 20px;
     color: var(--black);
     background: none;
     border: 1px solid var(--black);
     box-shadow: 0 0 5px var(--black);
     border-radius: 5px;
-    width: auto;
-    height: 40px;
     background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
     color: var(--white);
-    margin: 30px auto 0;
     font-family: "EB Garamond", serif;
     font-weight: 500;
+    width: auto;
 }
 .new-recipe-form button:hover {
     cursor: pointer;
@@ -547,6 +559,7 @@ input::placeholder {
     display: flex;
     flex-direction: column;
     margin: 25px 0 25px;
+    flex: 3;
 }
 .ingredient-row:first-child {
     margin-top: 0px;
@@ -555,19 +568,54 @@ input::placeholder {
     width: auto;
 }
 #addIngredientBtn {
-    margin-top: -25px;
+    font-size: 20px;
+    padding: 6px 7px 6px 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+}
+#removeIngredientBtn {
+    width: 32px;
+    height: 32px;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#removeIngredientBtn p {
+    margin-bottom: 4px;
 }
 .step-row {
+    margin: 25px 0;
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin: 25px 0;
+    gap: 20px;
 }
 #removeStepBtn {
-    margin: auto;
+    width: 32px;
+    height: 32px;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#removeStepBtn p {
+    margin-bottom: 4px;
 }
 #addStepBtn {
-    margin-top: -25px;
+    font-size: 20px;
+    padding: 6px 7px 6px 7px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-self: center;
+}
+#submitRecipeBtn {
+    padding: 6px 7px 6px 7px;
+    margin: 30px auto 0;
+    width: auto;
 }
 #stepsHeader {
     margin-bottom: -10px;
@@ -576,6 +624,7 @@ input::placeholder {
     border: 1px solid var(--black);
     width: 250px;
     padding: 2px;
+    flex: 3;
 }
 /*Login component styling*/
 .loginComponent {
@@ -994,7 +1043,32 @@ input::placeholder {
     margin-top: 10px;
     font-size: 16px;
 }
-/*Mediq queries*/
+/*Bookmarks component styling*/
+#recipeBookmarkBar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#removeBookmarkBtn {
+    padding: 7px 6px 7px;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 5px;
+    width: auto;
+    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
+    color: var(--white);
+    font-family: "EB Garamond", serif;
+    margin-top: 5px;
+}
+#removeBookmarkBtn:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
+}
+/*Media queries*/
 @media (max-width: 1440px) {
     
 }

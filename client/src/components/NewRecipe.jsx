@@ -192,15 +192,23 @@ const NewRecipe = () => {
                 />
               </div>
               {ingredients.length > 1 && (
-          <button type="button" onClick={() => handleRemoveIngredient(index)}>
-            Remove Ingredient
-          </button>
+                <button 
+                  id="removeIngredientBtn"
+                  type="button" 
+                  onClick={() => handleRemoveIngredient(index)}
+                >
+                  <p>-</p>
+                </button>
           )}
             </div>
           ))}
           </div>
-          <button id="addIngredientBtn" type="button" onClick={handleAddIngredient}>
-            Add Ingredient
+          <button   
+            id="addIngredientBtn" 
+            type="button" 
+            onClick={handleAddIngredient}
+          >
+            <p>Add Ingredient</p>
           </button>
         </div>
 
@@ -218,19 +226,32 @@ const NewRecipe = () => {
                   required
                 />
                 {steps.length > 1 && (
-        <button id="removeStepBtn" type="button" onClick={() => handleRemoveStep(index)}>
-          Remove Step
-        </button>
+                  <button   
+                    id="removeStepBtn" 
+                    type="button"
+                    onClick={() => handleRemoveStep(index)}
+                  >
+                    <p>-</p>
+                  </button>
         )}
               </div>
             ))}
-            <button id="addStepBtn" type="button" onClick={handleAddStep}>
-              Add Step
+            <button 
+              id="addStepBtn" 
+              type="button" 
+              onClick={handleAddStep}
+            >
+             <p>Add Step</p>
             </button>
         </div>
 
         {/* Submit Button */}
-        <button type="submit">Submit Recipe</button>
+        <button 
+          id="submitRecipeBtn" 
+          type="submit"
+        >
+          Submit Recipe
+        </button>
       </form>
     </div>
   );
