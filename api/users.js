@@ -177,7 +177,7 @@ router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
           },
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { bookmarkId: "desc"}, // newest bookmark first
       skip, // Skip this number of recipes
       take: limit, // Limit the number of recipes per page
     });
