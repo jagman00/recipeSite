@@ -390,16 +390,9 @@ const handleReportRecipe = async () => {
           </form>
         </div>
       </div>
-      {/* Back to Recipe List Button */}
-      <button
-        className="recipeBtn"
-        onClick={() =>
-          navigate(`/?page=${currentPage}`, {
-            state: { selectedCategoryId: currentCategory, page: currentPage },
-          })
-        }
-      >
-        Back to Recipes
+ {/* Back to Previous Page Button */}
+ <button className="recipeBtn" onClick={() => window.history.back()}>
+        Back
       </button>
     </div>
   );
