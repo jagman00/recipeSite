@@ -193,12 +193,14 @@ const GetUser = ({setToken}) => {
             {userInfo.recipes && userInfo.recipes.length > 0 ? (
               <div className="cardsContainer">
                 {userInfo.recipes.map((recipe) => (
-                  <div key={recipe.recipeId} className="bookCard">
-                    <div className="userRecipeImgContainer">
-                      <img src={recipe.recipeUrl} alt={recipe.title} />
+                  <Link key={recipe.recipeId} to={`/recipe/${recipe.recipeId}`}>
+                    <div className="bookCard">
+                      <div className="userRecipeImgContainer">
+                        <img src={recipe.recipeUrl} className="image" alt={recipe.title} />
+                      </div>
+                      <h4>{recipe.title}</h4>
                     </div>
-                    <h4>{recipe.title}</h4>
-                  </div>
+                  </Link>
                 ))}
               </div>
             ) : (
