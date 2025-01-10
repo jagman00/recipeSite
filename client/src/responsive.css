@@ -74,11 +74,6 @@ input, button {
 
 /* Navbar adjustments */
 @media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    padding: 10px;
-  }
-
   #searchbarContainer {
     display: flex;
     flex-direction: column;
@@ -128,11 +123,6 @@ input, button {
 
   #userIconContainer span {
     font-size: 14px; /* Reduce font size inside user icon container */
-  }
-
-  .navbar a {
-    font-size: 14px; 
-    padding: 5px 10px; 
   }
 }
 

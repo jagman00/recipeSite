@@ -8,6 +8,7 @@ import { jwtDecode } from "jwt-decode";
 function Navbar({ token, setToken, isAdmin }) {
   const [userId, setUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [dropdownVisible, setDropdownVisible] = useState(false);
   const navigate = useNavigate();
 
   const updateTokenState = () => {
@@ -82,44 +83,81 @@ function Navbar({ token, setToken, isAdmin }) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button onClick={handleSearch}>Search</button>
+        <button id="searchBtn" onClick={handleSearch}>Search</button>
       </div>
-      {token ? (
-        <>
-          <Link id="userIcon" to={`/user`}>
-            <div id="userIconContainer">
-              <img src={userIcon} alt="User icon" />
-              <span>Profile</span>
+      <div className="dropdownMenu">
+        <button
+          className="dropdownToggle"
+          onClick={() => setDropdownVisible(!dropdownVisible)}
+        >
+          <div id="userIconContainer">
+            <span>Menu</span>
+            <img src={userIcon} alt="User icon" />
             </div>
-          </Link>
-          <button
-            className="logoutButton"
-            onClick={handleLogout}>
-            Logout
-          </button>
-          <Link to="/new-recipe">
-            <button className="postrecipebutton">Add New Recipe</button>
-          </Link>
-          {isAdmin && (
-            <Link to="/admin">
-              <button className="adminDashboardButton">Admin Dashboard</button>
-            </Link>
-          )}
-          <Link to="/bookmarks">Bookmarks</Link>
-        </>
-      ) : (
-        <>
-          <Link id="userIcon" to="/login">
-            <div id="userIconContainer">
-              <img id="helmetIcon" src={userIcon} alt="User icon" />
-              <span>Login</span>
-            </div>
-          </Link>
-          <Link id="registerText" to="/register">
-            Register
-          </Link>
-        </>
-      )}
+        </button>
+        {dropdownVisible && (
+          <div className="dropdown">
+            {token ? (
+              <>
+                <Link 
+                  className="postrecipebutton"
+                  to="/user" 
+                  onClick={() => setDropdownVisible(false)}
+                >
+                  Profile
+                </Link>
+                <button
+                  className="logoutButton" 
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+                <Link 
+                  className="postrecipebutton"
+                  to="/new-recipe" 
+                  onClick={() => setDropdownVisible(false)}
+                >
+                  Add New Recipe
+                </Link>
+                <Link 
+                  id="bookmarksBtn"
+                  className="header" 
+                  to ="/bookmarks" 
+                  onClick={() => setDropdownVisible(false)}
+                >
+                  Bookmarks
+                </Link>
+                {isAdmin && (
+                  <Link 
+                    className="adminDashboardButton"
+                    to="/admin" 
+                    onClick={() => setDropdownVisible(false)}
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
+              </>
+            ) : (
+              <>
+                <Link 
+                  className="postrecipebutton"
+                  to="/login" 
+                  onClick={() => setDropdownVisible(false)}
+                >
+                  Login
+                </Link>
+                <Link 
+                  className="postrecipebutton"
+                  to="/register"
+                  onClick={() => setDropdownVisible(false)}
+                >
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
+        )}
+      </div>
     </nav>
   );
 };
