@@ -26,21 +26,38 @@ router.get("/", authenticateAdmin, async (req, res, next) => {
   }
 });
 
-// GET /api/users/:id
-// Get a user by id
-router.get("/:id", async (req, res, next) => {
+// GET /api/users/:id /*UPDATED */
+// Get a speicifc user by id including his recipes /*Updated */ only registered users
+router.get("/:id", authenticateUser , async (req, res, next) => {
   const { id } = req.params;
   try {
     const user = await prisma.user.findUnique({
       where: { userId: parseInt(id) },
-      select: {
-        userId: true,
-        name: true,
-        email: true,
-        profileUrl: true,
-        userTitle: true,
-        bio: true,
-        createdAt: true,
+      // select: {
+      //   userId: true,
+      //   name: true,
+      //   email: true,
+      //   profileUrl: true,
+      //   userTitle: true,
+      //   bio: true,
+      //   createdAt: true,
+      // },
+      include: {
+        recipes: {
+          select: {
+            recipeId: true,
+            title: true,
+            description: true,
+            servingSize: true,
+            recipeUrl: true,
+            createdAt: true,
+            updatedAt: true,
+            _count: {
+              select: { likes: true, bookmarks: true, comments: true },
+            },
+          },
+          orderBy: { updatedAt: "desc" }, // Order by newest updated recipe first
+        },
       },
     });
 

@@ -9,6 +9,7 @@ import User from './components/User'
 import Bookmarks from './components/Bookmarks'
 import AdminDashboard from './components/AdminDashboard'
 import NewRecipe from './components/NewRecipe';
+import AuthorProfile from './components/AuthorProfile'
 import './App.css'
 import React from 'react'
 import { useEffect } from 'react'
@@ -77,6 +78,7 @@ function App() {
             <Route path="/" element={<Recipes />} />
             <Route path="/new-recipe" element={<NewRecipe />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
+            <Route path="/author/:authorId" element={<AuthorProfile />} />
           </Routes>
         </Router>
       </div>

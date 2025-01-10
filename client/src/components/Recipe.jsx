@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { fetchRecipe } from "../API/index.js";
+import FollowButton from "./FollowButton";
 
 const Recipe = () => {
   const { id } = useParams();
@@ -213,6 +215,27 @@ const handleReportRecipe = async () => {
           <h2 className="header">{recipe.title}</h2>
           <p>{recipe.description}</p>
           <p>Serving Size: {recipe.servingSize}</p>
+
+          {/*Author profile - UPDATED*/}
+          <div id="authorInfo">
+            <Link to={`/author/${recipe.user.userId}`}>
+              <div id="authorDetails">
+                <div id="userProfilePicContainer">
+                  <img
+                    src={recipe.user.profileUrl}
+                    alt={recipe.user.name}
+                    className="authorProfilePic"
+                  />
+                </div>
+                <div>
+                  <p><strong>{recipe.user.name}</strong></p>
+                  <p>{recipe.user.userTitle || ""}</p>
+                </div>
+              </div>
+            </Link>
+            <FollowButton authorId={recipe.user.userId} />
+          </div>
+
           <div id="recipeIconContainer">
             <button className="recipeIcon" onClick={handleToggleLike}>
               <img
@@ -289,8 +312,10 @@ const handleReportRecipe = async () => {
             {comments.map((comment, index) => (
               <li key={index}>
                 <p className="commentSpace">
-                  <strong>{comment.user.name}</strong>-{" "}
-                  {timeAgo(comment.createdAt)}
+                  <Link to={`/author/${comment.user.userId}`}>
+                    <strong>{comment.user.name}</strong>
+                  </Link>
+                  -{" "}{timeAgo(comment.createdAt)}
                   <img
                     src="../src/assets/report-flag.png" 
                     alt="Report icon"
