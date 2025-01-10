@@ -191,9 +191,11 @@ const NewRecipe = () => {
                   }
                 />
               </div>
-              <button type="button" onClick={() => handleRemoveIngredient(index)}>
-                Remove Ingredient
-              </button>
+              {ingredients.length > 1 && (
+          <button type="button" onClick={() => handleRemoveIngredient(index)}>
+            Remove Ingredient
+          </button>
+          )}
             </div>
           ))}
           </div>
@@ -215,9 +217,11 @@ const NewRecipe = () => {
                   }
                   required
                 />
-                <button id="removeStepBtn" type="button" onClick={() => handleRemoveStep(index)}>
-                  Remove Step
-                </button>
+                {steps.length > 1 && (
+        <button id="removeStepBtn" type="button" onClick={() => handleRemoveStep(index)}>
+          Remove Step
+        </button>
+        )}
               </div>
             ))}
             <button id="addStepBtn" type="button" onClick={handleAddStep}>
