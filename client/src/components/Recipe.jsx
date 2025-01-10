@@ -136,7 +136,43 @@ const Recipe = () => {
     }
   };
 
+const handleReportRecipe = async () => {
+  const confirmReport = window.confirm(
+    "Are you sure you want to report this recipe? This action cannot be undone."
+  );
+  if (!confirmReport) return;
+
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/recipes/${recipe.recipeId}/report`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ reason: "Inappropriate content" }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to report recipe");
+    }
+
+    alert("Recipe reported successfully.");
+  } catch (error) {
+    console.error(error.message);
+    alert(error.message || "Failed to report recipe.");
+  }
+};
+
   const handleReportComment = async (commentId) => {
+    const confirmReport = window.confirm(
+      "Are you sure you want to report this comment? This action cannot be undone."
+    );
+    if (!confirmReport) return;
+
     try {
       const response = await fetch(
         `http://localhost:3000/api/comments/${commentId}/report`,
@@ -159,6 +195,7 @@ const Recipe = () => {
     }
   };
 
+
   if (!recipe) return <p>Loading...</p>;
 
   return (
@@ -168,7 +205,7 @@ const Recipe = () => {
           <img
             src={recipe.recipeUrl}
             className="image"
-            alt={recipe.title} //alt text for accessibility
+            alt={recipe.title} 
             loading="lazy"
           />
         </div>
@@ -178,16 +215,44 @@ const Recipe = () => {
           <p>Serving Size: {recipe.servingSize}</p>
           <div id="recipeIconContainer">
             <button className="recipeIcon" onClick={handleToggleLike}>
-              <img src={ liked ? "../src/assets/likesIconFilled.png"
-                               : "../src/assets/likesIcon.png"
-              } alt={ liked ? "Liked" : "Like"}/>
+              <img
+                src={
+                  liked
+                    ? "../src/assets/likesIconFilled.png"
+                    : "../src/assets/likesIcon.png"
+                }
+                alt={liked ? "Liked" : "Like"}
+              />
               {recipe._count.likes}
             </button>
             <button className="recipeIcon" onClick={handleToggleBookmark}>
-              <img src={ bookmarked ? "../src/assets/bookmarksIconFilled.png" 
-                               : "../src/assets/bookmarksIcon.png"
-              } alt={ bookmarked ? "Bookmarked" : "Bookmark"}/>
+              <img
+                src={
+                  bookmarked
+                    ? "../src/assets/bookmarksIconFilled.png"
+                    : "../src/assets/bookmarksIcon.png"
+                }
+                alt={bookmarked ? "Bookmarked" : "Bookmark"}
+              />
               {recipe._count.bookmarks}
+            </button>
+            {/* Report Button */}
+            <button
+              className="recipeIcon"
+              onClick={handleReportRecipe}
+              title="Report this recipe"
+              style={{
+                cursor: "pointer",
+                background: "none",
+                border: "none",
+                padding: "0",
+              }}
+            >
+              <img
+                src="../src/assets/report-flag.png"
+                alt="Report"
+                style={{ width: "20px", height: "20px" }}
+              />
             </button>
           </div>
         </div>
@@ -224,21 +289,21 @@ const Recipe = () => {
             {comments.map((comment, index) => (
               <li key={index}>
                 <p className="commentSpace">
-                  <strong>{comment.user.name}</strong>
-                  - {timeAgo(comment.createdAt)}
+                  <strong>{comment.user.name}</strong>-{" "}
+                  {timeAgo(comment.createdAt)}
                   <img
-                  src="../src/assets/report-flag.png" // Use your report icon image path
-                  alt="Report icon"
-                  title="Report this comment"
-                  className="reportIcon"
-                  onClick={() => handleReportComment(comment.id)}
-                  style={{
-                    cursor: "pointer",
-                    width: "auto",
-                    height: "18px",
-                    marginTop: "3px"
-                  }}
-                />
+                    src="../src/assets/report-flag.png" 
+                    alt="Report icon"
+                    title="Report this comment"
+                    className="reportIcon"
+                    onClick={() => handleReportComment(comment.id)}
+                    style={{
+                      cursor: "pointer",
+                      width: "auto",
+                      height: "18px",
+                      marginTop: "3px",
+                    }}
+                  />
                 </p>
                 <p className="commentText">{comment.text}</p>
               </li>
@@ -255,12 +320,15 @@ const Recipe = () => {
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Write your comment here..."
             ></textarea>
-            <button className="recipeBtn" type="submit">Post Comment</button>
+            <button className="recipeBtn" type="submit">
+              Post Comment
+            </button>
           </form>
         </div>
       </div>
       {/* Back to Recipe List Button */}
-      <button className="recipeBtn"
+      <button
+        className="recipeBtn"
         onClick={() =>
           navigate(`/?page=${currentPage}`, {
             state: { selectedCategoryId: currentCategory, page: currentPage },
