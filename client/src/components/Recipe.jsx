@@ -205,7 +205,7 @@ const handleReportRecipe = async () => {
           <img
             src={recipe.recipeUrl}
             className="image"
-            alt={recipe.title} //alt text for accessibility
+            alt={recipe.title} 
             loading="lazy"
           />
         </div>
@@ -292,7 +292,7 @@ const handleReportRecipe = async () => {
                   <strong>{comment.user.name}</strong>-{" "}
                   {timeAgo(comment.createdAt)}
                   <img
-                    src="../src/assets/report-flag.png" // Use your report icon image path
+                    src="../src/assets/report-flag.png" 
                     alt="Report icon"
                     title="Report this comment"
                     className="reportIcon"
