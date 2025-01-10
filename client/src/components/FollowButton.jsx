@@ -1,7 +1,7 @@
 const FollowButton = () => {
     return ( 
         <>
-        <p>Follow Buttons</p>
+        <p>Follow Button</p>
         </>
      );
 }

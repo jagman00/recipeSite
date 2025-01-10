@@ -414,6 +414,29 @@ router.post("/:id/like", authenticateUser, async (req, res, next) => {
     }
 });
 
+// Get like status /*UPDATE*/
+// GET /api/recipes/:id/like-status
+router.get("/:id/like-status", authenticateUser, async (req, res, next) => {
+    const { id } = req.params;
+    const userId = req.user.userId;
+
+    try {
+        const existingLike = await prisma.like.findUnique({
+          where: {
+            userId_recipeId: {
+              userId: parseInt(userId),
+              recipeId: parseInt(id),
+            },
+          },
+        });
+    
+        res.status(200).json({ likeStatus: !!existingLike }); // Return boolean value 
+      } catch (error) {
+        console.error("Error fetching like status:", error);
+        res.status(500).json({ message: "Failed to fetch like status." });
+      }
+    });
+
 // // Unlike a recipe 
 // // DELETE /api/recipes/:id/like
 // router.delete("/:id/like", authenticateUser, async (req, res, next) => {
@@ -494,6 +517,29 @@ router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
         res.status(500).json({ message: 'Failed to toggle bookmark status.' });
     }
 });
+// Get bookmark status /*UPDATE*/
+// GET /api/recipes/:id/bookmark-status
+router.get("/:id/bookmark-status", authenticateUser, async (req, res, next) => {
+    const { id } = req.params;
+    const userId = req.user.userId;
+
+    try {
+        const existingBookmark = await prisma.bookmark.findUnique({
+          where: {
+            userId_recipeId: {
+              userId: parseInt(userId),
+              recipeId: parseInt(id),
+            },
+          },
+        });
+    
+        res.status(200).json({ bookmarkStatus: !!existingBookmark }); // Return boolean
+      } catch (error) {
+        console.error("Error fetching bookmark status:", error);
+        res.status(500).json({ message: "Failed to fetch bookmark status." });
+      }
+    }
+);
 
 // // Remove a bookmark
 // // DELETE /api/recipes/:id/bookmarks
