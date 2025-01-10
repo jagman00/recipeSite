@@ -13,6 +13,7 @@ const Recipe = () => {
   const [bookmarked, setBookmarked] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const token =  localStorage.getItem("token");
 
   //get the page state from the location
   const currentPage = location.state?.page || 1;
@@ -42,22 +43,66 @@ const Recipe = () => {
     return "just now";
   }
 
+  // Fetch like status
+  const fetchLikeStatus = async (recipeId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/recipes/${recipeId}/like-status`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch like status");
+      const data = await response.json();
+      return data.likeStatus; // true or false
+    } catch (error) {
+      console.error(error.message);
+      return false;
+    }
+  };
+
+  // Fetch bookmark status
+  const fetchBookmarkStatus = async (recipeId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/recipes/${recipeId}/bookmark-status`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to fetch bookmark status");
+      const data = await response.json();
+      return data.bookmarkStatus; // true or false
+    } catch (error) {
+      console.error(error.message);
+      return false;
+    }
+  };
+
+  // useEffect to fetch recipe and statuses
   useEffect(() => {
     const getRecipe = async () => {
       try {
         const data = await fetchRecipe(id); // Call the imported fetchRecipe function
         setRecipe(data);
         setComments(data.comments || []);
-        setLiked(data.userHasLiked || false);
-        setBookmarked(data.userHasBookmarked || false);
+
+        // Fetch like and bookmark statuses
+        const [likeStatus, bookmarkStatus] = await Promise.all([
+          fetchLikeStatus(id),
+          fetchBookmarkStatus(id),
+        ]);
+
+        setLiked(likeStatus);
+        setBookmarked(bookmarkStatus);
       } catch (error) {
-        console.error("Failed to fetch recipe", error);
+        console.error("Failed to fetch recipe or statuses", error);
       }
     };
 
     getRecipe();
   }, [id]);
-
+   
   const handleToggleLike = async () => {
     try {
       const response = await fetch(
@@ -66,25 +111,26 @@ const Recipe = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
-        });
+        }
+      );
       if (!response.ok) throw new Error("Failed to toggle like");
-      setLiked(!liked); // Toggle the like state
+      const data = await response.json(); // Parse the response
+      // Update state using the API response
+      setLiked(data.likeStatus); // Set the like status from the response
       setRecipe((prev) => ({
         ...prev,
         _count: {
           ...prev._count,
-          likes: liked 
-            ? prev._count.likes - 1 
-            : prev._count.likes + 1,
+          likes: data.likeCount, // Update the like count from the response
         },
       }));
     } catch (error) {
       console.error(error.message);
     }
   };
-
+  
   const handleToggleBookmark = async () => {
     try {
       const response = await fetch(
@@ -93,25 +139,26 @@ const Recipe = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
-        });
+        }
+      );
       if (!response.ok) throw new Error("Failed to toggle bookmark");
-      setBookmarked(!bookmarked); // Toggle the bookmark state
+      const data = await response.json(); // Parse the response
+      // Update state using the API response
+      setBookmarked(data.bookmarkStatus); // Set the bookmark status from the response
       setRecipe((prev) => ({
         ...prev,
         _count: {
           ...prev._count,
-          bookmarks: bookmarked
-            ? prev._count.bookmarks - 1
-            : prev._count.bookmarks + 1,
+          bookmarks: data.bookmarkCount, // Update the bookmark count from the response
         },
       }));
     } catch (error) {
       console.error(error.message);
     }
   };
-
+  
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
@@ -122,7 +169,7 @@ const Recipe = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ text: newComment }),
         }
@@ -151,7 +198,7 @@ const handleReportRecipe = async () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ reason: "Inappropriate content" }),
       }
@@ -182,7 +229,7 @@ const handleReportRecipe = async () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ reason: "Inappropriate content" }),
         }
@@ -248,6 +295,7 @@ const handleReportRecipe = async () => {
               />
               {recipe._count.likes}
             </button>
+
             <button className="recipeIcon" onClick={handleToggleBookmark}>
               <img
                 src={
@@ -259,6 +307,7 @@ const handleReportRecipe = async () => {
               />
               {recipe._count.bookmarks}
             </button>
+
             {/* Report Button */}
             <button
               className="recipeIcon"
