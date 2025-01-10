@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
+import { useNavigate } from "react-router-dom";
 
 function AdminDashboard() {
-  // State variables
+  // Existing state variables
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalRecipes, setTotalRecipes] = useState(0);
   const [monthlyRegistrations, setMonthlyRegistrations] = useState([]);
@@ -13,7 +14,9 @@ function AdminDashboard() {
   const [errorLogs, setErrorLogs] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [categoryMessage, setCategoryMessage] = useState("");
-
+  const navigate = useNavigate();
+  const [reportedRecipes, setReportedRecipes] = useState([]);
+  const [reportedComments, setReportedComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -74,6 +77,26 @@ function AdminDashboard() {
           throw new Error(commentsData.message || "Failed to fetch comments");
         setRecentComments(commentsData.comments.slice(0, 5)); // Latest 5 comments
 
+        // Fetch Reported Recipes
+        const reportedRecipesResponse = await fetch(
+          "http://localhost:3000/api/reports/recipes",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const reportedRecipesData = await reportedRecipesResponse.json();
+        setReportedRecipes(reportedRecipesData.reports);
+
+        // Fetch Reported Comments
+        const reportedCommentsResponse = await fetch(
+          "http://localhost:3000/api/reports/comments",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const reportedCommentsData = await reportedCommentsResponse.json();
+        setReportedComments(reportedCommentsData.reports);
+
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -83,7 +106,7 @@ function AdminDashboard() {
 
     fetchData();
 
-    // Periodic Health Check (every 30 seconds)
+    // Periodic Health Check
     const interval = setInterval(() => {
       checkServerHealth();
     }, 30000);
@@ -103,15 +126,13 @@ function AdminDashboard() {
       } else {
         setServerHealth("Issues Detected");
       }
-      setErrorLogs(data.logs || ["No errors logged."]); // Use logs dynamically
+      setErrorLogs(data.logs || ["No errors logged."]); 
     } catch (error) {
       setServerHealth("Offline");
       setErrorLogs(["Failed to fetch server logs."]);
     }
   };
 
-
-  // Create Category
   const createCategory = async () => {
     if (!newCategory.trim()) {
       setCategoryMessage("Category name cannot be empty.");
@@ -138,7 +159,7 @@ function AdminDashboard() {
       );
     }
   };
-
+  
   // Render loading or error messages
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -147,7 +168,6 @@ function AdminDashboard() {
     <div>
       <h1 id="adminHeader">Admin Dashboard</h1>
       <div className="adminDashboard">
-        {/* Overview Section */}
         <div className="combinedChartContainer adminCard">
           <h2>Overview</h2>
           <div className="combinedChart">
@@ -216,6 +236,94 @@ function AdminDashboard() {
           />
           <button onClick={createCategory}>Create Category</button>
           {categoryMessage && <p>{categoryMessage}</p>}
+        </div>
+
+        {/* Reported Recipes */}
+        <div className="reportedRecipes adminCard">
+          <h2>Reported Recipes</h2>
+          {reportedRecipes.length > 0 ? (
+            <ul>
+              {reportedRecipes.slice(0, 3).map(
+                (
+                  report // Limit to 3 items
+                ) => (
+                  <li key={report.reportId} className="reported-item">
+                    <p>
+                      <strong>Recipe:</strong>{" "}
+                      <span
+                        className="highlighted-text"
+                        onClick={() =>
+                          navigate(`/recipe/${report.recipe.recipeId}`)
+                        }
+                      >
+                        {report.recipe.title}
+                      </span>{" "}
+                      (ID: {report.recipe.recipeId})
+                    </p>
+                    <p>
+                      <strong>Reported By:</strong> {report.reporter.name} (
+                      {report.reporter.email})
+                    </p>
+                    <p>
+                      <strong>Reason:</strong>{" "}
+                      {report.reason || "No reason provided"}
+                    </p>
+                    <p>
+                      <strong>Date:</strong>{" "}
+                      {new Date(report.createdAt).toLocaleString()}
+                    </p>
+                  </li>
+                )
+              )}
+            </ul>
+          ) : (
+            <p>No reported recipes.</p>
+          )}
+        </div>
+
+        {/* Reported Comments */}
+        <div className="reportedComments adminCard">
+          <h2>Reported Comments</h2>
+          {reportedComments.length > 0 ? (
+            <ul>
+              {reportedComments.slice(0, 3).map(
+                (
+                  report // Limit to 3 items
+                ) => (
+                  <li key={report.reportId} className="reported-item">
+                    <p>
+                      <strong>Comment:</strong>{" "}
+                      <span
+                        className="highlighted-text"
+                        onClick={() =>
+                          navigate(
+                            `/recipe/${report.comment.recipeId}#comment-${report.comment.id}`
+                          )
+                        }
+                      >
+                        {report.comment.text}
+                      </span>{" "}
+                      (ID: {report.comment.id})
+                    </p>
+                    <p>
+                      <strong>Reported By:</strong> {report.reporter.name} (
+                      {report.reporter.email})
+                    </p>
+                    <p>
+                      <strong>Reason:</strong>{" "}
+                      {report.reason || "No reason provided"}
+                    </p>
+                    <p>
+                      <strong>Date:</strong>{" "}
+                      {new Date(report.createdAt).toLocaleString()}
+                    </p>
+                  </li>
+                )
+              )}
+            </ul>
+          ) : (
+            <p>No reported comments.</p>
+          )}
         </div>
       </div>
     </div>
