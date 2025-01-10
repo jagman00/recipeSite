@@ -300,6 +300,7 @@ const handleReportRecipe = async () => {
 
             {/* Report Button */}
             <button
+              id="reportRecipeBtn"
               className="recipeIcon"
               onClick={handleReportRecipe}
               title="Report this recipe"
@@ -378,13 +379,13 @@ const handleReportRecipe = async () => {
         )}
         <div id="commentSection">
           <h3>Add a Comment</h3>
-          <form onSubmit={handleCommentSubmit}>
+          <form id="commentForm" onSubmit={handleCommentSubmit}>
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Write your comment here..."
             ></textarea>
-            <button className="recipeBtn" type="submit">
+            <button id="postCommentBtn" className="recipeBtn" type="submit">
               Post Comment
             </button>
           </form>

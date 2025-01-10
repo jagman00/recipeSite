@@ -107,7 +107,7 @@ const GetUser = ({setToken}) => {
   };
   
   return (
-    <div>
+    <div id="userComponent">
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       {loggedIn ? (
         userInfo ? (

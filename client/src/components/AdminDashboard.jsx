@@ -165,7 +165,7 @@ function AdminDashboard() {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
-    <div>
+    <div className="adminDashboardComponent">
       <h1 id="adminHeader">Admin Dashboard</h1>
       <div className="adminDashboard">
         <div className="combinedChartContainer adminCard">
