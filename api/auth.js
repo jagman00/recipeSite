@@ -84,8 +84,24 @@ router.get("/me", authenticateUser, async (req,res)=>{
     try {
         const user = await prisma.user.findUnique({
             where:{userId: req.user.userId},
-            include:{recipes:true},
-        });
+            include: {
+                recipes: {
+                  select: {
+                    recipeId: true,
+                    title: true,
+                    description: true,
+                    servingSize: true,
+                    recipeUrl: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    _count: {
+                      select: { likes: true, bookmarks: true, comments: true },
+                    },
+                  },
+                  orderBy: { updatedAt: "desc" }, // Order by newest updated recipe first
+                },
+              },
+            });
         res.status(201).json(user);
     } catch (error) {
         next(error);
