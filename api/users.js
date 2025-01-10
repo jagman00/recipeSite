@@ -324,74 +324,98 @@ router.post("/:id/follow", authenticateUser, async (req, res, next) => {
       console.error(error);
       res.status(500).json({ message: "Failed to update follow status" });
     }
-  });
-  
-  // Get the list of followers for a specific user 
-  // GET /api/users/:id/followers
-  router.get("/:id/followers", async (req, res, next) => {
-    const { id } = req.params; 
-    try {
-      const followers = await prisma.userFollower.findMany({
-        where: { followToUserId: parseInt(id) }, // People following this user
-        include: {
-          followFromUser: { // Include the details of the follower
-            select: {
-              userId: true,
-              name: true,
-              profileUrl: true,
-            },
+});
+
+
+// Get follow status /*UPDATE*/
+// GET /api/users/:id/follow-status 
+router.get("/:id/follow-status", authenticateUser, async (req, res, next) => {
+  const { id } = req.params;
+  const userId = req.user.userId;
+
+  try {
+      const existingFollow = await prisma.userFollower.findUnique({
+        where: {
+          followFromUserId_followToUserId: {
+            followFromUserId: parseInt(userId),
+            followToUserId: parseInt(id),
           },
         },
       });
   
-      if (!followers || followers.length === 0) {
-        return res.status(404).json({ message: "No followers found" });
-      }
-  
-      const followerList = followers.map((follower) => follower.followFromUser);
-  
-      const followerCount = await prisma.userFollower.count({
-          where: { followToUserId: parseInt(id) },
-          });
-  
-      res.status(200).json({followerCount,followerList});
+      res.status(200).json({ followStatus: !!existingFollow }); // Return boolean value
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Failed to fetch followers" });
+      console.error("Error fetching follow status:", error);
+      res.status(500).json({ message: "Failed to fetch follow status." });
     }
   });
-  
-  // Get the list of people being followed by a specific user
-  // GET /api/users/:id/followings
-  router.get("/:id/followings", async (req, res, next) => {
-    const { id } = req.params; 
-    try {
-      const followings = await prisma.userFollower.findMany({
-        where: { followFromUserId: parseInt(id) }, // People this user is following
-        include: {
-          followToUser: { // Include the details of people being followed
-            select: {
-              userId: true,
-              name: true,
-              profileUrl: true,
-            },
+
+// Get the list of followers for a specific user 
+// GET /api/users/:id/followers
+router.get("/:id/followers", async (req, res, next) => {
+  const { id } = req.params; 
+  try {
+    const followers = await prisma.userFollower.findMany({
+      where: { followToUserId: parseInt(id) }, // People following this user
+      include: {
+        followFromUser: { // Include the details of the follower
+          select: {
+            userId: true,
+            name: true,
+            profileUrl: true,
           },
         },
-      });
-  
-      if (!followings || followings.length === 0) {
-        return res.status(404).json({ message: "No followings found" });
-      }
-  
-      const followingList = followings.map((following) => following.followToUser);
-  
-      const followingCount = await prisma.userFollower.count({
-          where: { followFromUserId: parseInt(id) },
-          });
-  
-      res.status(200).json({followingCount,followingList});
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Failed to fetch followings" });
+      },
+    });
+
+    if (!followers || followers.length === 0) {
+      return res.status(404).json({ message: "No followers found" });
     }
-  });
+
+    const followerList = followers.map((follower) => follower.followFromUser);
+
+    const followerCount = await prisma.userFollower.count({
+        where: { followToUserId: parseInt(id) },
+        });
+
+    res.status(200).json({followerCount,followerList});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch followers" });
+  }
+});
+
+// Get the list of people being followed by a specific user
+// GET /api/users/:id/followings
+router.get("/:id/followings", async (req, res, next) => {
+  const { id } = req.params; 
+  try {
+    const followings = await prisma.userFollower.findMany({
+      where: { followFromUserId: parseInt(id) }, // People this user is following
+      include: {
+        followToUser: { // Include the details of people being followed
+          select: {
+            userId: true,
+            name: true,
+            profileUrl: true,
+          },
+        },
+      },
+    });
+
+    if (!followings || followings.length === 0) {
+      return res.status(404).json({ message: "No followings found" });
+    }
+
+    const followingList = followings.map((following) => following.followToUser);
+
+    const followingCount = await prisma.userFollower.count({
+        where: { followFromUserId: parseInt(id) },
+        });
+
+    res.status(200).json({followingCount,followingList});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch followings" });
+  }
+});
