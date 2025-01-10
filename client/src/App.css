@@ -1068,6 +1068,37 @@ input::placeholder {
     cursor: pointer;
     box-shadow: 0 0 2px var(--black);
 }
+
+.reported-item {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 10px solid transparent; 
+  border-image-source: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg'); 
+  border-image-slice: 30; 
+  border-image-repeat: round; 
+  border-radius: 5px; 
+}
+
+.reported-item p {
+  margin: 5px 0; /* Adds space between lines */
+}
+
+.clickable-recipe {
+  cursor: pointer;
+  margin: 0 0 10px;
+}
+
+.highlighted-text {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.highlighted-text:hover {
+  text-decoration: none;
+  color: darkblue;
+}
+
 /*Media queries*/
 @media (max-width: 1440px) {
     
