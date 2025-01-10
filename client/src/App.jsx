@@ -6,6 +6,7 @@ import Recipe from './components/Recipe'
 import Recipes from './components/Recipes'
 import Register from './components/Register'
 import User from './components/User'
+import Bookmarks from './components/Bookmarks'
 import AdminDashboard from './components/AdminDashboard'
 import NewRecipe from './components/NewRecipe';
 import './App.css'
@@ -75,6 +76,7 @@ function App() {
             <Route path="/recipe/:id" element={<Recipe />} />
             <Route path="/" element={<Recipes />} />
             <Route path="/new-recipe" element={<NewRecipe />} />
+            <Route path="/bookmarks" element={<Bookmarks />} />
           </Routes>
         </Router>
       </div>

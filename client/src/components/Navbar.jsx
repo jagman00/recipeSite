@@ -105,6 +105,7 @@ function Navbar({ token, setToken, isAdmin }) {
               <button className="adminDashboardButton">Admin Dashboard</button>
             </Link>
           )}
+          <Link to="/bookmarks">Bookmarks</Link>
         </>
       ) : (
         <>

@@ -151,3 +151,25 @@ export const fetchRecipes = async (page, limit = 12) => {
     }
   };
   
+  // get all bookmarked recipes of a specific user (owner only)
+  export const fetchBookmarkedRecipes = async (userId,token, page, limit =12) => {
+    try {
+      const response = await fetch(`${API_URL}/users/${userId}/bookmarks?page=${page}&limit=${limit}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch bookmarks");
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching bookmarks:", error);
+      throw error;
+    }
+  };
+
+
