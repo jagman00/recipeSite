@@ -4,11 +4,11 @@ import { fetchUserById } from '../API/index';
 import FollowButton from './FollowButton';
 
 const AuthorProfile = () => {
-    return (
+    return ( 
         <div>
-            <h1>Author Profile</h1>
+            Author Profile
         </div>
-    )
+     );
 }
  
 export default AuthorProfile;
