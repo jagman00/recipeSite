@@ -190,19 +190,31 @@ const GetUser = ({setToken}) => {
             </button>
             )}
             <h3 className="header">Your Recipes</h3>
-            {userInfo.recipes && userInfo.recipes.length > 0 ? (
-              <div className="cardsContainer">
-                {userInfo.recipes.map((recipe) => (
-                  <Link key={recipe.recipeId} to={`/recipe/${recipe.recipeId}`}>
-                    <div className="bookCard">
-                      <div className="userRecipeImgContainer">
-                        <img src={recipe.recipeUrl} className="image" alt={recipe.title} />
-                      </div>
-                      <h4>{recipe.title}</h4>
+                {userInfo.recipes && userInfo.recipes.length > 0 ? (
+                    <div className="recipe-list">
+                    {userInfo.recipes.map((recipe) => (
+                        <div key={recipe.recipeId} className="recipe-card">
+                            <Link to={`/recipe/${recipe.recipeId}`}>
+                                <div id="imgContainer">
+                                    <img src={recipe.recipeUrl} className="image" alt={recipe.title} />
+                                </div>
+                            </Link>
+                            <div id="recipeBar">
+                                <h4>{recipe.title}</h4>
+                                <div id="likesAndBookmarks">
+                                    <p>
+                                        <img src="../src/assets/likesIcon.png" alt="likes" />{" "}
+                                        {recipe._count?.likes || 0}
+                                    </p>
+                                    <p>
+                                        <img src="../src/assets/bookmarksIcon.png" alt="bookmarks" />{" "}
+                                        {recipe._count?.bookmarks || 0}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                     </div>
-                  </Link>
-                ))}
-              </div>
             ) : (
               <p id="noRecipes">No recipes found.</p>
             )}
