@@ -172,4 +172,46 @@ export const fetchRecipes = async (page, limit = 12) => {
     }
   };
 
+// fetch a specific user by id
+export const fetchUserById = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      });
+    if (!response.ok) {
+      throw new Error("Failed to fetch the user");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching user by ID:", error);
+    throw error;
+  }
+};
+
+// toggle follow user
+export const toggleFollowUser = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/follow`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to toggle follow user");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error toggling follow user:", error);
+    throw error;
+  }
+};
+
 
