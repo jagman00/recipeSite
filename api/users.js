@@ -330,7 +330,7 @@ router.post("/:id/follow", authenticateUser, async (req, res, next) => {
 // Get follow status /*UPDATE*/
 // GET /api/users/:id/follow-status 
 router.get("/:id/follow-status", authenticateUser, async (req, res, next) => {
-  const { id } = req.params;
+  const { id } = req.params; // id of the user to follow/unfollow
   const userId = req.user.userId;
 
   try {

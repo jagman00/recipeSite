@@ -194,7 +194,7 @@ export const fetchUserById = async (userId) => {
 };
 
 // toggle follow user
-export const toggleFollowUser = async (userId) => {
+export const toggleFollow = async (userId) => {
   try {
     const response = await fetch(`${API_URL}/users/${userId}/follow`, {
       method: "POST",
@@ -210,6 +210,26 @@ export const toggleFollowUser = async (userId) => {
     return data;
   } catch (error) {
     console.error("Error toggling follow user:", error);
+    throw error;
+  }
+};
+
+// fetch follow status
+export const fetchFollowStatus = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/follow-status`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch follow status");
+    }
+    const data = await response.json();
+    return data.followStatus;
+  } catch (error) {
+    console.error("Error fetching follow status:", error);
     throw error;
   }
 };
