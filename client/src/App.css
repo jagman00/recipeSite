@@ -1198,3 +1198,21 @@ input::placeholder {
         gap: 0;
     }
   }
+  /* Print-specific styles */
+@media print {
+    .no-print {
+      display: none !important;
+    }
+  
+    /* Optional: Adjust the layout for print */
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+    
+    #printableSection {
+      margin: 0;
+      padding: 1rem;
+    }
+  }
+  

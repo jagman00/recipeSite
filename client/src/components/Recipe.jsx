@@ -245,10 +245,47 @@ const Recipe = () => {
     }
   };
 
+  const handlePrint = () => {
+    const printableContent = document.getElementById("printableSection");
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>${recipe.title}</title>
+          <style>
+            @media print {
+              .no-print { display: none !important; }
+            }
+            body { font-family: Arial, sans-serif; line-height: 1.6; }
+            img { max-width: 100%; }
+          </style>
+        </head>
+        <body>${printableContent.outerHTML}</body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+  
+  const handleShareRecipe = async () => {
+    const recipeUrl = `http://localhost:5173/recipe/${recipe.recipeId}`;
+    const shareText = `Copied to clipboard: Check out this recipe from Recipe Round Table, ${recipe.title}! ${recipeUrl}`;
+
+    // Copy to clipboard
+    try {
+      await navigator.clipboard.writeText(recipeUrl);
+      alert(shareText); // Show the confirmation message
+    } catch (error) {
+      console.error("Failed to copy to clipboard:", error);
+      alert("Failed to copy recipe link.");
+    }
+  };
+
   if (!recipe) return <p>Loading...</p>;
 
   return (
     <div id="recipeComponent">
+      <div id="printableSection">
       <div id="recipeHeaderContainer">
         <div id="recipeHeaderImg">
           <img
@@ -275,7 +312,7 @@ const Recipe = () => {
           </div>
           <p>{recipe.description}</p>
           <p>Serving Size: {recipe.servingSize}</p>
-          <div id="recipeIconContainer">
+          <div id="recipeIconContainer" className="no-print">
             <button className="recipeIcon" onClick={handleToggleLike}>
               <img
                 src={
@@ -398,6 +435,9 @@ const Recipe = () => {
           <p>No steps available for this recipe.</p>
         )}
       </div>
+      </div>
+      <button className="recipeBtn" onClick={handlePrint}>Print Recipe</button>
+      <button className="recipeBtn" onClick={handleShareRecipe}>Share Recipe</button>
       <div id="commentsContainer">
         <h3 className="recipeSpace">Comments</h3>
         {comments && comments.length > 0 ? (

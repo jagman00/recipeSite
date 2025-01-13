@@ -234,4 +234,3 @@ export const fetchFollowStatus = async (userId) => {
   }
 };
 
-

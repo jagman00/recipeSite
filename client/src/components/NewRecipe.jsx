@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchCategories } from "../API";
 import "../App.css";
 
 const NewRecipe = () => {
@@ -8,11 +9,32 @@ const NewRecipe = () => {
   // State for form fields
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [categories, setCategories] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(""); // State for selected category
+  const [loadingCategories, setLoadingCategories] = useState(true); // Loading state for categories
   const [servingSize, setServingSize] = useState(1); // Default serving size
   const [recipeUrl, setRecipeUrl] = useState(""); // State for the image URL
   const [ingredients, setIngredients] = useState([{ name: "", quantity: "", unit: "" }]);
   const [steps, setSteps] = useState([""]);
+  const [error, setError] = useState(null); // Error state for categories
 
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const fetchedCategories = await fetchCategories();
+        const uniqueCategories = [...new Set(fetchedCategories)]; // Ensure uniqueness
+        setCategories(uniqueCategories);
+      } catch (err) {
+        setError("Failed to load categories. Please try again later.");
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+  
+    loadCategories();
+  }, []);
+  
   const handleAddIngredient = () => {
     setIngredients([...ingredients, { name: "", quantity: "", unit: "" }]);
   };
@@ -39,7 +61,6 @@ const NewRecipe = () => {
       instruction, 
     }));
 
-
     const recipeData = {
         title,
         description,
@@ -52,7 +73,6 @@ const NewRecipe = () => {
           quantityUnit: ingredient.unit,
         })),
       };
-
 
       try {
     const token = localStorage.getItem("token"); // Retrieve token from localStorage
@@ -77,6 +97,7 @@ const NewRecipe = () => {
     alert("An error occurred while submitting the recipe.");
   }
 };
+
 
   return (
     <div className="new-recipe-form">
@@ -108,6 +129,34 @@ const NewRecipe = () => {
               placeholder="Enter a brief description"
               required
             />
+          </label>
+        </div>
+
+         {/* Category Dropdown */}
+         <div>
+          <label htmlFor="category">
+            Category:
+            {loadingCategories ? (
+              <p>Loading categories...</p>
+            ) : error ? (
+              <p className="error">{error}</p>
+            ) : (
+              <select
+              id="category"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              required
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.categoryName}
+                </option>
+              ))}
+            </select>
+            )}
           </label>
         </div>
 
