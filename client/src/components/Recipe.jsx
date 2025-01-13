@@ -266,7 +266,7 @@ const Recipe = () => {
     printWindow.document.close();
     printWindow.print();
   };
-  
+
   const handleShareRecipe = async () => {
     const recipeUrl = `http://localhost:5173/recipe/${recipe.recipeId}`;
     const shareText = `Copied to clipboard: Check out this recipe from Recipe Round Table, ${recipe.title}! ${recipeUrl}`;
@@ -286,158 +286,151 @@ const Recipe = () => {
   return (
     <div id="recipeComponent">
       <div id="printableSection">
-      <div id="recipeHeaderContainer">
-        <div id="recipeHeaderImg">
-          <img
-            src={recipe.recipeUrl}
-            className="image"
-            alt={recipe.title}
-            loading="lazy"
-          />
-        </div>
-        <div id="recipeHeaderInfo">
-          <h2 className="header">{recipe.title}</h2>
-          {/*Author profile - UPDATED*/}
-          <div id="authorInfo">
-            <Link to={`/author/${recipe.user.userId}`}>
-              <div id="authorDetails">
-                <div>
-                  <p>
-                    by <strong>{recipe.user.name}</strong>
-                  </p>
-                </div>
-              </div>
-            </Link>
-            <FollowButton authorId={recipe.user.userId} />
+        <div id="recipeHeaderContainer">
+          <div id="recipeHeaderImg">
+            <img
+              src={recipe.recipeUrl}
+              className="image"
+              alt={recipe.title}
+              loading="lazy"
+            />
           </div>
-          <p>{recipe.description}</p>
-          <p>Serving Size: {recipe.servingSize}</p>
-          <div id="recipeIconContainer" className="no-print">
-            <button className="recipeIcon" onClick={handleToggleLike}>
-              <img
-                src={
-                  liked
-                    ? "../src/assets/likesIconFilled.png"
-                    : "../src/assets/likesIcon.png"
-                }
-                alt={liked ? "Liked" : "Like"}
-              />
-              {recipe._count.likes}
-            </button>
-
-            <button className="recipeIcon" onClick={handleToggleBookmark}>
-              <img
-                src={
-                  bookmarked
-                    ? "../src/assets/bookmarksIconFilled.png"
-                    : "../src/assets/bookmarksIcon.png"
-                }
-                alt={bookmarked ? "Bookmarked" : "Bookmark"}
-              />
-              {recipe._count.bookmarks}
-            </button>
-
-            {/* Report Button with Conditional Dropdown */}
-            <div id="reportRecipeContainer">
-              {!showReportDropdown ? (
-                <button
-                  className="recipeIcon"
-                  onClick={() => setShowReportDropdown(true)} // Show the dropdown on click
-                  title="Report this recipe"
-                  style={{
-                    cursor: "pointer",
-                    background: "none",
-                    border: "none",
-                    padding: "0",
-                  }}
-                >
-                  <img
-                    src="../src/assets/report-flag.png"
-                    alt="Report"
-                    style={{ width: "20px", height: "20px" }}
-                  />
-                </button>
-              ) : (
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <select
-                    value={selectedReason}
-                    onChange={(e) => setSelectedReason(e.target.value)}
-                    style={{ marginRight: "10px" }}
-                  >
-                    <option value="" disabled>
-                      Select a reason
-                    </option>
-                    <option value="Inappropriate content">
-                      Inappropriate content
-                    </option>
-                    <option value="Spam">Spam</option>
-                    <option value="Harassment">Harassment</option>
-                    <option value="Other">Other</option>
-                  </select>
-                  <button
-                    onClick={() => {
-                      if (selectedReason) {
-                        handleReportRecipe(selectedReason);
-                        setShowReportDropdown(false); // Hide the dropdown after reporting
-                      } else {
-                        alert("Please select a reason before reporting.");
-                      }
-                    }}
-                    style={{
-                      cursor: "pointer",
-                      background: "none",
-                      border: "1px solid #ccc",
-                      padding: "5px",
-                    }}
-                  >
-                    Submit
-                  </button>
-                  <button
-                    onClick={() => setShowReportDropdown(false)} // Cancel and hide dropdown
-                    style={{
-                      cursor: "pointer",
-                      background: "none",
-                      border: "1px solid #ccc",
-                      padding: "5px",
-                      marginLeft: "5px",
-                    }}
-                  >
-                    Cancel
-                  </button>
+          <div id="recipeHeaderInfo">
+            <h2 className="header">{recipe.title}</h2>
+            {/*Author profile - UPDATED*/}
+            <div id="authorInfo">
+              <Link to={`/author/${recipe.user.userId}`}>
+                <div id="authorDetails">
+                  <div>
+                    <p>
+                      by <strong>{recipe.user.name}</strong>
+                    </p>
+                  </div>
                 </div>
-              )}
+              </Link>
+              <FollowButton authorId={recipe.user.userId} />
+            </div>
+            <p>{recipe.description}</p>
+            <p>Serving Size: {recipe.servingSize}</p>
+            <div id="recipeIconContainer" className="no-print">
+              <button className="recipeIcon" onClick={handleToggleLike}>
+                <img
+                  src={
+                    liked
+                      ? "../src/assets/likesIconFilled.png"
+                      : "../src/assets/likesIcon.png"
+                  }
+                  alt={liked ? "Liked" : "Like"}
+                />
+                {recipe._count.likes}
+              </button>
+
+              <button className="recipeIcon" onClick={handleToggleBookmark}>
+                <img
+                  src={
+                    bookmarked
+                      ? "../src/assets/bookmarksIconFilled.png"
+                      : "../src/assets/bookmarksIcon.png"
+                  }
+                  alt={bookmarked ? "Bookmarked" : "Bookmark"}
+                />
+                {recipe._count.bookmarks}
+              </button>
+
+              {/* Report Button with Conditional Dropdown */}
+              <div id="reportRecipeContainer">
+                {!showReportDropdown ? (
+                  <button
+                    className="recipeIcon"
+                    onClick={() => setShowReportDropdown(true)} // Show the dropdown on click
+                    title="Report this recipe"
+                    style={{
+                      cursor: "pointer",
+                      background: "none",
+                      border: "none",
+                      padding: "0",
+                    }}
+                  >
+                    <img
+                      src="../src/assets/report-flag.png"
+                      alt="Report"
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  </button>
+                ) : (
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <select
+                      value={selectedReason}
+                      onChange={(e) => setSelectedReason(e.target.value)}
+                      style={{ marginRight: "10px" }}
+                    >
+                      <option value="" disabled>
+                        Select a reason
+                      </option>
+                      <option value="Inappropriate content">
+                        Inappropriate content
+                      </option>
+                      <option value="Spam">Spam</option>
+                      <option value="Harassment">Harassment</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <button
+                      className="reportButton"
+                      onClick={() => {
+                        if (selectedReason) {
+                          handleReportRecipe(selectedReason);
+                          setShowReportDropdown(false); // Hide the dropdown after reporting
+                        } else {
+                          alert("Please select a reason before reporting.");
+                        }
+                      }}
+                    >
+                      Submit
+                    </button>
+                    <button
+                      className="reportButton"
+                      onClick={() => setShowReportDropdown(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div id="ingredientsContainer">
-        <h3>Ingredients</h3>
-        <ul id="ingredientsList">
-          {recipe.ingredients.map((ingredient, index) => (
-            <li key={index}>
-              {ingredient.quantityAmount} {ingredient.quantityUnit} of{" "}
-              {ingredient.ingredientName}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <h3 className="recipeSpace">Directions</h3>
-      <div id="stepsListContainer">
-        {Array.isArray(recipe.steps) && recipe.steps.length > 0 ? (
-          <ol id="stepsList">
-            {recipe.steps.map((step) => (
-              <li key={step.stepNumber}>
-                <strong>Step {step.stepNumber}:</strong> {step.instruction}
+        <div id="ingredientsContainer">
+          <h3>Ingredients</h3>
+          <ul id="ingredientsList">
+            {recipe.ingredients.map((ingredient, index) => (
+              <li key={index}>
+                {ingredient.quantityAmount} {ingredient.quantityUnit} of{" "}
+                {ingredient.ingredientName}
               </li>
             ))}
-          </ol>
-        ) : (
-          <p>No steps available for this recipe.</p>
-        )}
+          </ul>
+        </div>
+        <h3 className="recipeSpace">Directions</h3>
+        <div id="stepsListContainer">
+          {Array.isArray(recipe.steps) && recipe.steps.length > 0 ? (
+            <ol id="stepsList">
+              {recipe.steps.map((step) => (
+                <li key={step.stepNumber}>
+                  <strong>Step {step.stepNumber}:</strong> {step.instruction}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p>No steps available for this recipe.</p>
+          )}
+        </div>
       </div>
-      </div>
-      <button className="recipeBtn" onClick={handlePrint}>Print Recipe</button>
-      <button className="recipeBtn" onClick={handleShareRecipe}>Share Recipe</button>
+      <button className="recipeBtn" onClick={handlePrint}>
+        Print Recipe
+      </button>
+      <button className="recipeBtn" onClick={handleShareRecipe}>
+        Share Recipe
+      </button>
       <div id="commentsContainer">
         <h3 className="recipeSpace">Comments</h3>
         {comments && comments.length > 0 ? (
@@ -550,10 +543,7 @@ const Recipe = () => {
         </div>
       </div>
       {/* Back to Previous Page Button */}
-      <button 
-        className="recipeBtn" 
-        onClick={() => window.history.back()}
-      >
+      <button className="recipeBtn" onClick={() => window.history.back()}>
         Back
       </button>
     </div>
