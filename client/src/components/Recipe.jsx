@@ -11,9 +11,14 @@ const Recipe = () => {
   const [newComment, setNewComment] = useState("");
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showReportDropdown, setShowReportDropdown] = useState(false);
+  const [commentDropdownVisible, setCommentDropdownVisible] = useState({});
+  const [selectedReason, setSelectedReason] = useState("");
+
   const navigate = useNavigate();
   const location = useLocation();
-  const token =  localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
   //get the page state from the location
   const currentPage = location.state?.page || 1;
@@ -46,12 +51,15 @@ const Recipe = () => {
   // Fetch like status
   const fetchLikeStatus = async (recipeId) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/recipes/${recipeId}/like-status`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/recipes/${recipeId}/like-status`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!response.ok) throw new Error("Failed to fetch like status");
       const data = await response.json();
       return data.likeStatus; // true or false
@@ -64,12 +72,15 @@ const Recipe = () => {
   // Fetch bookmark status
   const fetchBookmarkStatus = async (recipeId) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/recipes/${recipeId}/bookmark-status`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3000/api/recipes/${recipeId}/bookmark-status`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!response.ok) throw new Error("Failed to fetch bookmark status");
       const data = await response.json();
       return data.bookmarkStatus; // true or false
@@ -102,7 +113,7 @@ const Recipe = () => {
 
     getRecipe();
   }, [id]);
-   
+
   const handleToggleLike = async () => {
     try {
       const response = await fetch(
@@ -130,7 +141,7 @@ const Recipe = () => {
       console.error(error.message);
     }
   };
-  
+
   const handleToggleBookmark = async () => {
     try {
       const response = await fetch(
@@ -158,7 +169,7 @@ const Recipe = () => {
       console.error(error.message);
     }
   };
-  
+
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
@@ -185,43 +196,33 @@ const Recipe = () => {
     }
   };
 
-const handleReportRecipe = async () => {
-  const confirmReport = window.confirm(
-    "Are you sure you want to report this recipe? This action cannot be undone."
-  );
-  if (!confirmReport) return;
+  const handleReportRecipe = async (reason) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/recipes/${recipe.recipeId}/report`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ reason }),
+        }
+      );
 
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/recipes/${recipe.recipeId}/report`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ reason: "Inappropriate content" }),
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to report recipe");
       }
-    );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to report recipe");
+      alert("Recipe reported successfully.");
+    } catch (error) {
+      console.error(error.message);
+      alert(error.message || "Failed to report recipe.");
     }
+  };
 
-    alert("Recipe reported successfully.");
-  } catch (error) {
-    console.error(error.message);
-    alert(error.message || "Failed to report recipe.");
-  }
-};
-
-  const handleReportComment = async (commentId) => {
-    const confirmReport = window.confirm(
-      "Are you sure you want to report this comment? This action cannot be undone."
-    );
-    if (!confirmReport) return;
-
+  const handleReportComment = async (commentId, reason) => {
     try {
       const response = await fetch(
         `http://localhost:3000/api/comments/${commentId}/report`,
@@ -231,7 +232,7 @@ const handleReportRecipe = async () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ reason: "Inappropriate content" }),
+          body: JSON.stringify({ reason }),
         }
       );
 
@@ -244,7 +245,6 @@ const handleReportRecipe = async () => {
     }
   };
 
-
   if (!recipe) return <p>Loading...</p>;
 
   return (
@@ -254,7 +254,7 @@ const handleReportRecipe = async () => {
           <img
             src={recipe.recipeUrl}
             className="image"
-            alt={recipe.title} 
+            alt={recipe.title}
             loading="lazy"
           />
         </div>
@@ -265,7 +265,9 @@ const handleReportRecipe = async () => {
             <Link to={`/author/${recipe.user.userId}`}>
               <div id="authorDetails">
                 <div>
-                  <p>by <strong>{recipe.user.name}</strong></p>
+                  <p>
+                    by <strong>{recipe.user.name}</strong>
+                  </p>
                 </div>
               </div>
             </Link>
@@ -298,25 +300,76 @@ const handleReportRecipe = async () => {
               {recipe._count.bookmarks}
             </button>
 
-            {/* Report Button */}
-            <button
-              id="reportRecipeBtn"
-              className="recipeIcon"
-              onClick={handleReportRecipe}
-              title="Report this recipe"
-              style={{
-                cursor: "pointer",
-                background: "none",
-                border: "none",
-                padding: "0",
-              }}
-            >
-              <img
-                src="../src/assets/report-flag.png"
-                alt="Report"
-                style={{ width: "20px", height: "20px" }}
-              />
-            </button>
+            {/* Report Button with Conditional Dropdown */}
+            <div id="reportRecipeContainer">
+              {!showReportDropdown ? (
+                <button
+                  className="recipeIcon"
+                  onClick={() => setShowReportDropdown(true)} // Show the dropdown on click
+                  title="Report this recipe"
+                  style={{
+                    cursor: "pointer",
+                    background: "none",
+                    border: "none",
+                    padding: "0",
+                  }}
+                >
+                  <img
+                    src="../src/assets/report-flag.png"
+                    alt="Report"
+                    style={{ width: "20px", height: "20px" }}
+                  />
+                </button>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <select
+                    value={selectedReason}
+                    onChange={(e) => setSelectedReason(e.target.value)}
+                    style={{ marginRight: "10px" }}
+                  >
+                    <option value="" disabled>
+                      Select a reason
+                    </option>
+                    <option value="Inappropriate content">
+                      Inappropriate content
+                    </option>
+                    <option value="Spam">Spam</option>
+                    <option value="Harassment">Harassment</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <button
+                    onClick={() => {
+                      if (selectedReason) {
+                        handleReportRecipe(selectedReason);
+                        setShowReportDropdown(false); // Hide the dropdown after reporting
+                      } else {
+                        alert("Please select a reason before reporting.");
+                      }
+                    }}
+                    style={{
+                      cursor: "pointer",
+                      background: "none",
+                      border: "1px solid #ccc",
+                      padding: "5px",
+                    }}
+                  >
+                    Submit
+                  </button>
+                  <button
+                    onClick={() => setShowReportDropdown(false)} // Cancel and hide dropdown
+                    style={{
+                      cursor: "pointer",
+                      background: "none",
+                      border: "1px solid #ccc",
+                      padding: "5px",
+                      marginLeft: "5px",
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -355,20 +408,98 @@ const handleReportRecipe = async () => {
                   <Link to={`/author/${comment.user.userId}`}>
                     <strong>{comment.user.name}</strong>
                   </Link>
-                  -{" "}{timeAgo(comment.createdAt)}
-                  <img
-                    src="../src/assets/report-flag.png" 
-                    alt="Report icon"
-                    title="Report this comment"
-                    className="reportIcon"
-                    onClick={() => handleReportComment(comment.id)}
-                    style={{
-                      cursor: "pointer",
-                      width: "auto",
-                      height: "18px",
-                      marginTop: "3px",
-                    }}
-                  />
+                  - {timeAgo(comment.createdAt)}
+                  
+                  {/* Report Comment with Conditional Dropdown */}
+                  <div>
+                    {!commentDropdownVisible[comment.id] ? (
+                      <img
+                        src="../src/assets/report-flag.png"
+                        alt="Report icon"
+                        title="Report this comment"
+                        className="reportIcon"
+                        onClick={() =>
+                          setCommentDropdownVisible((prev) => ({
+                            ...prev,
+                            [comment.id]: true, // Show dropdown for this comment
+                          }))
+                        }
+                        style={{
+                          cursor: "pointer",
+                          width: "auto",
+                          height: "18px",
+                          marginTop: "3px",
+                        }}
+                      />
+                    ) : (
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <select
+                          value={comment.selectedReason || ""}
+                          onChange={(e) =>
+                            setComments((prev) =>
+                              prev.map((c) =>
+                                c.id === comment.id
+                                  ? { ...c, selectedReason: e.target.value }
+                                  : c
+                              )
+                            )
+                          }
+                          style={{ marginRight: "10px" }}
+                        >
+                          <option value="" disabled>
+                            Select a reason
+                          </option>
+                          <option value="Inappropriate content">
+                            Inappropriate content
+                          </option>
+                          <option value="Spam">Spam</option>
+                          <option value="Harassment">Harassment</option>
+                          <option value="Other">Other</option>
+                        </select>
+                        <button
+                          onClick={() => {
+                            if (comment.selectedReason) {
+                              handleReportComment(
+                                comment.id,
+                                comment.selectedReason
+                              );
+                              setCommentDropdownVisible((prev) => ({
+                                ...prev,
+                                [comment.id]: false, // Hide the dropdown for this comment
+                              }));
+                            } else {
+                              alert("Please select a reason before reporting.");
+                            }
+                          }}
+                          style={{
+                            cursor: "pointer",
+                            background: "none",
+                            border: "1px solid #ccc",
+                            padding: "5px",
+                          }}
+                        >
+                          Submit
+                        </button>
+                        <button
+                          onClick={() =>
+                            setCommentDropdownVisible((prev) => ({
+                              ...prev,
+                              [comment.id]: false, // Cancel and hide dropdown
+                            }))
+                          }
+                          style={{
+                            cursor: "pointer",
+                            background: "none",
+                            border: "1px solid #ccc",
+                            padding: "5px",
+                            marginLeft: "5px",
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </p>
                 <p className="commentText">{comment.text}</p>
               </li>
@@ -379,21 +510,28 @@ const handleReportRecipe = async () => {
         )}
         <div id="commentSection">
           <h3>Add a Comment</h3>
-          <form id="commentForm" onSubmit={handleCommentSubmit}>
+          <form onSubmit={handleCommentSubmit}>
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Write your comment here..."
             ></textarea>
-            <button id="postCommentBtn" className="recipeBtn" type="submit">
+            <button className="recipeBtn" type="submit">
               Post Comment
             </button>
           </form>
         </div>
       </div>
- {/* Back to Previous Page Button */}
- <button className="recipeBtn" onClick={() => window.history.back()}>
-        Back
+      {/* Back to Recipe List Button */}
+      <button
+        className="recipeBtn"
+        onClick={() =>
+          navigate(`/?page=${currentPage}`, {
+            state: { selectedCategoryId: currentCategory, page: currentPage },
+          })
+        }
+      >
+        Back to Recipes
       </button>
     </div>
   );
