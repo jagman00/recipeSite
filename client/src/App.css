@@ -446,6 +446,20 @@ input::placeholder {
 }
 #reportRecipeBtn {
     margin-left: 5px;
+    
+}
+#reportRecipeContainer {
+    display: flex;
+}
+#reportRecipeContainer select {
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--black);
+    font-family: "EB Garamond", serif;
+    font-size: 20px;
+    font-weight: 500;
+    width: auto;
+    resize: none;
 }
 .recipeSpace {
     margin-top: 20px;
@@ -502,6 +516,16 @@ input::placeholder {
     width: auto;
     text-align: left;
 }
+#printRecipeIcon, #shareRecipeIcon {
+    height: 20px;
+}
+.iconBtn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
 .commentSpace {
     display: flex;
     flex-direction: row;
@@ -548,6 +572,16 @@ input::placeholder {
 #commentForm {
     display: flex;
     flex-direction: column;
+}
+.reportDropdown select {
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--black);
+    font-family: "EB Garamond", serif;
+    font-size: 20px;
+    font-weight: 500;
+    width: auto;
+    resize: none;
 }
 #postCommentBtn {
     margin-top: 0;
