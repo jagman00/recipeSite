@@ -241,40 +241,39 @@ function AdminDashboard() {
         {/* Reported Recipes */}
         <div className="reportedRecipes adminCard">
           <h2>Reported Recipes</h2>
-          {reportedRecipes.length > 0 ? (
+          {Array.isArray(reportedRecipes) && reportedRecipes.length > 0 ? (
             <ul>
-              {reportedRecipes.slice(0, 3).map(
-                (
-                  report // Limit to 3 items
-                ) => (
-                  <li key={report.reportId} className="reported-item">
-                    <p>
-                      <strong>Recipe:</strong>{" "}
-                      <span
-                        className="highlighted-text"
-                        onClick={() =>
-                          navigate(`/recipe/${report.recipe.recipeId}`)
-                        }
-                      >
-                        {report.recipe.title}
-                      </span>{" "}
-                      (ID: {report.recipe.recipeId})
-                    </p>
-                    <p>
-                      <strong>Reported By:</strong> {report.reporter.name} (
-                      {report.reporter.email})
-                    </p>
-                    <p>
-                      <strong>Reason:</strong>{" "}
-                      {report.reason || "No reason provided"}
-                    </p>
-                    <p>
-                      <strong>Date:</strong>{" "}
-                      {new Date(report.createdAt).toLocaleString()}
-                    </p>
-                  </li>
-                )
-              )}
+              {reportedRecipes.slice(0, 3).map((report) => (
+                <li key={report.reportId} className="reported-item">
+                  <p>
+                    <strong>Recipe:</strong>{" "}
+                    <span
+                      className="highlighted-text"
+                      onClick={() =>
+                        navigate(`/recipe/${report.recipe?.recipeId}`)
+                      }
+                    >
+                      {report.recipe?.title || "Unknown Recipe"}
+                    </span>{" "}
+                    (ID: {report.recipe?.recipeId || "N/A"})
+                  </p>
+                  <p>
+                    <strong>Reported By:</strong>{" "}
+                    {report.reporter?.name || "Unknown"} (
+                    {report.reporter?.email || "N/A"})
+                  </p>
+                  <p>
+                    <strong>Reason:</strong>{" "}
+                    {report.reason || "No reason provided"}
+                  </p>
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {report.createdAt
+                      ? new Date(report.createdAt).toLocaleString()
+                      : "Unknown Date"}
+                  </p>
+                </li>
+              ))}
             </ul>
           ) : (
             <p>No reported recipes.</p>
@@ -284,42 +283,41 @@ function AdminDashboard() {
         {/* Reported Comments */}
         <div className="reportedComments adminCard">
           <h2>Reported Comments</h2>
-          {reportedComments.length > 0 ? (
+          {Array.isArray(reportedComments) && reportedComments.length > 0 ? (
             <ul>
-              {reportedComments.slice(0, 3).map(
-                (
-                  report // Limit to 3 items
-                ) => (
-                  <li key={report.reportId} className="reported-item">
-                    <p>
-                      <strong>Comment:</strong>{" "}
-                      <span
-                        className="highlighted-text"
-                        onClick={() =>
-                          navigate(
-                            `/recipe/${report.comment.recipeId}#comment-${report.comment.id}`
-                          )
-                        }
-                      >
-                        {report.comment.text}
-                      </span>{" "}
-                      (ID: {report.comment.id})
-                    </p>
-                    <p>
-                      <strong>Reported By:</strong> {report.reporter.name} (
-                      {report.reporter.email})
-                    </p>
-                    <p>
-                      <strong>Reason:</strong>{" "}
-                      {report.reason || "No reason provided"}
-                    </p>
-                    <p>
-                      <strong>Date:</strong>{" "}
-                      {new Date(report.createdAt).toLocaleString()}
-                    </p>
-                  </li>
-                )
-              )}
+              {reportedComments.slice(0, 3).map((report) => (
+                <li key={report.reportId} className="reported-item">
+                  <p>
+                    <strong>Comment:</strong>{" "}
+                    <span
+                      className="highlighted-text"
+                      onClick={() =>
+                        navigate(
+                          `/recipe/${report.comment?.recipeId}#comment-${report.comment?.id}`
+                        )
+                      }
+                    >
+                      {report.comment?.text || "Unknown Comment"}
+                    </span>{" "}
+                    (ID: {report.comment?.id || "N/A"})
+                  </p>
+                  <p>
+                    <strong>Reported By:</strong>{" "}
+                    {report.reporter?.name || "Unknown"} (
+                    {report.reporter?.email || "N/A"})
+                  </p>
+                  <p>
+                    <strong>Reason:</strong>{" "}
+                    {report.reason || "No reason provided"}
+                  </p>
+                  <p>
+                    <strong>Date:</strong>{" "}
+                    {report.createdAt
+                      ? new Date(report.createdAt).toLocaleString()
+                      : "Unknown Date"}
+                  </p>
+                </li>
+              ))}
             </ul>
           ) : (
             <p>No reported comments.</p>
