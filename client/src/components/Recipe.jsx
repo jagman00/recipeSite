@@ -449,98 +449,85 @@ const Recipe = () => {
                     <strong>{comment.user.name}</strong>
                   </Link>
                   - {timeAgo(comment.createdAt)}
-                  
-                  {/* Report Comment with Conditional Dropdown */}
-                  <div>
-                    {!commentDropdownVisible[comment.id] ? (
-                      <img
-                        src="../src/assets/report-flag.png"
-                        alt="Report icon"
-                        title="Report this comment"
-                        className="reportIcon"
+                </p>
+                <div>
+                  {!commentDropdownVisible[comment.id] ? (
+                    <img
+                      src="../src/assets/report-flag.png"
+                      alt="Report icon"
+                      title="Report this comment"
+                      className="reportIcon"
+                      onClick={() =>
+                        setCommentDropdownVisible((prev) => ({
+                          ...prev,
+                          [comment.id]: true, // Show dropdown for this comment
+                        }))
+                      }
+                      style={{
+                        cursor: "pointer",
+                        width: "auto",
+                        height: "18px",
+                        marginTop: "3px",
+                      }}
+                    />
+                  ) : (
+                    <div className="reportDropdown">
+                      <select
+                        className="reportSelect"
+                        value={comment.selectedReason || ""}
+                        onChange={(e) =>
+                          setComments((prev) =>
+                            prev.map((c) =>
+                              c.id === comment.id
+                                ? { ...c, selectedReason: e.target.value }
+                                : c
+                            )
+                          )
+                        }
+                      >
+                        <option value="" disabled>
+                          Select a reason
+                        </option>
+                        <option value="Inappropriate content">
+                          Inappropriate content
+                        </option>
+                        <option value="Spam">Spam</option>
+                        <option value="Harassment">Harassment</option>
+                        <option value="Other">Other</option>
+                      </select>
+                      <button
+                        className="reportButton"
+                        onClick={() => {
+                          if (comment.selectedReason) {
+                            handleReportComment(
+                              comment.id,
+                              comment.selectedReason
+                            );
+                            setCommentDropdownVisible((prev) => ({
+                              ...prev,
+                              [comment.id]: false,
+                            }));
+                          } else {
+                            alert("Please select a reason before reporting.");
+                          }
+                        }}
+                      >
+                        Submit
+                      </button>
+                      <button
+                        className="reportButton"
                         onClick={() =>
                           setCommentDropdownVisible((prev) => ({
                             ...prev,
-                            [comment.id]: true, // Show dropdown for this comment
+                            [comment.id]: false,
                           }))
                         }
-                        style={{
-                          cursor: "pointer",
-                          width: "auto",
-                          height: "18px",
-                          marginTop: "3px",
-                        }}
-                      />
-                    ) : (
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <select
-                          value={comment.selectedReason || ""}
-                          onChange={(e) =>
-                            setComments((prev) =>
-                              prev.map((c) =>
-                                c.id === comment.id
-                                  ? { ...c, selectedReason: e.target.value }
-                                  : c
-                              )
-                            )
-                          }
-                          style={{ marginRight: "10px" }}
-                        >
-                          <option value="" disabled>
-                            Select a reason
-                          </option>
-                          <option value="Inappropriate content">
-                            Inappropriate content
-                          </option>
-                          <option value="Spam">Spam</option>
-                          <option value="Harassment">Harassment</option>
-                          <option value="Other">Other</option>
-                        </select>
-                        <button
-                          onClick={() => {
-                            if (comment.selectedReason) {
-                              handleReportComment(
-                                comment.id,
-                                comment.selectedReason
-                              );
-                              setCommentDropdownVisible((prev) => ({
-                                ...prev,
-                                [comment.id]: false, // Hide the dropdown for this comment
-                              }));
-                            } else {
-                              alert("Please select a reason before reporting.");
-                            }
-                          }}
-                          style={{
-                            cursor: "pointer",
-                            background: "none",
-                            border: "1px solid #ccc",
-                            padding: "5px",
-                          }}
-                        >
-                          Submit
-                        </button>
-                        <button
-                          onClick={() =>
-                            setCommentDropdownVisible((prev) => ({
-                              ...prev,
-                              [comment.id]: false, // Cancel and hide dropdown
-                            }))
-                          }
-                          style={{
-                            cursor: "pointer",
-                            background: "none",
-                            border: "1px solid #ccc",
-                            padding: "5px",
-                            marginLeft: "5px",
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </p>
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </div>
                 <p className="commentText">{comment.text}</p>
               </li>
             ))}
