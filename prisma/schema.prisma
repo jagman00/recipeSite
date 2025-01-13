@@ -33,6 +33,8 @@ model User {
   followers UserFollower[] @relation("Followers") // Users who follow this user
   following UserFollower[] @relation("Following") // Users this user is following
 
+  activities    Activity[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -68,6 +70,7 @@ model Recipe {
   comments    Comment[]
   likes       Like[]
   recipeReports RecipeReport[] // Reports for this recipe
+  activities   Activity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -111,6 +114,7 @@ model Comment {
   user     User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   commentReports CommentReport[] // Reports for this comment
+  activities   Activity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -125,6 +129,7 @@ model Like {
   recipe   Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+  activities   Activity[]
 
   @@unique([userId, recipeId])// Enforce unique likes for each user-recipe pair
 }
@@ -155,4 +160,18 @@ model CommentReport {
   createdAt   DateTime @default(now())
 
   @@unique([reporterId, commentId]) // Ensure a user can report a comment only once
+}
+
+model Activity {
+  id        Int      @id @default(autoincrement())
+  type      String   // 'new_recipe', 'comment', 'like'
+  userId    Int
+  user      User     @relation(fields: [userId], references: [userId])
+  recipeId  Int?
+  recipe    Recipe?  @relation(fields: [recipeId], references: [recipeId])
+  commentId Int?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: SetNull)
+  likeId    Int?
+  like      Like?    @relation(fields: [likeId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
 }
