@@ -69,18 +69,20 @@ function App() {
           }}
           isAdmin={isAdmin}
         />
-        <Routes>
-          <Route path="/user" element={<User setToken={setToken} />} />
-          {isAdmin && <Route path="/admin" element={<AdminDashboard />} />}
-          <Route path="/login" element={<Login setToken={setToken} />} />
-          <Route path="/register" element={<Register setToken={setToken} />} />
-          <Route path="/recipe/:id" element={<Recipe />} />
-          <Route path="/" element={<Recipes />} />
-          <Route path="/new-recipe" element={<NewRecipe />} />
-          <Route path="/bookmarks" element={<Bookmarks />} />
-          <Route path="/author/:authorId" element={<AuthorProfile />} />
-          <Route path="*" element={<div>Page Not Found</div>} />
-        </Routes>
+        <main>
+          <Routes>
+            <Route path="/user" element={<User setToken={setToken} />} />
+            {isAdmin && <Route path="/admin" element={<AdminDashboard />} />}
+            <Route path="/login" element={<Login setToken={setToken} />} />
+            <Route path="/register" element={<Register setToken={setToken} />} />
+            <Route path="/recipe/:id" element={<Recipe />} />
+            <Route path="/" element={<Recipes />} />
+            <Route path="/new-recipe" element={<NewRecipe />} />
+            <Route path="/bookmarks" element={<Bookmarks />} />
+            <Route path="/author/:authorId" element={<AuthorProfile />} />
+            <Route path="*" element={<div>Page Not Found</div>} />
+          </Routes>
+        </main>
       </Router>
     </div>
   );
