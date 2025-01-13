@@ -20,8 +20,8 @@ body {
     background-repeat: no-repeat;
     background-position: top;
     background-attachment: fixed;
-    overflow: auto;
     display: flex;
+    flex-direction: column;
     min-height: 100vh;
 }
 input::placeholder {
@@ -34,12 +34,11 @@ input::placeholder {
 /* Navbar */
 .navbar {
     background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 0;
     box-shadow: 0 0 12px var(--black);
     width: 100%;
-    padding: 5px 0;
+    padding: 1px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -69,6 +68,7 @@ input::placeholder {
 #logoText {
     font-size: 30px;
     font-family: "Uncial Antiqua", serif;
+    text-wrap: nowrap;
 }
 #searchbar {
     background-image: url('./assets/largeParchmentBackground.jpg');
@@ -139,9 +139,6 @@ input::placeholder {
     color: var(--white);
     background: none;
     align-self: flex-start;
-    margin-left: 10px;
-    padding-top: 5px;
-    padding-bottom: 2px;
 }
 .logoutButton:hover {
     cursor: pointer;
@@ -190,9 +187,12 @@ input::placeholder {
     position: absolute;
     top: 75px;
     gap: 10px;
-    padding: 10px 0 10px;
+    padding: 10px 0 10px 10px;
     border-radius: 2px;
     box-shadow: 0 0 10px var(--black);
+}
+.dropdown a {
+    padding: 0;
 }
 .dropdownToggle {
     background: none;
@@ -214,19 +214,21 @@ input::placeholder {
     background-image: url('./assets/largeParchmentBackground.jpg');
     background-size: cover;
     color: var(--black);
-    margin: 160px auto 100px;
     text-align: center;
-    align-self: flex-start;
     width: auto;
+    max-width: 1200px;
     height: auto;
     font-family: "EB Garamond", serif;
     z-index: 1;
     border-radius: 2px;
     box-shadow: 0 0 10px var(--black);
+    margin: 50px auto;
+    padding: 20px;
 }
 .category-filter {
     font-size: 20px;
     font-weight: 500;
+    margin-bottom: 20px;
 }
 .category-filter select {
     font-size: 20px;
@@ -245,13 +247,12 @@ input::placeholder {
 .recipes h2 {
     font-family: "Uncial Antiqua", serif;
     font-size: 30px;
-    margin-top: 40px;
+    margin-bottom: 10px;
 }
 .recipe-list {
-    margin: 50px;
     display: grid;
     grid-template-columns: repeat(3, minmax(300px, 1fr));
-    gap: 50px;
+    gap: auto;
 }
 .recipe-item {
     width: 300px;
@@ -260,6 +261,7 @@ input::placeholder {
     display: flex;
     align-items: flex-start;
     justify-content: center;
+    margin-bottom: 20px;
 }
 .recipe-item a {
     padding: 0 20px 0 20px;
@@ -311,6 +313,7 @@ input::placeholder {
 }
 .pagination {
     grid-column: 1 / -1;
+    margin-top: 20px;
 }
 .pagination span {
     font-weight: 500;
@@ -343,8 +346,6 @@ input::placeholder {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    margin: 160px auto 80px;
-    padding: 20px 10px 50px 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -354,7 +355,10 @@ input::placeholder {
     backdrop-filter: blur(0);
     box-shadow: 0 0 10px var(--black);
     border-radius: 2px;
-    align-self: flex-start;
+    margin: 50px auto 50px;
+    padding: 20px;
+    max-width: 800px;
+    width: auto;
 }
 #recipeComponent a {
     font-size: 20px;
@@ -388,6 +392,24 @@ input::placeholder {
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+}
+#followButton {
+    padding: 5px 7px 5px 7px;
+    font-size: 20px;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 5px;
+    width: auto;
+    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
+    color: var(--white);
+    font-family: "EB Garamond", serif;
+    font-weight: 500;
+}
+#followButton:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
 }
 #recipeHeaderImg {
     height: auto;
@@ -541,7 +563,9 @@ input::placeholder {
     box-shadow: 0 0 10px var(--black);
     border-radius: 2px;
     align-self: flex-start;
-    margin: 160px auto 100px;
+    width: auto;
+    max-width: 800px;
+    margin: 50px auto 50px;
 }
 .new-recipe-form form {
     display: flex;
@@ -565,6 +589,9 @@ input::placeholder {
     width: 100%;
     resize: none;
 }
+.new-recipe-form select {
+    width: auto;
+}
 .new-recipe-form input::placeholder,
 .new-recipe-form textarea::placeholder {
     color: #4d4d4d;
@@ -578,7 +605,7 @@ input::placeholder {
     align-items: flex-start;
 }
 #description {
-   width: 340px;
+   width: 100%;
    border: 1px solid var(--black);
    padding: 2px;
 }
@@ -623,6 +650,7 @@ input::placeholder {
 }
 .addIngredientContainer input {
     width: auto;
+    margin-top: 5px;
 }
 #addIngredientBtn {
     font-size: 20px;
@@ -672,7 +700,7 @@ input::placeholder {
 #submitRecipeBtn {
     padding: 6px 7px 6px 7px;
     width: auto;
-    margin: 50px auto 0;
+    margin: 40px auto 0;
 }
 #stepsHeader {
     margin-bottom: -10px;
@@ -689,18 +717,18 @@ input::placeholder {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    margin: 0 auto;
     padding: 20px 10px 20px 10px;
     display: flex;
-    align-self: center;
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    width: 600px;
-    height: 600px;
+    max-width: 600px;
+    min-height: 400px;
+    height: auto;
     backdrop-filter: blur(0);
     box-shadow: 0 0 10px var(--black);
     border-radius: 2px;
+    margin: 50px auto;
 }
 .loginComponent h2 {
     font-size: 36px;
@@ -760,15 +788,16 @@ input::placeholder {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    margin: 0 auto;
+    margin: 50px auto;
     padding: 20px 10px 20px 10px;
     display: flex;
-    align-self: center;
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    width: 600px;
-    height: 600px;
+    max-width: 600px;
+    width: auto;
+    min-height: 600px;
+    height: auto;
     backdrop-filter: blur(0);
     box-shadow: 0 0 10px var(--black);
     border-radius: 2px;
@@ -825,17 +854,17 @@ input::placeholder {
     margin-right: 10px;
 }
 /*User component styling*/
-#userComponent {
-    margin: 160px auto;
-}
 #userContainer {
     background-image: url('./assets/largeParchmentBackground.jpg');
+    max-width: 600px;
     width: auto;
     height: auto;
+    margin: 50px auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     box-shadow: 0 0 10px var(--black);
+    padding: 20px;
 }
 #userProfilePicContainer {
     width: 200px;
@@ -852,6 +881,11 @@ input::placeholder {
 }
 #userContainer h3 {
     font-size: 30px;
+    width: 300px;
+}
+#yourRecipesHeader {
+    width: auto;
+    text-align: center;
 }
 #userContainer p {
     font-size: 20px;
@@ -862,7 +896,7 @@ input::placeholder {
     flex-direction: row;
     align-items: flex-start;
     gap: 50px;
-    margin: 50px 50px 20px;
+    margin-bottom: 20px;
 }
 #userDetailsContainer {
     max-width: 300px;
@@ -932,7 +966,7 @@ input::placeholder {
     background: none;
     border: 1px solid var(--black);
     box-shadow: 0 0 5px var(--black);
-    border-radius: 10px;
+    border-radius: 5px;
     width: 130px;
     background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
     color: var(--white);
@@ -942,6 +976,9 @@ input::placeholder {
 #editProfileBtn:hover {
     cursor: pointer;
     box-shadow: 0 0 2px var(--black);
+}
+#editUserForm input {
+    width: 100%;
 }
 .cardsContainer {
     margin: 20px 0 50px 0;
@@ -976,7 +1013,7 @@ input::placeholder {
     background: none;
     border: 1px solid var(--black);
     box-shadow: 0 0 5px var(--black);
-    border-radius: 10px;
+    border-radius: 5px;
     width: 100px;
     background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
     color: var(--white);
@@ -990,7 +1027,7 @@ input::placeholder {
 /*Admin dashboard component styling*/
 .adminDashboardComponent {
     align-self: flex-start;
-    margin-top: 160px;
+    margin-top: 50px;
 }
 .adminDashboard {
     text-align: center;
@@ -999,7 +1036,7 @@ input::placeholder {
     grid-template-columns: repeat(3, minmax(450px, 1fr));
     gap: 50px;
     font-weight: 500;
-    margin: 0 50px 0 50px;
+    margin: 0 50px 50px 50px;
     word-wrap: break-word;
 }
 #adminHeader {
@@ -1165,37 +1202,97 @@ input::placeholder {
 }
 
 /*Media queries*/
-@media (max-width: 1440px) {
-    
+@media (max-width: 1550px) {
+    .adminDashboard {
+        grid-template-columns: repeat(2, minmax(450px, 1fr));
+    }
 }
-@media (max-width: 1210px) {
+@media (max-width: 1300px) {
     .recipe-list {
         grid-template-columns: repeat(2, minmax(300px, 1fr));
     }
-    #logoText {
-        font-size: 24px;
+    .recipes {
+        max-width: 800px;
+    }  
+}
+@media (max-width: 1050px) {
+    .adminDashboard {
+        grid-template-columns: repeat(1, minmax(450px, 1fr));
     }
 }
 @media (max-width: 960px) {
-    #logoText {
-        display: none;
-    }
     .recipe-list {
         grid-template-columns: repeat(1, minmax(300px, 1fr));
     }
-    #recipeComponent {
-        margin: 200px 50px 100px;
+    .recipes {
+        max-width: 460px;
     }
     #userIconContainer span {
         display: none;
     }
-}
-@media (max-width: 768px) {
-    #searchBtn {
+    #logoText {
         display: none;
     }
-    #searchbarContainer {
-        gap: 0;
+}
+@media (max-width: 840px) {
+    #recipeComponent {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    #recipeHeaderContainer {
+        margin: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+    #recipeHeaderContainer h2 {
+        text-align: center;
+    }
+    #authorInfo {
+        justify-content: center;
+    }
+    #recipeIconContainer {
+        justify-content: center;
+    }
+    .new-recipe-form {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}
+  @media (max-width: 640px) {
+    #userContainer {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    #userPicAndDetailsContainer {
+        flex-direction: column;
+        align-items: center;
+    }
+    #userDetailsContainer h3 {
+        text-align: center;
+    }
+    #mainDetailView {
+        display: flex;
+        flex-direction: column;
+    }
+    #editProfileBtn {
+        align-self: center;
+    }
+    .loginComponent {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    .registerComponent {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+  }
+  @media (max-width: 550px) {
+    .adminDashboard {
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-bottom: 20px;
     }
   }
   /* Print-specific styles */

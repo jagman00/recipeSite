@@ -121,7 +121,7 @@ const GetUser = ({setToken}) => {
               <div id="userDetailsContainer">
                 <h3 className="header">User Details</h3>
                 {editMode ? (
-                  <form>
+                  <form id="editUserForm">
                     <label>
                       <strong>Name:</strong>
                       <input
@@ -140,12 +140,14 @@ const GetUser = ({setToken}) => {
                     </label>
                     <label>
                       <strong>Profile Picture URL:</strong>
+                      <br />
                       <input
                         type="text"
                         name="profileUrl"
                         value={editProfile.profileUrl}
                         onChange={handleProfileChange}/>
                     </label>
+                    <br />
                     <label>
                       <strong>Title:</strong>
                       <input
@@ -154,6 +156,7 @@ const GetUser = ({setToken}) => {
                         value={editProfile.userTitle}
                         onChange={handleProfileChange}/>
                     </label>
+                    <br />
                     <label>
                       <strong>Bio:</strong>
                       <textarea
@@ -173,14 +176,19 @@ const GetUser = ({setToken}) => {
                     </div>
                   </form>
                 ) : (
-                  <>
+                  <div id="mainDetailView">
                     <p><strong>Name:</strong> {userInfo.name}</p>
                     <p><strong>Email:</strong> {userInfo.email}</p>
                     <p><strong>Title:</strong> {userInfo.userTitle || "Not provided"}</p>
                     <p><strong>Bio:</strong> {userInfo.bio || "Not provided"}</p>
                     {isAdmin && <p><strong>Admin:</strong> Yes</p>}
-                    <button id="editProfileBtn" onClick={handleEditToggle}>Edit Profile</button>
-                  </>
+                    <button 
+                      id="editProfileBtn" 
+                      onClick={handleEditToggle}
+                    >
+                      Edit Profile
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
@@ -189,7 +197,7 @@ const GetUser = ({setToken}) => {
               Logout
             </button>
             )}
-            <h3 className="header">Your Recipes</h3>
+            <h3 className="header" id="yourRecipesHeader">Your Recipes</h3>
                 {userInfo.recipes && userInfo.recipes.length > 0 ? (
                     <div className="recipe-list">
                     {userInfo.recipes.map((recipe) => (

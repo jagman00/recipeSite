@@ -550,7 +550,7 @@ const Recipe = () => {
         )}
         <div id="commentSection">
           <h3>Add a Comment</h3>
-          <form onSubmit={handleCommentSubmit}>
+          <form id="commentForm" onSubmit={handleCommentSubmit}>
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
@@ -562,16 +562,12 @@ const Recipe = () => {
           </form>
         </div>
       </div>
-      {/* Back to Recipe List Button */}
-      <button
-        className="recipeBtn"
-        onClick={() =>
-          navigate(`/?page=${currentPage}`, {
-            state: { selectedCategoryId: currentCategory, page: currentPage },
-          })
-        }
+      {/* Back to Previous Page Button */}
+      <button 
+        className="recipeBtn" 
+        onClick={() => window.history.back()}
       >
-        Back to Recipes
+        Back
       </button>
     </div>
   );

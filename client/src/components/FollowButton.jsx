@@ -32,7 +32,7 @@ const FollowButton = ({ authorId }) => {
   if (isFollowing===null) return <p>Loading...</p>;
 
   return (
-    <button onClick={handleFollowToggle} className="followButton">
+    <button id="followButton" onClick={handleFollowToggle} className="followButton">
       {isFollowing ? "Unfollow" : "Follow"}
     </button>
   );
