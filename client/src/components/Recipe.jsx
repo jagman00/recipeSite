@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { fetchRecipe } from "../API/index.js";
 import FollowButton from "./FollowButton";
+import { jwtDecode } from "jwt-decode";
 
 const Recipe = () => {
   const { id } = useParams();
@@ -15,6 +16,7 @@ const Recipe = () => {
   const [showReportDropdown, setShowReportDropdown] = useState(false);
   const [commentDropdownVisible, setCommentDropdownVisible] = useState({});
   const [selectedReason, setSelectedReason] = useState("");
+  const [loggedInUserId, setLoggedInUserId] = useState(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -103,6 +105,10 @@ const Recipe = () => {
           fetchLikeStatus(id),
           fetchBookmarkStatus(id),
         ]);
+
+        // decode the token to get logged in user id
+        const decoded = jwtDecode(token);
+        setLoggedInUserId(decoded.userId);
 
         setLiked(likeStatus);
         setBookmarked(bookmarkStatus);
@@ -308,7 +314,12 @@ const Recipe = () => {
                   </div>
                 </div>
               </Link>
-              <FollowButton authorId={recipe.user.userId} />
+
+              {/* Don't show the button if logged in user is author */}
+              {loggedInUserId !== recipe.user.userId && (
+                <FollowButton authorId={recipe.user.userId} />
+              )}
+
             </div>
             <p>{recipe.description}</p>
             <p>Serving Size: {recipe.servingSize}</p>
