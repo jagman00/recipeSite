@@ -10,6 +10,7 @@ import Bookmarks from "./components/Bookmarks";
 import AdminDashboard from "./components/AdminDashboard";
 import NewRecipe from "./components/NewRecipe";
 import AuthorProfile from "./components/AuthorProfile";
+import Notifications from "./components/Notifications";
 import "./App.css";
 import React from "react";
 import { useEffect } from "react";
@@ -81,6 +82,7 @@ function App() {
             <Route path="/bookmarks" element={<Bookmarks />} />
             <Route path="/author/:authorId" element={<AuthorProfile />} />
             <Route path="*" element={<div>Page Not Found</div>} />
+            <Route path="/notifications" element={<Notifications />} />
           </Routes>
         </main>
       </Router>

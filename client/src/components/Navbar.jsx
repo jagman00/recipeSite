@@ -106,6 +106,14 @@ function Navbar({ token, setToken, isAdmin }) {
                 >
                   Profile
                 </Link>
+                <Link 
+                  id="bookmarksBtn"
+                  className="header" 
+                  to ="/notifications" 
+                  onClick={() => setDropdownVisible(false)}
+                >
+                  Notifications
+                </Link>
                 <button
                   className="logoutButton" 
                   onClick={handleLogout}

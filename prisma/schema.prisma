@@ -18,25 +18,27 @@ model User {
   name       String
   email      String  @unique
   password   String
-  profileUrl String @default("https://img.freepik.com/premium-vector/knight-minimalist-line-art-icon-logo-symbol_925376-269058.jpg?w=1060")
+  profileUrl String  @default("https://img.freepik.com/premium-vector/knight-minimalist-line-art-icon-logo-symbol_925376-269058.jpg?w=1060")
   isAdmin    Boolean @default(false)
   userTitle  String?
   bio        String?
 
-  recipes   Recipe[]
-  bookmarks Bookmark[]
-  comments  Comment[]
-  likes     Like[]
-  recipeReports RecipeReport[] // Recipes reported by this user
+  recipes        Recipe[]
+  bookmarks      Bookmark[]
+  comments       Comment[]
+  likes          Like[]
+  recipeReports  RecipeReport[] // Recipes reported by this user
   commentReports CommentReport[] // Comments reported by this user
 
   followers UserFollower[] @relation("Followers") // Users who follow this user
   following UserFollower[] @relation("Following") // Users this user is following
 
-  activities    Activity[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  notifications          Notification[]             // Notifications for this user
+  notificationsFromUser Notification[] @relation("NotificationFromUser")// Notifications triggered by this user
+
 }
 
 model UserFollower {
@@ -58,26 +60,26 @@ model Recipe {
   title       String
   description String?
   servingSize Int?
-  recipeUrl   String @default("https://i.ytimg.com/vi/CPbKkb1hn7I/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBCWAzNKtwroNf1JzxKUvJEM5H4Wg")
-  steps       Json @default("[]")
+  recipeUrl   String  @default("https://i.ytimg.com/vi/CPbKkb1hn7I/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBCWAzNKtwroNf1JzxKUvJEM5H4Wg")
+  steps       Json    @default("[]")
 
   userId Int
   user   User @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
-  ingredients Ingredient[]
-  categories  Category[]
-  bookmarks   Bookmark[]
-  comments    Comment[]
-  likes       Like[]
+  ingredients   Ingredient[]
+  categories    Category[]
+  bookmarks     Bookmark[]
+  comments      Comment[]
+  likes         Like[]
   recipeReports RecipeReport[] // Reports for this recipe
-  activities   Activity[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  notifications Notification[]
 }
 
 model Ingredient {
-  ingredientId   Int    @id @default(autoincrement())
+  ingredientId   Int     @id @default(autoincrement())
   ingredientName String
   quantityAmount String? // e.g., "1", "1/4"
   quantityUnit   String? // e.g., "cup", "tbsp"
@@ -114,7 +116,6 @@ model Comment {
   user     User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   commentReports CommentReport[] // Reports for this comment
-  activities   Activity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -129,49 +130,51 @@ model Like {
   recipe   Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
 
   createdAt DateTime @default(now())
-  activities   Activity[]
 
-  @@unique([userId, recipeId])// Enforce unique likes for each user-recipe pair
+  @@unique([userId, recipeId]) // Enforce unique likes for each user-recipe pair
 }
-
 
 model RecipeReport {
-  reportId    Int      @id @default(autoincrement())
-  reason      String?
-  
-  reporterId  Int
-  reporter    User     @relation(fields: [reporterId], references: [userId])
-  recipeId    Int
-  recipe      Recipe   @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+  reportId Int     @id @default(autoincrement())
+  reason   String?
 
-  createdAt   DateTime @default(now())
- 
+  reporterId Int
+  reporter   User   @relation(fields: [reporterId], references: [userId])
+  recipeId   Int
+  recipe     Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
   @@unique([reporterId, recipeId]) // Ensure a user can report a recipe only once
 }
-model CommentReport {
-  reportId    Int      @id @default(autoincrement())
-  reason      String?
-  
-  reporterId  Int
-  reporter    User     @relation(fields: [reporterId], references: [userId])
-  commentId   Int
-  comment     Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
+model CommentReport {
+  reportId Int     @id @default(autoincrement())
+  reason   String?
+
+  reporterId Int
+  reporter   User    @relation(fields: [reporterId], references: [userId])
+  commentId  Int
+  comment    Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 
   @@unique([reporterId, commentId]) // Ensure a user can report a comment only once
 }
 
-model Activity {
-  id        Int      @id @default(autoincrement())
-  type      String   // 'new_recipe', 'comment', 'like'
-  userId    Int
-  user      User     @relation(fields: [userId], references: [userId])
-  recipeId  Int?
-  recipe    Recipe?  @relation(fields: [recipeId], references: [recipeId])
-  commentId Int?
-  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: SetNull)
-  likeId    Int?
-  like      Like?    @relation(fields: [likeId], references: [id], onDelete: SetNull)
+model Notification {
+  id      Int     @id @default(autoincrement())
+  type    String // e.g., 'like', 'comment', 'new_recipe', 'bookmark', 'follow'
+  message String
+
+  userId Int // User to whom the notification is sent
+  user   User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  fromUserId Int? // User who triggered the notification
+  fromUser   User? @relation("NotificationFromUser", fields: [fromUserId], references: [userId], onDelete: SetNull)
+
+  recipeId Int? // Recipe related to the notification
+  recipe   Recipe? @relation(fields: [recipeId], references: [recipeId], onDelete: SetNull)
+
   createdAt DateTime @default(now())
 }
