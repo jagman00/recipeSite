@@ -401,7 +401,17 @@ router.post("/:id/like", authenticateUser, async (req, res, next) => {
                 },
             });
             likeStatus = true;
+
+            await prisma.activity.create({
+                data: {
+                  type: "like",
+                  userId: parseInt(userId),
+                  recipeId: parseInt(id),
+                },
+            });
         }
+        
+    
 
         const likeCount = await prisma.like.count({
             where: { recipeId: parseInt(id) },
