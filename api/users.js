@@ -317,6 +317,28 @@ router.post("/:id/follow", authenticateUser, async (req, res, next) => {
           },
         });
         followStatus = true;
+
+        // Notify the followed user about the new follower
+        const followedUser = await prisma.user.findUnique({
+          where: { userId: parseInt(id) },
+          // select: { name: true },
+        });
+
+        const fromUser = await prisma.user.findUnique({
+            where: { userId: currentUserId },
+            select: { name: true },
+        });
+
+        if (followedUser) {
+            await prisma.notification.create({
+                data: {
+                    type: 'follow',
+                    message: `${fromUser.name} followed you.`,
+                    userId: parseInt(id),
+                    fromUserId: currentUserId, //Follower ID
+                },
+            });
+        }
       }
   
       res.status(200).json({ followStatus ,message: "Follow status updated" });

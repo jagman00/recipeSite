@@ -7,4 +7,5 @@ router.use("/recipes", require("./recipes"));
 router.use("/comments", require("./comments"));
 router.use("/categories", require("./categories"));
 router.use("/reports", require("./reports"));
-router.use("/activity-feed", require("./activity"));
+// router.use("/activity-feed", require("./activity"));
+router.use("/notifications", require("./notifications")); /*NOTIFICATION */

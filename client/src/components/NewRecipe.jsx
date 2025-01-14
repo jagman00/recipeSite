@@ -199,8 +199,8 @@ const NewRecipe = () => {
           <div>
             <h3>Ingredients</h3>
             {ingredients.map((ingredient, index) => (
-            <div className="addIngredientContainer">
-              <div key={index} className="ingredient-row">
+            <div key={index} className="addIngredientContainer">
+              <div  className="ingredient-row">
                 <input
                   type="text"
                   placeholder="Ingredient name"

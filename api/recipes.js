@@ -11,6 +11,7 @@ const { parse } = require("dotenv");
 // POST /api/recipes
 router.post("/", authenticateUser, async (req, res, next) => {
     const { title, description, servingSize, recipeUrl, steps } = req.body;
+    const userId = parseInt(req.user.userId);
 
     try {
         const recipe = await prisma.recipe.create({
@@ -20,7 +21,7 @@ router.post("/", authenticateUser, async (req, res, next) => {
                 servingSize,
                 recipeUrl,
                 steps,
-                userId: req.user.userId,
+                userId,
                 ingredients: {  /* Create related ingredients */ /* Expect an array of ingredient objects*/
                     create: req.body.ingredients.map((ingredient) => ({ 
                         ingredientName: ingredient.ingredientName,
@@ -31,6 +32,28 @@ router.post("/", authenticateUser, async (req, res, next) => {
             },
             include:{ingredients:true},
         });
+
+        // Notify followers when a user creates a new recipe /*NOTIFICATION */
+        const followers = await prisma.userFollower.findMany({
+            where: { followToUserId: userId },
+            select: { followFromUserId: true }, // ID of followers
+        });
+
+        const user = await prisma.user.findUnique({
+            where: { userId },
+            select: { name:true },
+        })
+
+        const notifications = followers.map((follower) => ({
+            type: 'new_recipe',
+            message: `${user.name} posted a new recipe: ${recipe.title}.`,
+            userId: follower.followFromUserId, // Notify the follower
+            fromUserId: userId,                // Recipe creator
+            recipeId: recipe.recipeId,         // New recipe
+        }));
+
+        await prisma.notification.createMany({ data: notifications });
+
         res.status(201).json(recipe);
     } catch (error) {
         next(error);
@@ -266,6 +289,7 @@ router.get("/:id/comments", async (req, res, next) => {
 router.post("/:id/comments", authenticateUser, async (req, res, next) => {
     const { id } = req.params; 
     const { text } = req.body; 
+    const userId = req.user.userId;
 
     // Validate comment text
     if (!text || typeof text !== 'string' || text.trim() === "") {
@@ -291,6 +315,29 @@ router.post("/:id/comments", authenticateUser, async (req, res, next) => {
                 }
             }
         });
+
+        // Notify the recipe creator about the new comment /*NOTIFICATION */
+        const recipe = await prisma.recipe.findUnique({
+            where: { recipeId: parseInt(id) },
+            select: { userId: true, title: true },
+        });
+
+        const fromUser = await prisma.user.findUnique({
+            where: { userId: parseInt(userId) },
+            select: { name: true },
+        });
+
+        if (recipe) {
+            await prisma.notification.create({
+                data: {
+                    type: 'comment',
+                    message: `${fromUser.name} commented on your recipe - "${recipe.title}".`,
+                    userId: recipe.userId, // Recipe owner ID
+                    fromUserId: parseInt(userId), //Commenter ID
+                    recipeId: parseInt(id),
+                },
+            });
+        }
 
         res.status(201).json(newComment);
     } catch (error) {
@@ -402,17 +449,30 @@ router.post("/:id/like", authenticateUser, async (req, res, next) => {
             });
             likeStatus = true;
 
-            await prisma.activity.create({
-                data: {
-                  type: "like",
-                  userId: parseInt(userId),
-                  recipeId: parseInt(id),
-                },
+            // Notify the recipe creator about the new like /*NOTIFICATION */
+            const recipe = await prisma.recipe.findUnique({
+                where: { recipeId: parseInt(id) },
+                select: { userId: true, title: true },
             });
+            
+            const fromUser = await prisma.user.findUnique({
+                where: { userId: parseInt(userId) },
+                select: { name: true },
+            });
+
+            if (recipe) {
+                await prisma.notification.create({
+                    data: {
+                        type: 'like',
+                        message: `${fromUser.name} liked your recipe - "${recipe.title}".`,
+                        userId: recipe.userId, // Recipe owner ID
+                        fromUserId: parseInt(userId), //Liker ID
+                        recipeId: parseInt(id),
+                    },
+                });
+            }           
         }
         
-    
-
         const likeCount = await prisma.like.count({
             where: { recipeId: parseInt(id) },
         });
@@ -447,41 +507,6 @@ router.get("/:id/like-status", authenticateUser, async (req, res, next) => {
       }
     });
 
-// // Unlike a recipe 
-// // DELETE /api/recipes/:id/like
-// router.delete("/:id/like", authenticateUser, async (req, res, next) => {
-//     const { id } = req.params;
-//     try {
-//         await prisma.like.deleteMany({
-//             where: {
-//                 userId: req.user.userId,
-//                 recipeId: parseInt(id),
-//             },
-//         });
-//         res.status(200).json({ message: "Recipe unliked successfully" });
-//     } catch (error) {
-//         next(error);
-//     }
-// }); // combined with like/unlike
-
-// // Get all bookmarks of a specific user
-// // GET /api/users/:userId/bookmarks
-// router.get("/users/:userId/bookmarks", authenticateUser, async (req, res, next) => {
-//     const { userId } = req.params;
-//     if (req.user.userId !== parseInt(userId)) {
-//         return res.status(403).json({ message: "Unauthorized access" });
-//     }
-//     try {
-//         const bookmarks = await prisma.bookmark.findMany({
-//             where: { userId: parseInt(userId) },
-//             include: { recipe: true },
-//         });
-//         res.status(200).json(bookmarks);
-//     } catch (error) {
-//         next(error);
-//     }
-// }); // already included in user.js
-
 // Bookmark/UnBookmark a recipe by authenticated user (toggle)
 // POST /api/recipes/:id/bookmarks
 router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
@@ -515,6 +540,29 @@ router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
                 },
             });
             bookmarkStatus = true;
+
+            // Notify the recipe creator about the new bookmark
+            const recipe = await prisma.recipe.findUnique({
+                where: { recipeId: parseInt(id) },
+                select: { userId: true, title: true },
+            });
+
+            const fromUser = await prisma.user.findUnique({
+                where: { userId: parseInt(userId) },
+                select: { name: true },
+            });
+
+            if (recipe) {
+                await prisma.notification.create({
+                    data: {
+                        type: 'bookmark',
+                        message: `${fromUser.name} bookmarked your recipe - "${recipe.title}".`,
+                        userId: recipe.userId, // Recipe owner ID
+                        fromUserId: parseInt(userId), //Bookmarker ID
+                        recipeId: parseInt(id),
+                    },
+                });
+            }
         }
 
         const bookmarkCount = await prisma.bookmark.count({
@@ -550,43 +598,6 @@ router.get("/:id/bookmark-status", authenticateUser, async (req, res, next) => {
       }
     }
 );
-
-// // Remove a bookmark
-// // DELETE /api/recipes/:id/bookmarks
-// router.delete("/:id/bookmarks", authenticateUser, async (req, res, next) => {
-//     const { id } = req.params;
-//     try {
-//         await prisma.bookmark.deleteMany({
-//             where: {
-//                 userId: req.user.userId,
-//                 recipeId: parseInt(id),
-//             },
-//         });
-//         res.status(200).json({ message: "Bookmark removed successfully" });
-//     } catch (error) {
-//         next(error);
-//     }
-// }); // combined with save/unsave
-
-// // Delete a bookmark of a specific user
-// // DELETE /api/users/:userId/bookmarks/:recipeId
-// router.delete("/users/:userId/bookmarks/:recipeId", authenticateUser, async (req, res, next) => {
-//     const { userId, recipeId } = req.params;
-//     if (req.user.userId !== parseInt(userId)) {
-//         return res.status(403).json({ message: "Unauthorized access" });
-//     }
-//     try {
-//         await prisma.bookmark.deleteMany({
-//             where: {
-//                 userId: parseInt(userId),
-//                 recipeId: parseInt(recipeId),
-//             },
-//         });
-//         res.status(200).json({ message: "User's bookmark deleted successfully" });
-//     } catch (error) {
-//         next(error);
-//     }
-// }); // not necessary anymore if the user untoggle the bookmark
 
 // Recipe Steps by ID
 // GET /api/recipes/:id/steps
