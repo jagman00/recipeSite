@@ -1251,8 +1251,39 @@ input::placeholder {
   cursor: pointer;
     box-shadow: 0 0 2px var(--black);
 }
-
-
+/*Author profile styling*/
+.recipeList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+    gap: 50px;
+    margin-top: 20px;
+}
+.recipeCard {
+    width: 200px;
+    height: auto;
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.recipeCard a {
+    text-decoration: none;
+    color: var(--black);
+}
+.recipeCard a:visited,
+.recipeCard a:focus {
+    color: var(--black);
+}
+#profileImgContainer {
+    height: auto;
+    width: 200px;
+    aspect-ratio: 2/1;
+}
+#profileImgContainer img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
 /*Media queries*/
 @media (max-width: 1550px) {
     .adminDashboard {
