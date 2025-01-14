@@ -436,10 +436,20 @@ const Recipe = () => {
           )}
         </div>
       </div>
-      <button className="recipeBtn" onClick={handlePrint}>
+      <button className="recipeBtn iconBtn" onClick={handlePrint}>
+        <img
+          id="printRecipeIcon"
+          src="../src/assets/PrintRecipe1.png"
+          alt="print recipe icon"
+        />
         Print Recipe
       </button>
-      <button className="recipeBtn" onClick={handleShareRecipe}>
+      <button className="recipeBtn iconBtn" onClick={handleShareRecipe}>
+        <img 
+          id="shareRecipeIcon"
+          src="../src/assets/ShareRecipe1.png"
+          alt="share recipe icon"
+        />
         Share Recipe
       </button>
       <div id="commentsContainer">

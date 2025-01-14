@@ -162,14 +162,12 @@ const AuthorProfile = () => {
                                 {followingCount >= 1000 ? (followingCount / 1000).toFixed(1) + "k" : followingCount}
                             </span>
                         <div/>
-                        
+                        <FollowButton
+                            authorId={authorInfo.userId}
+                            onFollowChange={(userId, isFollowing) => handleFollowChange(loggedInUserId, isFollowing, loggedInUserName)} // Pass name dynamically
+                            authorName={authorInfo.name}
+                        />
                     </div>
-                    <FollowButton
-                        authorId={authorInfo.userId}
-                        onFollowChange={(userId, isFollowing) => handleFollowChange(loggedInUserId, isFollowing, loggedInUserName)} // Pass name dynamically
-                        authorName={authorInfo.name}
-                    />
-
                     <Modal isOpen={modalOpen} onClose={handleCloseModal} title={modalTitle}>
                         {modalContent}
                     </Modal>
@@ -178,25 +176,15 @@ const AuthorProfile = () => {
                 
                 <h3 className="header">Creator&apos;s Recipes</h3>
                 {authorInfo.recipes && authorInfo.recipes.length > 0 ? (
-                    <div className="recipe-list">
+                    <div className="recipeList">
                     {authorInfo.recipes.map((recipe) => (
-                        <div key={recipe.recipeId} className="recipe-card">
+                        <div key={recipe.recipeId} className="recipeCard">
                             <Link to={`/recipe/${recipe.recipeId}`}>
-                                <div id="imgContainer">
+                                <div id="profileImgContainer">
                                     <img src={recipe.recipeUrl} className="image" alt={recipe.title} />
                                 </div>
                                 <div id="recipeBar">
                                     <h4>{recipe.title}</h4>
-                                    <div id="likesAndBookmarks">
-                                        <p>
-                                            <img src="../src/assets/likesIcon.png" alt="likes" />{" "}
-                                            {recipe._count?.likes || 0}
-                                        </p>
-                                        <p>
-                                            <img src="../src/assets/bookmarksIcon.png" alt="bookmarks" />{" "}
-                                            {recipe._count?.bookmarks || 0}
-                                        </p>
-                                    </div>
                                 </div>
                             </Link>
                         </div>
