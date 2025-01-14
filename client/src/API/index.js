@@ -234,3 +234,44 @@ export const fetchFollowStatus = async (userId) => {
   }
 };
 
+// Fetch followers of a specific user
+export const fetchFollowers = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/followers`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch followers");
+    }
+    const data = await response.json();
+    return data;
+  }
+  catch (error) {
+    console.error("Error fetching followers:", error);
+    throw error;
+  }
+}
+
+// Fetch following users of a specific user
+export const fetchFollowings = async (userId) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/followings`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Failed to fetch following users");
+    }
+    const data = await response.json();
+    return data;
+  }
+  catch (error) {
+    console.error("Error fetching following users:", error);
+    throw error;
+  }
+}

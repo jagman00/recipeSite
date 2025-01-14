@@ -366,26 +366,22 @@ router.get("/:id/followers", async (req, res, next) => {
           },
         },
       },
+      orderBy: { createdAt: "desc" }, // Order by newest follower first
     });
 
-    if (!followers || followers.length === 0) {
-      return res.status(404).json({ message: "No followers found" });
-    }
-
     const followerList = followers.map((follower) => follower.followFromUser);
-
-    const followerCount = await prisma.userFollower.count({
-        where: { followToUserId: parseInt(id) },
-        });
+    const followerCount = followerList.length;
 
     res.status(200).json({followerCount,followerList});
+    // A consistent structure, even if the followers list is empty 
+    // ({ followerCount: 0, followerList: [] })
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch followers" });
   }
 });
 
-// Get the list of people being followed by a specific user
+// Get the list of people that the user is following
 // GET /api/users/:id/followings
 router.get("/:id/followings", async (req, res, next) => {
   const { id } = req.params; 
@@ -401,17 +397,11 @@ router.get("/:id/followings", async (req, res, next) => {
           },
         },
       },
+      orderBy: { createdAt: "desc" },
     });
 
-    if (!followings || followings.length === 0) {
-      return res.status(404).json({ message: "No followings found" });
-    }
-
     const followingList = followings.map((following) => following.followToUser);
-
-    const followingCount = await prisma.userFollower.count({
-        where: { followFromUserId: parseInt(id) },
-        });
+    const followingCount = followingList.length;
 
     res.status(200).json({followingCount,followingList});
   } catch (error) {

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { fetchUser, updateUser } from "../API/index.js"; // Importing the fetchUser function
+import { fetchUser, updateUser,fetchFollowers, fetchFollowings } from "../API/index.js"; // Importing the fetchUser function
 import { jwtDecode } from "jwt-decode";
 import { Link, useNavigate } from "react-router-dom";
+import FollowButton from "./FollowButton";
+import Modal from "./Modal.jsx";  
 
 const GetUser = ({setToken}) => {
   const [userInfo, setUserInfo] = useState({
@@ -15,6 +17,14 @@ const GetUser = ({setToken}) => {
   const [editProfile, setEditProfile] = useState({}); // Editable profile fields
   const navigate = useNavigate();
 
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [followers, setFollowers] = useState([]);
+  const [followings, setFollowings] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false); // State for modal
+  const [modalTitle, setModalTitle] = useState(""); // Title for the modal
+  const [modalContent, setModalContent] = useState(null); // Content of the modal
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -23,7 +33,7 @@ const GetUser = ({setToken}) => {
         setIsAdmin(decodedToken.isAdmin || false); // Set admin status
         setUserId(decodedToken.userId); // Extract and set userId
         setLoggedIn(true); // User is logged in
-        fetchLoggedInUser(token);
+        fetchLoggedInUser(token); 
       } catch (error) {
         console.error("Error decoding token:", error);
         setErrorMessage("Invalid authentication token. Please log in again.");
@@ -33,7 +43,7 @@ const GetUser = ({setToken}) => {
     } else {
       setLoggedIn(false);
     }
-  }, []);
+  }, [userId]);
 
   const fetchLoggedInUser = async (token) => {
     setErrorMessage("");
@@ -51,6 +61,15 @@ const GetUser = ({setToken}) => {
           userTitle: response.userTitle || "",
           bio: response.bio || "",
         });
+
+        const followersData = await fetchFollowers(response.userId);
+        setFollowerCount(followersData.followerCount);
+        setFollowers(followersData.followerList || []);
+
+        const followingsData = await fetchFollowings(response.userId);
+        setFollowingCount(followingsData.followingCount);
+        setFollowings(followingsData.followingList || []);
+
       } else {
         setErrorMessage(response?.message || "Unable to fetch user information.");
       }
@@ -105,7 +124,76 @@ const GetUser = ({setToken}) => {
       console.error("Error saving profile changes:", error);
     }
   };
+
+  /* Follow List */
+  const handleFollowChange = (userId, isFollowing, username) => {
+    if (isFollowing) {
+      //Add the user to the `followings` list if followed
+      const newFollowing = {
+        userId,
+        name: username, 
+        //profileUrl: "/path/to/profile/image", 
+      };
+      setFollowings((prevFollowings) => [...prevFollowings, newFollowing]);
+      setFollowingCount((prevCount) => prevCount + 1); // Increase count
+    } else {
+      // Remove the user from the `followings` list if unfollowed
+      setFollowings((prevFollowings) =>
+        prevFollowings.filter((user) => user.userId !== userId)
+      );
+      setFollowingCount((prevCount) => prevCount - 1); // Decrease count
+    }
+  };
+
+  const handleViewFollowers = () => {
+    setModalTitle("Followers");
+    setModalContent(
+      followers.length > 0 ? (
+        followers.map((follower) => (
+          <div key={follower.userId} className="follower">
+            <Link to={`/author/${follower.userId}`}>{follower.name}</Link>
+            <FollowButton
+              authorId={follower.userId}
+              //onFollowChange={(userId, isFollowing) => handleFollowChange(userId, isFollowing, follower.name)} // Pass name dynamically
+              onFollowChange={handleFollowChange}
+              authorName={follower.name}
+            />
+          </div>
+        ))
+      ) : (
+        <p>You have no followers yet.</p>
+      )
+    );
+    setModalOpen(true);
+  };
   
+  const handleViewFollowings = () => {
+    setModalTitle("Following");
+    setModalContent(
+      followings.length > 0 ? (
+        followings.map((following) => (
+          <div key={following.userId} className="following">
+            <Link to={`/author/${following.userId}`}>{following.name}</Link>
+            <FollowButton
+              authorId={following.userId}
+              onFollowChange={handleFollowChange}
+              authorName={following.name}
+            />
+          </div>
+        ))
+      ) : (
+        <p>You are not following anybody yet.</p>
+      )
+    );
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setModalTitle("");
+    setModalContent(null);
+  };
+
   return (
     <div id="userComponent">
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
@@ -182,21 +270,36 @@ const GetUser = ({setToken}) => {
                     <p><strong>Title:</strong> {userInfo.userTitle || "Not provided"}</p>
                     <p><strong>Bio:</strong> {userInfo.bio || "Not provided"}</p>
                     {isAdmin && <p><strong>Admin:</strong> Yes</p>}
-                    <button 
-                      id="editProfileBtn" 
-                      onClick={handleEditToggle}
-                    >
-                      Edit Profile
-                    </button>
+
+                    <span onClick={handleViewFollowers}>
+                      <strong>Followers:</strong>{" "}
+                      {followerCount >= 1000 ? (followerCount / 1000).toFixed(1) + "k" : followerCount}
+                    </span>{" "}
+                    <span onClick={handleViewFollowings}>
+                      <strong>Following:</strong>{" "}
+                      {followingCount >= 1000 ? (followingCount / 1000).toFixed(1) + "k" : followingCount}
+                    </span>
+
+                    <button id="editProfileBtn" onClick={handleEditToggle}>Edit Profile</button>
                   </div>
                 )}
               </div>
+
+              <Modal
+                isOpen={modalOpen} 
+                onClose={handleCloseModal}
+                title={modalTitle}
+              >
+                {modalContent}
+              </Modal>
+
             </div>
             {!editMode && (
               <button onClick={handleLogout} id="logoutButton">
               Logout
             </button>
             )}
+
             <h3 className="header" id="yourRecipesHeader">Your Recipes</h3>
                 {userInfo.recipes && userInfo.recipes.length > 0 ? (
                     <div className="recipe-list">
