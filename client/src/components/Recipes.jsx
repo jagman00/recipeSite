@@ -120,18 +120,19 @@ const RecipesList = () => {
                 />
               </div>
               <div id="recipeBar">
-                <h3>{recipe.title}</h3>
-                <div id="likesAndBookmarks">
-                  <p>
-                    <img src="../src/assets/likesIcon.png" alt="likes" />{" "}
-                    {recipe._count?.likes || 0}
-                  </p>
-                  <p>
-                    <img src="../src/assets/bookmarksIcon.png" alt="bookmarks" />{" "}
-                    {recipe._count?.bookmarks || 0}
-                  </p>
-                </div>
+              <h3>{recipe.title}</h3>
+              <small>
+                Created by: {recipe.user?.name || 'Unknown'}
+              </small>
+              <div id="likesAndBookmarks">
+                <p>
+                  <img src="../src/assets/likesIcon.png" alt="likes" /> {recipe._count?.likes || 0}
+                </p>
+                <p>
+                  <img src="../src/assets/bookmarksIcon.png" alt="bookmarks" /> {recipe._count?.bookmarks || 0}
+                </p>
               </div>
+            </div>
             </Link>
           </div>
         ))}
