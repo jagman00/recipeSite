@@ -153,11 +153,11 @@ const AuthorProfile = () => {
                             <p><strong>Title:</strong> {authorInfo.userTitle || "Not provided"}</p>
                             <p><strong>Bio:</strong> {authorInfo.bio || "Not provided"}</p>
 
-                            <span onClick={handleViewFollowers}>
+                            <span className="cursor" onClick={handleViewFollowers}>
                                 <strong>Followers:</strong>{" "}
                                 {followerCount >= 1000 ? (followerCount / 1000).toFixed(1) + "k" : followerCount}
                             </span>{" "}
-                            <span onClick={handleViewFollowings}>
+                            <span className="cursor" onClick={handleViewFollowings}>
                                 <strong>Following:</strong>{" "}
                                 {followingCount >= 1000 ? (followingCount / 1000).toFixed(1) + "k" : followingCount}
                             </span>

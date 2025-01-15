@@ -25,6 +25,9 @@
     text-decoration: none;
     margin-right: 5px;
   }
+  .cursor:hover {
+    cursor: pointer;
+  }
   .modalContainer a:visited,
   .modalContainer a:focus {
     color: var(--black);
