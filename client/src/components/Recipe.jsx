@@ -316,7 +316,7 @@ const Recipe = () => {
     printWindow.document.close();
     printWindow.print();
   };
-
+  
   const handleShareRecipe = async () => {
     const recipeUrl = `http://localhost:5173/recipe/${recipe.recipeId}`;
     const shareText = `Copied to clipboard: Check out this recipe from Recipe Round Table, ${recipe.title}! ${recipeUrl}`;
@@ -351,11 +351,9 @@ const Recipe = () => {
             <div id="authorInfo">
               <Link to={`/author/${recipe.user.userId}`}>
                 <div id="authorDetails">
-                  <div>
-                    <p>
-                      by <strong>{recipe.user.name}</strong>
-                    </p>
-                  </div>
+                  <p>
+                    by <strong>{recipe.user.name}</strong>
+                  </p>
                 </div>
               </Link>
 
@@ -364,20 +362,20 @@ const Recipe = () => {
                 <FollowButton authorId={recipe.user.userId} />
               )}
             </div>
-            <p>{recipe.description}</p>
-            <p>Serving Size: {recipe.servingSize}</p>
-            <div id="recipeIconContainer" className="no-print">
-              <button className="recipeIcon" onClick={handleToggleLike}>
-                <img
-                  src={
-                    liked
-                      ? "../src/assets/likesIconFilled.png"
-                      : "../src/assets/likesIcon.png"
-                  }
-                  alt={liked ? "Liked" : "Like"}
-                />
-                {recipe._count.likes}
-              </button>
+              <p>{recipe.description}</p>
+              <p>Serving Size: {recipe.servingSize}</p>
+              <div id="recipeIconContainer" className="no-print">
+                <button className="recipeIcon" onClick={handleToggleLike}>
+                  <img
+                    src={
+                      liked
+                        ? "../src/assets/likesIconFilled.png"
+                        : "../src/assets/likesIcon.png"
+                    }
+                    alt={liked ? "Liked" : "Like"}
+                  />
+                  {recipe._count.likes}
+                </button>
 
               <button className="recipeIcon" onClick={handleToggleBookmark}>
                 <img
@@ -415,6 +413,7 @@ const Recipe = () => {
                       background: "none",
                       border: "none",
                       padding: "0",
+                      boxShadow: "none"
                     }}
                   >
                     <img
@@ -441,7 +440,6 @@ const Recipe = () => {
                       <option value="Other">Other</option>
                     </select>
                     <button
-                      className="reportButton"
                       onClick={() => {
                         if (selectedReason) {
                           handleReportRecipe(selectedReason);
@@ -450,12 +448,24 @@ const Recipe = () => {
                           alert("Please select a reason before reporting.");
                         }
                       }}
+                      style={{
+                        cursor: "pointer",
+                        background: "none",
+                        border: "1px solid #ccc",
+                        padding: "5px",
+                      }}
                     >
                       Submit
                     </button>
                     <button
-                      className="reportButton"
-                      onClick={() => setShowReportDropdown(false)}
+                      onClick={() => setShowReportDropdown(false)} // Cancel and hide dropdown
+                      style={{
+                        cursor: "pointer",
+                        background: "none",
+                        border: "1px solid #ccc",
+                        padding: "5px",
+                        marginLeft: "5px",
+                      }}
                     >
                       Cancel
                     </button>
@@ -514,138 +524,154 @@ const Recipe = () => {
             <p>No steps available for this recipe.</p>
           )}
         </div>
-      </div>
-      <button className="recipeBtn iconBtn" onClick={handlePrint}>
-        <img
-          id="printRecipeIcon"
-          src="../src/assets/PrintRecipe1.png"
-          alt="print recipe icon"
-        />
-        Print Recipe
-      </button>
-      <button className="recipeBtn iconBtn" onClick={handleShareRecipe}>
-        <img 
-          id="shareRecipeIcon"
-          src="../src/assets/ShareRecipe1.png"
-          alt="share recipe icon"
-        />
-        Share Recipe
-      </button>
-      <div id="commentsContainer">
-        <h3 className="recipeSpace">Comments</h3>
-        {comments && comments.length > 0 ? (
-          <ul id="commentsList">
-            {comments.map((comment, index) => (
-              <li key={index}>
-                <p className="commentSpace">
-                  <Link to={`/author/${comment.user.userId}`}>
-                    <strong>{comment.user.name}</strong>
-                  </Link>
-                  - {timeAgo(comment.createdAt)}
-                </p>
-                <div>
-                  {!commentDropdownVisible[comment.id] ? (
-                    <img
-                      src="../src/assets/report-flag.png"
-                      alt="Report icon"
-                      title="Report this comment"
-                      className="reportIcon"
-                      onClick={() =>
-                        setCommentDropdownVisible((prev) => ({
-                          ...prev,
-                          [comment.id]: true, // Show dropdown for this comment
-                        }))
-                      }
-                      style={{
-                        cursor: "pointer",
-                        width: "auto",
-                        height: "18px",
-                        marginTop: "3px",
-                      }}
-                    />
-                  ) : (
-                    <div className="reportDropdown">
-                      <select
-                        className="reportSelect"
-                        value={comment.selectedReason || ""}
-                        onChange={(e) =>
-                          setComments((prev) =>
-                            prev.map((c) =>
-                              c.id === comment.id
-                                ? { ...c, selectedReason: e.target.value }
-                                : c
-                            )
-                          )
-                        }
-                      >
-                        <option value="" disabled>
-                          Select a reason
-                        </option>
-                        <option value="Inappropriate content">
-                          Inappropriate content
-                        </option>
-                        <option value="Spam">Spam</option>
-                        <option value="Harassment">Harassment</option>
-                        <option value="Other">Other</option>
-                      </select>
-                      <button
-                        className="reportButton"
-                        onClick={() => {
-                          if (comment.selectedReason) {
-                            handleReportComment(
-                              comment.id,
-                              comment.selectedReason
-                            );
+        <button className="recipeBtn iconBtn" onClick={handlePrint}>
+          <img
+            id="printRecipeIcon"
+            src="../src/assets/PrintRecipe1.png"
+            alt="print recipe icon"
+          />
+          Print Recipe
+        </button>
+        <button className="recipeBtn iconBtn" onClick={handleShareRecipe}>
+          <img 
+            id="shareRecipeIcon"
+            src="../src/assets/ShareRecipe1.png"
+            alt="share recipe icon"
+          />
+          Share Recipe
+        </button>
+        <div id="commentsContainer">
+          <h3 className="recipeSpace">Comments</h3>
+          {comments && comments.length > 0 ? (
+            <ul id="commentsList">
+              {comments.map((comment, index) => (
+                <li key={index}>
+                  <p className="commentSpace">
+                    <Link to={`/author/${comment.user.userId}`}>
+                      <strong>{comment.user.name}</strong>
+                    </Link>
+                    - {timeAgo(comment.createdAt)}
+                    
+                    {/* Report Comment with Conditional Dropdown */}
+                    <div>
+                      {!commentDropdownVisible[comment.id] ? (
+                        <img
+                          src="../src/assets/report-flag.png"
+                          alt="Report icon"
+                          title="Report this comment"
+                          className="reportIcon"
+                          onClick={() =>
                             setCommentDropdownVisible((prev) => ({
                               ...prev,
-                              [comment.id]: false,
-                            }));
-                          } else {
-                            alert("Please select a reason before reporting.");
+                              [comment.id]: true, // Show dropdown for this comment
+                            }))
                           }
-                        }}
-                      >
-                        Submit
-                      </button>
-                      <button
-                        className="reportButton"
-                        onClick={() =>
-                          setCommentDropdownVisible((prev) => ({
-                            ...prev,
-                            [comment.id]: false,
-                          }))
-                        }
-                      >
-                        Cancel
-                      </button>
+                          style={{
+                            cursor: "pointer",
+                            width: "auto",
+                            height: "18px",
+                            marginTop: "3px",
+                          }}
+                        />
+                      ) : (
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <select
+                            value={comment.selectedReason || ""}
+                            onChange={(e) =>
+                              setComments((prev) =>
+                                prev.map((c) =>
+                                  c.id === comment.id
+                                    ? { ...c, selectedReason: e.target.value }
+                                    : c
+                                )
+                              )
+                            }
+                            style={{ marginRight: "10px" }}
+                          >
+                            <option value="" disabled>
+                              Select a reason
+                            </option>
+                            <option value="Inappropriate content">
+                              Inappropriate content
+                            </option>
+                            <option value="Spam">Spam</option>
+                            <option value="Harassment">Harassment</option>
+                            <option value="Other">Other</option>
+                          </select>
+                          <button
+                            onClick={() => {
+                              if (comment.selectedReason) {
+                                handleReportComment(
+                                  comment.id,
+                                  comment.selectedReason
+                                );
+                                setCommentDropdownVisible((prev) => ({
+                                  ...prev,
+                                  [comment.id]: false, // Hide the dropdown for this comment
+                                }));
+                              } else {
+                                alert("Please select a reason before reporting.");
+                              }
+                            }}
+                            style={{
+                              cursor: "pointer",
+                              background: "none",
+                              border: "1px solid #ccc",
+                              padding: "5px",
+                            }}
+                          >
+                            Submit
+                          </button>
+                          <button
+                            onClick={() =>
+                              setCommentDropdownVisible((prev) => ({
+                                ...prev,
+                                [comment.id]: false, // Cancel and hide dropdown
+                              }))
+                            }
+                            style={{
+                              cursor: "pointer",
+                              background: "none",
+                              border: "1px solid #ccc",
+                              padding: "5px",
+                              marginLeft: "5px",
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <p className="commentText">{comment.text}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No comments yet.</p>
-        )}
-        <div id="commentSection">
-          <h3>Add a Comment</h3>
-          <form id="commentForm" onSubmit={handleCommentSubmit}>
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Write your comment here..."
-            ></textarea>
-            <button className="recipeBtn" type="submit">
-              Post Comment
-            </button>
-          </form>
+                  </p>
+                  <p className="commentText">{comment.text}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No comments yet.</p>
+          )}
+          <div id="commentSection">
+            <h3>Add a Comment</h3>
+            <form id="commentForm" onSubmit={handleCommentSubmit}>
+              <textarea
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                placeholder="Write your comment here..."
+              ></textarea>
+              <button className="recipeBtn" type="submit">
+                Post Comment
+              </button>
+            </form>
+          </div>
         </div>
+        {/* Back to Previous Page Button */}
+        <button 
+          className="recipeBtn" 
+          onClick={() => window.history.back()}
+        >
+          Back
+        </button>
       </div>
-      {/* Back to Previous Page Button */}
-      <button className="recipeBtn" onClick={() => window.history.back()}>
-        Back
-      </button>
     </div>
   );
 };

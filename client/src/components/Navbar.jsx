@@ -85,7 +85,13 @@ function Navbar({ token, setToken, isAdmin }) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button id="searchBtn" onClick={handleSearch}>
+        <button 
+          id="searchBtn" 
+          onClick={handleSearch}
+        >
+          <img 
+            src="../src/assets/SearchIcon.png" 
+          />
           Search
         </button>
       </div>

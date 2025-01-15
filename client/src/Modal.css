@@ -12,14 +12,23 @@
   }
   
   .modalContainer {
-    background: #fff;
-    border-radius: 8px;
+    background-image: url('./assets/largeParchmentBackground.jpg');
+    border-radius: 2px;
     padding: 20px;
     width: 400px;
     max-width: 80%;
     position: relative;
+    font-weight: 500;
   }
-  
+  .modalContainer a {
+    color: var(--black);
+    text-decoration: none;
+    margin-right: 5px;
+  }
+  .modalContainer a:visited,
+  .modalContainer a:focus {
+    color: var(--black);
+  }
   .modalContent {
     margin-top: 20px;
   }
