@@ -448,7 +448,42 @@ input::placeholder {
   cursor: pointer;
 }
 .recipeIcon img {
-  height: 30px;
+    height: 30px;
+}
+#reportRecipeContainer {
+    display: flex;
+    flex-direction: row;
+}
+#reportRecipeContainer select {
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--black);
+    font-family: "EB Garamond", serif;
+    font-size: 20px;
+    font-weight: 500;
+    width: auto;
+    resize: none;
+}
+#reportRecipeContainer button {
+    padding: 5px 2px 5px 2px;
+    font-size: 20px;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 5px;
+    width: auto;
+    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
+    color: var(--white);
+    font-family: "EB Garamond", serif;
+    font-weight: 500;
+}
+#reportRecipeContainer button:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
+}
+#reportRecipeBtn {
+    margin-left: 5px;
 }
 #reportRecipeContainer {
     display: flex;
@@ -574,6 +609,16 @@ input::placeholder {
     justify-content: center;
     gap: 2px;
 }
+#printBtnIcon {
+    height: 20px;
+}
+#shareBtn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
 .commentSpace {
   display: flex;
   flex-direction: row;
@@ -595,6 +640,64 @@ input::placeholder {
   max-width: 700px;
 }
 #commentsList select {
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--black);
+    font-family: "EB Garamond", serif;
+    font-size: 20px;
+    font-weight: 500;
+    width: auto;
+    resize: none;
+}
+#commentsList button {
+    padding: 5px 2px 5px 2px;
+    font-size: 20px;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 5px;
+    width: auto;
+    background-image: url('./assets/openart-image_IOoTSc82_1735921515997_raw.jpg');
+    color: var(--white);
+    font-family: "EB Garamond", serif;
+    font-weight: 500;
+}
+#commentsList button:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
+}
+#commentsList li:not(:first-child) {
+    margin-top: 10px;
+}
+.commentText {
+    word-wrap: break-word;
+}
+#commentSection {
+    margin-top: 20px;
+}
+#commentSection textarea {
+    background: none;
+    border: 1px solid var(--black);
+    font-family: "EB Garamond", serif;
+    font-size: 20px;
+    font-weight: 500;
+    width: 400px;
+    min-height: 36px;
+    resize: none;
+    padding: 2px;
+}
+#commentSection textarea:focus {
+    outline: none;
+}
+#commentSection textarea::placeholder {
+    color: #4d4d4d;
+}
+#commentForm {
+    display: flex;
+    flex-direction: column;
+}
+.reportDropdown select {
     background: none;
     border: none;
     border-bottom: 1px solid var(--black);
