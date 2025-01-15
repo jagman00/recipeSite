@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { fetchRecipe } from "../API/index.js";
 import FollowButton from "./FollowButton";
 import { jwtDecode } from "jwt-decode";
+import ConversionTable from "./ConversionTable";
 
 const Recipe = () => {
   const { id } = useParams();
@@ -17,7 +18,7 @@ const Recipe = () => {
   const [commentDropdownVisible, setCommentDropdownVisible] = useState({});
   const [selectedReason, setSelectedReason] = useState("");
   const [loggedInUserId, setLoggedInUserId] = useState(null);
-
+  const [showConversionTable, setShowConversionTable] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const token = localStorage.getItem("token");
@@ -319,7 +320,6 @@ const Recipe = () => {
               {loggedInUserId !== recipe.user.userId && (
                 <FollowButton authorId={recipe.user.userId} />
               )}
-
             </div>
             <p>{recipe.description}</p>
             <p>Serving Size: {recipe.servingSize}</p>
@@ -411,7 +411,22 @@ const Recipe = () => {
           </div>
         </div>
         <div id="ingredientsContainer">
-          <h3>Ingredients</h3>
+          <h3>
+            Ingredients
+            <img
+              src="../src/assets/conversion-icon.png" // Replace with your icon path
+              alt="Conversion Icon"
+              title="Open Conversion Table"
+              className="conversionIcon"
+              onClick={() => setShowConversionTable(true)} // Trigger the table modal
+              style={{
+                cursor: "pointer",
+                marginLeft: "10px",
+                width: "24px", // Adjust as needed
+                height: "24px", // Adjust as needed
+              }}
+            />
+          </h3>
           <ul id="ingredientsList">
             {recipe.ingredients.map((ingredient, index) => (
               <li key={index}>
@@ -420,7 +435,16 @@ const Recipe = () => {
               </li>
             ))}
           </ul>
+
+          {/* Include the Conversion Table Component */}
+          {showConversionTable && (
+            <ConversionTable
+              visible={showConversionTable}
+              onClose={() => setShowConversionTable(false)}
+            />
+          )}
         </div>
+
         <h3 className="recipeSpace">Directions</h3>
         <div id="stepsListContainer">
           {Array.isArray(recipe.steps) && recipe.steps.length > 0 ? (
