@@ -520,6 +520,30 @@ input::placeholder {
 #reportRecipeBtn {
   margin-left: 5px;
 }
+.action-buttons {
+    display: flex;
+    gap: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.edit-button, .delete-button {
+    padding: 7px 5px 7px 5px;
+    font-size: 20px;
+    color: var(--black);
+    background: none;
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 5px;
+    width: auto;
+    background-image: url("./assets/openart-image_IOoTSc82_1735921515997_raw.jpg");
+    color: var(--white);
+    font-family: "EB Garamond", serif;
+    font-weight: 500;
+}
+.edit-button:hover, .delete-button:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
+}
 #reportRecipeContainer {
   display: flex;
 }

@@ -271,11 +271,11 @@ const GetUser = ({setToken}) => {
                     <p><strong>Bio:</strong> {userInfo.bio || "Not provided"}</p>
                     {isAdmin && <p><strong>Admin:</strong> Yes</p>}
 
-                    <span onClick={handleViewFollowers}>
+                    <span className="cursor" onClick={handleViewFollowers}>
                       <strong>Followers:</strong>{" "}
                       {followerCount >= 1000 ? (followerCount / 1000).toFixed(1) + "k" : followerCount}
                     </span>{" "}
-                    <span onClick={handleViewFollowings}>
+                    <span className="cursor"onClick={handleViewFollowings}>
                       <strong>Following:</strong>{" "}
                       {followingCount >= 1000 ? (followingCount / 1000).toFixed(1) + "k" : followingCount}
                     </span>
