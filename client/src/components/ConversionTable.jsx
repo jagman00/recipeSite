@@ -125,10 +125,6 @@ const ConversionTable = ({ visible, onClose }) => {
             </tr>
           </tbody>
         </table>
-
-        <button onClick={onClose} className="conversionCloseButton">
-          Close
-        </button>
       </div>
     </div>
   );

@@ -469,18 +469,18 @@ const Recipe = () => {
           <h3>
             Ingredients
             <img
-              src="../src/assets/conversion-icon.png" // Replace with your icon path
-              alt="Conversion Icon"
-              title="Open Conversion Table"
-              className="conversionIcon"
-              onClick={() => setShowConversionTable(true)} // Trigger the table modal
-              style={{
-                cursor: "pointer",
-                marginLeft: "10px",
-                width: "24px", // Adjust as needed
-                height: "24px", // Adjust as needed
-              }}
-            />
+            src="../src/assets/conversion-icon.png" // Replace with your icon path
+            alt="Conversion Icon"
+            title="Toggle Conversion Table"
+            className="conversionIcon"
+            onClick={() => setShowConversionTable((prev) => !prev)} // Toggle the table
+            style={{
+            cursor: "pointer",
+            marginLeft: "10px",
+            width: "24px", // Adjust as needed
+            height: "24px", // Adjust as needed
+  }}
+/>
           </h3>
           <ul id="ingredientsList">
             {recipe.ingredients.map((ingredient, index) => (
