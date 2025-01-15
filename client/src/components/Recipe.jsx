@@ -546,7 +546,7 @@ const Recipe = () => {
             <ul id="commentsList">
               {comments.map((comment, index) => (
                 <li key={index}>
-                  <p className="commentSpace">
+                  <div className="commentSpace">
                     <Link to={`/author/${comment.user.userId}`}>
                       <strong>{comment.user.name}</strong>
                     </Link>
@@ -642,7 +642,7 @@ const Recipe = () => {
                         </div>
                       )}
                     </div>
-                  </p>
+                  </div>
                   <p className="commentText">{comment.text}</p>
                 </li>
               ))}
