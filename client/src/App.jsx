@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
@@ -11,9 +11,8 @@ import AdminDashboard from "./components/AdminDashboard";
 import NewRecipe from "./components/NewRecipe";
 import AuthorProfile from "./components/AuthorProfile";
 import Notifications from "./components/Notifications";
+import Contact from "./components/Contact";  // Import Contact component
 import "./App.css";
-import React from "react";
-import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import "./responsive.css";
 import EditRecipe from "./components/EditRecipe";
@@ -22,20 +21,18 @@ function App() {
   const [token, setToken] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Check logged in token expiration and auto-logout if expired
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
         const decodedUser = jwtDecode(token);
         if (decodedUser.exp * 1000 < Date.now()) {
-          // Token expiration time is in seconds
           localStorage.clear();
           setToken(null);
           setIsAdmin(false);
           return;
         }
-        setToken(token); // Set the token in state
+        setToken(token);
         setIsAdmin(decodedUser.isAdmin || false);
       } catch (error) {
         console.error("Invalid token:", error);
@@ -76,13 +73,17 @@ function App() {
             <Route path="/user" element={<User setToken={setToken} />} />
             {isAdmin && <Route path="/admin" element={<AdminDashboard />} />}
             <Route path="/login" element={<Login setToken={setToken} />} />
-            <Route path="/register" element={<Register setToken={setToken} />} />
+            <Route
+              path="/register"
+              element={<Register setToken={setToken} />}
+            />
             <Route path="/recipe/:id" element={<Recipe />} />
             <Route path="/edit-recipe/:id" element={<EditRecipe />} />
             <Route path="/" element={<Recipes />} />
             <Route path="/new-recipe" element={<NewRecipe />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
             <Route path="/author/:authorId" element={<AuthorProfile />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<div>Page Not Found</div>} />
             <Route path="/notifications" element={<Notifications />} />
           </Routes>
