@@ -18,7 +18,11 @@ const Recipe = () => {
   const [commentDropdownVisible, setCommentDropdownVisible] = useState({});
   const [selectedReason, setSelectedReason] = useState("");
   const [loggedInUserId, setLoggedInUserId] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+
   const [showConversionTable, setShowConversionTable] = useState(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const token = localStorage.getItem("token");
@@ -50,6 +54,19 @@ const Recipe = () => {
     }
     return "just now";
   }
+  
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setLoggedInUserId(decoded.userId);
+        setIsAdmin(decoded.isAdmin || false); // Correctly set admin status
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
 
   // Fetch like status
   const fetchLikeStatus = async (recipeId) => {
@@ -120,6 +137,32 @@ const Recipe = () => {
 
     getRecipe();
   }, [id]);
+
+  const handleEditRecipe = () => {
+    navigate(`/edit-recipe/${id}`);
+  };
+
+  const handleDeleteRecipe = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this recipe?");
+    if (confirmDelete) {
+      try {
+        const response = await fetch(`http://localhost:3000/api/recipes/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          alert("Recipe deleted successfully.");
+          navigate("/");
+        } else {
+          alert("Failed to delete the recipe.");
+        }
+      } catch (error) {
+        console.error("Error deleting recipe:", error);
+      }
+    }
+  };
 
   const handleToggleLike = async () => {
     try {
@@ -347,6 +390,18 @@ const Recipe = () => {
                 />
                 {recipe._count.bookmarks}
               </button>
+
+            {/* Conditional Edit/Delete Buttons */}
+            {(loggedInUserId === recipe.user.userId || isAdmin) && (
+            <div className="action-buttons">
+            <button className="edit-button" onClick={handleEditRecipe}>
+            Edit Recipe
+            </button>
+            <button className="delete-button" onClick={handleDeleteRecipe}>
+            Delete Recipe
+            </button>
+            </div>
+          )}
 
               {/* Report Button with Conditional Dropdown */}
               <div id="reportRecipeContainer">
