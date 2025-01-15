@@ -72,7 +72,9 @@ function Navbar({ token, setToken, isAdmin }) {
       <Link to="/">
         <div id="logoContainer">
           <img id="logoIcon" src={logoIcon} alt="Website logo" />
-          <span className="header" id="logoText">Recipe Round Table</span>
+          <span className="header" id="logoText">
+            Recipe Round Table
+          </span>
         </div>
       </Link>
       <div id="searchbarContainer">
@@ -83,7 +85,9 @@ function Navbar({ token, setToken, isAdmin }) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button id="searchBtn" onClick={handleSearch}>Search</button>
+        <button id="searchBtn" onClick={handleSearch}>
+          Search
+        </button>
       </div>
       <div className="dropdownMenu">
         <button
@@ -93,52 +97,57 @@ function Navbar({ token, setToken, isAdmin }) {
           <div id="userIconContainer">
             <span>Menu</span>
             <img src={userIcon} alt="User icon" />
-            </div>
+          </div>
         </button>
         {dropdownVisible && (
           <div className="dropdown">
             {token ? (
               <>
-                <Link 
+                <Link
                   className="postrecipebutton"
-                  to="/user" 
+                  to="/user"
                   onClick={() => setDropdownVisible(false)}
                 >
                   Profile
                 </Link>
-                <Link 
+                <Link
                   id="bookmarksBtn"
-                  className="header" 
-                  to ="/notifications" 
+                  className="header"
+                  to="/notifications"
                   onClick={() => setDropdownVisible(false)}
                 >
                   Notifications
                 </Link>
-                <button
-                  className="logoutButton" 
-                  onClick={handleLogout}
-                >
+                <button className="logoutButton" onClick={handleLogout}>
                   Logout
                 </button>
-                <Link 
+                <Link
                   className="postrecipebutton"
-                  to="/new-recipe" 
+                  to="/new-recipe"
                   onClick={() => setDropdownVisible(false)}
                 >
                   Add New Recipe
                 </Link>
-                <Link 
+                <Link
                   id="bookmarksBtn"
-                  className="header" 
-                  to ="/bookmarks" 
+                  className="header"
+                  to="/bookmarks"
                   onClick={() => setDropdownVisible(false)}
                 >
                   Bookmarks
                 </Link>
+                <Link
+                  className="postrecipebutton"
+                  to="/contact"
+                  onClick={() => setDropdownVisible(false)}
+                >
+                  Contact
+                </Link>
+
                 {isAdmin && (
-                  <Link 
+                  <Link
                     className="adminDashboardButton"
-                    to="/admin" 
+                    to="/admin"
                     onClick={() => setDropdownVisible(false)}
                   >
                     Admin Dashboard
@@ -147,19 +156,26 @@ function Navbar({ token, setToken, isAdmin }) {
               </>
             ) : (
               <>
-                <Link 
+                <Link
                   className="postrecipebutton"
-                  to="/login" 
+                  to="/login"
                   onClick={() => setDropdownVisible(false)}
                 >
                   Login
                 </Link>
-                <Link 
+                <Link
                   className="postrecipebutton"
                   to="/register"
                   onClick={() => setDropdownVisible(false)}
                 >
                   Register
+                </Link>
+                <Link
+                  className="header"
+                  to="/contact"
+                  onClick={() => setDropdownVisible(false)}
+                >
+                  Contact
                 </Link>
               </>
             )}
