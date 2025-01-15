@@ -16,6 +16,7 @@ import React from "react";
 import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import "./responsive.css";
+import EditRecipe from "./components/EditRecipe";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -77,6 +78,7 @@ function App() {
             <Route path="/login" element={<Login setToken={setToken} />} />
             <Route path="/register" element={<Register setToken={setToken} />} />
             <Route path="/recipe/:id" element={<Recipe />} />
+            <Route path="/edit-recipe/:id" element={<EditRecipe />} />
             <Route path="/" element={<Recipes />} />
             <Route path="/new-recipe" element={<NewRecipe />} />
             <Route path="/bookmarks" element={<Bookmarks />} />

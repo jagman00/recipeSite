@@ -1,11 +1,12 @@
 {
   "name": "recipesite",
   "version": "1.0.0",
-  "description": "",
+  "description": "If there any changes and update in schema.prisma\r try running \r npx prisma generate \r npx prisma db push\r npx prisma migrate reset\r (or)\r npx prisma migrate dev --name init",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "nodemon server.js"
+    "start:dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -30,5 +31,14 @@
   "devDependencies": {
     "@faker-js/faker": "^9.3.0",
     "nodemon": "^3.1.9"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Williamd110/recipeSite.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Williamd110/recipeSite/issues"
+  },
+  "homepage": "https://github.com/Williamd110/recipeSite#readme"
 }
