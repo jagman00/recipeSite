@@ -19,6 +19,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import "./responsive.css";
 import Contact from "./components/Contact";
+import ActivityFeed from "./components/ActivityFeed";
+
 function App() {
   const [token, setToken] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -91,6 +93,7 @@ function App() {
               <Route path="/edit-recipe/:id" element={<EditRecipe />} />
               <Route path="/bookmarks" element={<Bookmarks />} />
               <Route path="/author/:authorId" element={<AuthorProfile />} />
+              <Route path="/latest" element={<ActivityFeed />} />
               <Route path="*" element={<div>Page Not Found</div>} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/contact" element={<Contact />} />

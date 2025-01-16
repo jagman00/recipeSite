@@ -138,6 +138,21 @@ const Recipe = () => {
     getRecipe();
   }, [id]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchRecipe(id); // Fetch recipe by ID
+        setRecipe(data);
+        setComments(data.comments || []);
+      } catch (error) {
+        console.error("Error fetching recipe:", error);
+        navigate("/404"); // Navigate to a 404 page if recipe is not found
+      }
+    };
+
+    fetchData();
+  }, [id, navigate]);
+
   const handleEditRecipe = () => {
     navigate(`/edit-recipe/${id}`);
   };

@@ -9,6 +9,4 @@ router.use("/categories", require("./categories"));
 router.use("/reports", require("./reports"));
 router.use("/activity-feed", require("./activity"));
 router.use("/notifications", require("./notifications")); /*NOTIFICATION */
-router.use("/activity-feed", require("./activity"));
-router.use("/notifications", require("./notifications")); /*NOTIFICATION */
 router.use("/contact", require("./contact"));

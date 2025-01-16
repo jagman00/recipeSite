@@ -32,9 +32,10 @@ router.get("/", authenticateUser, async (req, res) => {
         recipe: { select: { recipeId: true, title: true, recipeUrl: true } },
         comment: { select: { id: true, text: true, recipeId: true, createdAt: true } },
         like: { select: { id: true, userId: true, recipeId: true } },
+        bookmark: { select: { bookmarkId: true, userId: true, recipeId: true } },
       },
       orderBy: { createdAt: "desc" },
-      take: 20, // Limit to the most recent 20 activities
+      take: 20,
     });
 
     console.log("Fetched Activities:", activities);

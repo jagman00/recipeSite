@@ -94,6 +94,15 @@ function Navbar({ token, setToken, isAdmin }) {
           />
           Search
         </button>
+        {token && (
+          <Link
+            id="latestBtn"
+            className="header"
+            to="/latest"
+          >
+            Latest
+          </Link>
+        )}
       </div>
       <div className="dropdownMenu">
         <button
