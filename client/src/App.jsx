@@ -11,6 +11,7 @@ import AdminDashboard from "./components/AdminDashboard";
 import NewRecipe from "./components/NewRecipe";
 import AuthorProfile from "./components/AuthorProfile";
 import Notifications from "./components/Notifications";
+import EditRecipe from "./components/EditRecipe";
 import "./App.css";
 import React from "react";
 import { useEffect } from "react";
@@ -83,6 +84,7 @@ function App() {
             <Route path="/recipe/:id" element={<Recipe />} />
             <Route path="/" element={<Recipes />} />
             <Route path="/new-recipe" element={<NewRecipe />} />
+            <Route path="/edit-recipe/:id" element={<EditRecipe />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
             <Route path="/author/:authorId" element={<AuthorProfile />} />
             <Route path="*" element={<div>Page Not Found</div>} />
