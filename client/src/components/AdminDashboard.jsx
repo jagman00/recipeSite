@@ -19,7 +19,8 @@ function AdminDashboard() {
   const [reportedComments, setReportedComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const [messages, setMessages] = useState([]);
+  
   // Group users by month
   const groupByMonth = (users) => {
     const counts = {};
@@ -160,6 +161,45 @@ function AdminDashboard() {
     }
   };
   
+ useEffect(() => {
+   const fetchMessages = async () => {
+     try {
+       const response = await fetch("http://localhost:3000/api/contact");
+       if (!response.ok) throw new Error("Failed to fetch messages.");
+       const data = await response.json();
+       setMessages(data);
+     } catch (error) {
+       console.error("Error fetching messages:", error);
+     }
+   };
+
+   fetchMessages();
+ }, []);
+
+  const handleDeleteMessage = async (id) => {
+    if (window.confirm("Are you sure you want to delete this message?")) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/contact/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to delete message.");
+
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg.id !== id)
+        );
+        alert("Message deleted successfully.");
+      } catch (error) {
+        console.error("Error deleting message:", error);
+        alert("Failed to delete message. Please try again.");
+      }
+    }
+  };
+
+
   // Render loading or error messages
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -322,6 +362,32 @@ function AdminDashboard() {
           ) : (
             <p>No reported comments.</p>
           )}
+        </div>
+      </div>
+      <div className="adminDashboard">
+        <div className="contactMessageContainer">
+          <h2>Contact Messages</h2>
+          <ul className="contactMessageList">
+            {messages.map((message) => (
+              <li key={message.id} >
+                <p>
+                  <strong>Name:</strong> {message.name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {message.email}
+                </p>
+                <p>
+                  <strong>Message:</strong> {message.message}
+                </p>
+                <button
+                  onClick={() => handleDeleteMessage(message.id)}
+                  className="contactMessagedeleteButton"
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
