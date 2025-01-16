@@ -33,6 +33,15 @@ router.post("/", authenticateUser, async (req, res, next) => {
             include:{ingredients:true},
         });
 
+        // log recipe create activity
+        const newActivity = await prisma.activity.create({
+            data: {
+              type: "new_recipe",
+              userId: userId,
+              recipeId: recipe.recipeId,
+            },
+          });
+
         // Notify followers when a user creates a new recipe /*NOTIFICATION */
         const followers = await prisma.userFollower.findMany({
             where: { followToUserId: userId },
@@ -558,13 +567,24 @@ router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
                 },
             });
         } else { // Save if not saved yet
-            await prisma.bookmark.create({
+            const newBookmark = await prisma.bookmark.create({
                 data: {
+                  userId: parseInt(userId),
+                  recipeId: parseInt(id),
+                },
+              });
+            bookmarkStatus = true;
+
+             // Log the activity
+                await prisma.activity.create({
+                data: {
+                    type: "bookmark",
                     userId: parseInt(userId),
                     recipeId: parseInt(id),
+                    bookmarkId: newBookmark.bookmarkId,
                 },
             });
-            bookmarkStatus = true;
+
 
             // Notify the recipe creator about the new bookmark
             const recipe = await prisma.recipe.findUnique({
