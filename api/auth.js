@@ -113,41 +113,41 @@ router.get("/me", authenticateUser, async (req,res)=>{
     }
 });
 
-router.post('/google-login', async (req, res) => {
+router.post('/google-login', async (req, res, next) => {
     const { credential } = req.body;
 
     try {
         // Verify the Google token
         const ticket = await client.verifyIdToken({
             idToken: credential,
-            audience: process.env.GOOGLE_CLIENT_ID, // Replace with your actual Google Client ID
+            audience: process.env.GOOGLE_CLIENT_ID,
         });
 
         const payload = ticket.getPayload();
-
-        // Extract user details from the payload
         const { email, name, sub: googleId } = payload;
 
         // Check if user already exists in your database
-        let user = await User.findOne({ email });
+        let user = await prisma.user.findUnique({ where: { email } });
 
         if (!user) {
             // Register the user if they don't exist
-            user = new User({
-                name,
-                email,
-                googleId,
-                provider: 'google',
+            user = await prisma.user.create({
+                data: {
+                    name,
+                    email,
+                    googleId,
+                    provider: 'google',
+                },
             });
-            await user.save();
         }
-        // Generate a token for the user (JWT or session)
-        const token = generateToken(user); // Replace with your JWT generation logic
+
+        // Generate a token for the user
+        const token = createToken(user);
 
         res.json({ token, user });
     } catch (error) {
         console.error('Google Login Error:', error);
-        res.status(500).json({ message: 'Google login failed.' });
+        next(error);
     }
 });
 
