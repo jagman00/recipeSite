@@ -24,7 +24,7 @@ import ActivityFeed from "./components/ActivityFeed";
 function App() {
   const [token, setToken] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  const FE_GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
   // console.log(GOOGLE_CLIENT_ID);
   
   
@@ -58,7 +58,7 @@ function App() {
 
   return (
     <div className="background">
-      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <GoogleOAuthProvider clientId={FE_GOOGLE_CLIENT_ID}>
         <Router>
           <Navbar
             key={navbarKey}

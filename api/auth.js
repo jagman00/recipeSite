@@ -1,10 +1,15 @@
 const router = require("express").Router();
 module.exports = router;
 const prisma = require("../prisma");
+const cors = require('cors');
 
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+router.use(cors());
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 
 const authenticateUser = require('../middleware/authenticateUser')
 //const authenticateAdmin = require('../middleware/authenticateAdmin');
@@ -108,3 +113,44 @@ router.get("/me", authenticateUser, async (req,res)=>{
     }
 });
 
+router.post('/google-login', async (req, res) => {
+    const { credential } = req.body;
+
+    try {
+        // Verify the Google token
+        const ticket = await client.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID, // Replace with your actual Google Client ID
+        });
+
+        const payload = ticket.getPayload();
+
+        // Extract user details from the payload
+        const { email, name, sub: googleId } = payload;
+
+        // Check if user already exists in your database
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            // Register the user if they don't exist
+            user = new User({
+                name,
+                email,
+                googleId,
+                provider: 'google',
+            });
+            await user.save();
+        }
+        // Generate a token for the user (JWT or session)
+        const token = generateToken(user); // Replace with your JWT generation logic
+
+        res.json({ token, user });
+    } catch (error) {
+        console.error('Google Login Error:', error);
+        res.status(500).json({ message: 'Google login failed.' });
+    }
+});
+
+// router.post('/google-register', async (req, res) => {
+
+// })

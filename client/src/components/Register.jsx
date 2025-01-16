@@ -40,35 +40,35 @@ const RegisterUser = ({ setToken }) => {
 
   const handleGoogleLogin = async (credentialResponse) => {
     try {
-      const { credential } = credentialResponse;
-      const decoded = jwtDecode(credential);
+        const { credential } = credentialResponse;
 
-      // Extract Google user info
-      const googleUser = {
-        name: decoded.name,
-        email: decoded.email,
-        googleId: decoded.sub,
-      };
+        const response = await fetch('http://localhost:3000/auth/google-login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ credential }),
+        });
 
-      // Send Google user info to your backend for registration/login
-      const response = await fetchRegister(googleUser.name, googleUser.email, googleUser.googleId);
+        const data = await response.json();
 
-      if (response) {
-        setSuccessMessage("Google login successful!");
-        setToken(response);
+        if (response.ok) {
+            setSuccessMessage('Google login successful!');
+            setToken(data.token);
 
-        // Save the token in localStorage
-        localStorage.setItem("token", response);
+            // Save the token in localStorage
+            localStorage.setItem('token', data.token);
 
-        navigate('/user');
-      } else {
-        setErrorMessage("Google login failed.");
-      }
+            navigate('/user');
+        } else {
+            setErrorMessage(data.message || 'Google login failed.');
+        }
     } catch (error) {
-      console.error("Google Login Error:", error);
-      setErrorMessage("An error occurred during Google login.");
+        console.error('Google Login Error:', error);
+        setErrorMessage('An error occurred during Google login.');
     }
-  };
+};
+
 
   return (
     <div className="registerComponent">
