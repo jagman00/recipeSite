@@ -121,9 +121,6 @@ const RecipesList = () => {
               </div>
               <div id="recipeBar">
               <h3>{recipe.title}</h3>
-              <small>
-                Created by: {recipe.user?.name || 'Unknown'}
-              </small>
               <div id="likesAndBookmarks">
                 <p>
                   <img src="../src/assets/likesIcon.png" alt="likes" /> {recipe._count?.likes || 0}

@@ -152,7 +152,7 @@ const EditRecipe = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="edit-recipe-form">
+    <div className="new-recipe-form">
       <h2 className="header">Edit Recipe</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -169,7 +169,7 @@ const EditRecipe = () => {
           </label>
         </div>
         <div>
-          <label htmlFor="description">
+          <label id="newRecipeDescription" htmlFor="description">
             Description:
             <textarea
               id="description"
@@ -240,41 +240,43 @@ const EditRecipe = () => {
         <div>
           <h3>Ingredients</h3>
           {recipe.ingredients.map((ingredient, index) => (
-            <div key={index} className="ingredient-row">
-              <input
-                type="text"
-                placeholder="Ingredient name"
-                value={ingredient.name}
-                onChange={(e) => handleIngredientChange(index, "name", e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Quantity"
-                value={ingredient.quantity}
-                onChange={(e) => handleIngredientChange(index, "quantity", e.target.value)}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Unit"
-                value={ingredient.unit}
-                onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
-              />
+            <div key={index} className="addIngredientContainer">
+              <div className="ingredient-row">
+                <input
+                  type="text"
+                  placeholder="Ingredient name"
+                  value={ingredient.name}
+                  onChange={(e) => handleIngredientChange(index, "name", e.target.value)}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Quantity"
+                  value={ingredient.quantity}
+                  onChange={(e) => handleIngredientChange(index, "quantity", e.target.value)}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Unit"
+                  value={ingredient.unit}
+                  onChange={(e) => handleIngredientChange(index, "unit", e.target.value)}
+                />
+              </div>
               {recipe.ingredients.length > 1 && (
                 <button
+                  id="removeIngredientBtn"
                   type="button"
-                  className="remove-btn"
                   onClick={() => handleRemoveIngredient(index)}
                 >
-                  Remove
+                  <p>-</p>
                 </button>
               )}
             </div>
           ))}
           <button
+            id="addIngredientBtn"
             type="button"
-            className="add-btn"
             onClick={handleAddIngredient}
           >
             Add Ingredient
@@ -292,25 +294,30 @@ const EditRecipe = () => {
               />
               {recipe.steps.length > 1 && (
                 <button
+                id="removeStepBtn"
                   type="button"
                   className="remove-btn"
                   onClick={() => handleRemoveStep(index)}
                 >
-                  Remove
+                  <p>-</p>
                 </button>
               )}
             </div>
           ))}
           <button
+            id="addStepBtn"
             type="button"
-            className="add-btn"
             onClick={handleAddStep}
           >
             Add Step
           </button>
         </div>
-        <button type="submit" className="submit-btn">
-          Save Changes
+        <button 
+          id="submitRecipeBtn" 
+          type="submit" 
+          className="submit-btn"
+        >
+          Submit Changes
         </button>
       </form>
     </div>
