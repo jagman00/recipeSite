@@ -23,8 +23,9 @@ function App() {
   const [token, setToken] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  // console.log(GOOGLE_CLIENT_ID);
   
-
+  
   // Check logged in token expiration and auto-logout if expired
   useEffect(() => {
     const token = localStorage.getItem("token");
