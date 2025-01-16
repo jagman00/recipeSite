@@ -1594,6 +1594,51 @@ input::placeholder {
 .contactPage a:hover {
   text-decoration: underline;
 }
+.contactMessageContainer {
+  background-image: url("./assets/largeParchmentBackground.jpg");
+  box-shadow: 0 0 10px var(--black);
+  padding: 20px;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  word-wrap: break-word;
+  height: 100%;
+}
+
+.contactMessageContainer h2 {
+  font-size: 30px;
+}
+
+.contactMessageList {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.contactMessagedeleteButton {
+ padding: 7px 0px 7px;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--black);
+  background: none;
+  border: 1px solid var(--black);
+  box-shadow: 0 0 5px var(--black);
+  border-radius: 5px;
+  width: 100px;
+  background-image: url("./assets/openart-image_IOoTSc82_1735921515997_raw.jpg");
+  color: var(--white);
+  font-family: "EB Garamond", serif;
+}
+
+.contactMessagedeleteButton:hover {
+  cursor: pointer;
+
+  box-shadow: 0 0 2px var(--black);
+}
+
+
 
 /*Media queries*/
 @media (max-width: 1550px) {
