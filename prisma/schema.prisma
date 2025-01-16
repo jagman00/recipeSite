@@ -38,6 +38,7 @@ model User {
 
   notifications          Notification[]             // Notifications for this user
   notificationsFromUser Notification[] @relation("NotificationFromUser")// Notifications triggered by this user
+  activities  Activity[]
 
 }
 
@@ -51,6 +52,7 @@ model UserFollower {
   followToUser   User @relation("Followers", fields: [followToUserId], references: [userId], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+  activities  Activity[]
 
   @@unique([followFromUserId, followToUserId]) // Ensure no duplicate relationships
 }
@@ -76,6 +78,7 @@ model Recipe {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   notifications Notification[]
+  activities  Activity[]
 }
 
 model Ingredient {
@@ -102,6 +105,7 @@ model Bookmark {
   user     User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
   recipeId Int
   recipe   Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
+  activities  Activity[]
 
   @@unique([userId, recipeId]) // Enforce unique bookmarks for each user-recipe pair
 }
@@ -116,7 +120,7 @@ model Comment {
   user     User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   commentReports CommentReport[] // Reports for this comment
-
+  activities  Activity[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -130,6 +134,7 @@ model Like {
   recipe   Recipe @relation(fields: [recipeId], references: [recipeId], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+  activities  Activity[]
 
   @@unique([userId, recipeId]) // Enforce unique likes for each user-recipe pair
 }
@@ -176,5 +181,23 @@ model Notification {
   recipeId Int? // Recipe related to the notification
   recipe   Recipe? @relation(fields: [recipeId], references: [recipeId], onDelete: SetNull)
 
+  createdAt DateTime @default(now())
+}
+
+model Activity {
+  id        Int      @id @default(autoincrement())
+  type      String   // 'new_recipe', 'comment', 'like'
+  userId    Int
+  user      User     @relation(fields: [userId], references: [userId])
+  recipeId  Int?
+  recipe    Recipe?  @relation(fields: [recipeId], references: [recipeId])
+  followId Int?
+  follow    UserFollower?  @relation(fields: [followId], references: [followId], onDelete: SetNull)
+  commentId Int?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: SetNull)
+  likeId    Int?
+  like      Like?    @relation(fields: [likeId], references: [id], onDelete: SetNull)
+  bookmarkId Int? 
+  bookmark Bookmark? @relation(fields: [bookmarkId], references: [bookmarkId], onDelete: SetNull)
   createdAt DateTime @default(now())
 }

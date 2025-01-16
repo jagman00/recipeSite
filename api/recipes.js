@@ -316,6 +316,18 @@ router.post("/:id/comments", authenticateUser, async (req, res, next) => {
             }
         });
 
+         
+            // Log the activity
+            const newActivity = await prisma.activity.create({
+            data: {
+            type: "comment",
+            userId: userId,
+            recipeId: parseInt(id), // Use the correct recipe ID
+            commentId: newComment.id, // Use the ID of the newly created comment
+        },
+      });
+
+
         // Notify the recipe creator about the new comment /*NOTIFICATION */
         const recipe = await prisma.recipe.findUnique({
             where: { recipeId: parseInt(id) },
@@ -431,59 +443,72 @@ router.post("/:id/like", authenticateUser, async (req, res, next) => {
 
         let likeStatus = false;
 
-        if (existingLike) { // Unlike if already liked
+        if (existingLike) {
+            // Unlike if already liked
             await prisma.like.delete({
-                where: {
-                    userId_recipeId: {
-                        userId: parseInt(userId),
-                        recipeId: parseInt(id),
-                    },
+              where: {
+                userId_recipeId: {
+                  userId: parseInt(userId),
+                  recipeId: parseInt(id),
                 },
+              },
             });
-        } else { // Like if not liked yet
-            await prisma.like.create({
-                data: {
-                    userId: req.user.userId,
-                    recipeId: parseInt(id),
-                },
+          } else {
+            // Like if not liked yet
+            const newLike = await prisma.like.create({
+              data: {
+                userId: req.user.userId,
+                recipeId: parseInt(id),
+              },
             });
+      
             likeStatus = true;
+      
 
-            // Notify the recipe creator about the new like /*NOTIFICATION */
-            const recipe = await prisma.recipe.findUnique({
-                where: { recipeId: parseInt(id) },
-                select: { userId: true, title: true },
-            });
-            
-            const fromUser = await prisma.user.findUnique({
-                where: { userId: parseInt(userId) },
-                select: { name: true },
-            });
+      // Log the activity
+       await prisma.activity.create({
+        data: {
+          type: "like",
+          userId: parseInt(userId),
+          recipeId: parseInt(id),
+          likeId: newLike.id, // Use the ID of the newly created like
+        },
+      });
+    };
 
-            if (recipe) {
-                await prisma.notification.create({
-                    data: {
-                        type: 'like',
-                        message: `${fromUser.name} liked your recipe - "${recipe.title}".`,
-                        userId: recipe.userId, // Recipe owner ID
-                        fromUserId: parseInt(userId), //Liker ID
-                        recipeId: parseInt(id),
-                    },
-                });
-            }           
-        }
-        
-        const likeCount = await prisma.like.count({
-            where: { recipeId: parseInt(id) },
-        });
+    // Notify the recipe creator about the new like (if applicable)
+    const recipe = await prisma.recipe.findUnique({
+      where: { recipeId: parseInt(id) },
+      select: { userId: true, title: true },
+    });
 
-        res.status(200).json({ likeStatus, message: 'Like status updated',likeCount });
-    } catch (error) {
-        console.error('Error toggling like status:', error);
-        res.status(500).json({ message: 'Failed to toggle like status.' });
+    const fromUser = await prisma.user.findUnique({
+      where: { userId: userId },
+      select: { name: true },
+    });
+
+    if (likeStatus && recipe) {
+      await prisma.notification.create({
+        data: {
+          type: "like",
+          message: `${fromUser.name} liked your recipe - "${recipe.title}".`,
+          userId: recipe.userId, // Recipe owner ID
+          fromUserId: userId, // Liker ID
+          recipeId: parseInt(id),
+        },
+      });
     }
-});
 
+    const likeCount = await prisma.like.count({
+      where: { recipeId: parseInt(id) },
+    });
+
+    res.status(200).json({ likeStatus, message: "Like status updated", likeCount });
+  } catch (error) {
+    console.error("Error toggling like status:", error);
+    res.status(500).json({ message: "Failed to toggle like status." });
+  }
+});
 // Get like status /*UPDATE*/
 // GET /api/recipes/:id/like-status
 router.get("/:id/like-status", authenticateUser, async (req, res, next) => {
