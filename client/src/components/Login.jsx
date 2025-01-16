@@ -19,12 +19,15 @@ const LoginUser = ({ setToken }) => {
 
     try {
       const response = await fetchLogin(email, password);
+      console.log('email: ', email, 'password: ', password);
+      
       if (response !== undefined) {
         setSuccessMessage("Login successful!");
         setToken(response);
 
         // Save the token in localStorage
         localStorage.setItem("token", response); 
+        
 
         navigate('/user');
       } else {
@@ -37,36 +40,44 @@ const LoginUser = ({ setToken }) => {
   };
 
   const handleGoogleLogin = async (credentialResponse) => {
+    //console.log('credentialResponse: ', credentialResponse);
+  
     try {
       const { credential } = credentialResponse;
-      const decoded = jwtDecode(credential);
-
-      // Extract Google user info
-      const googleUser = {
-        name: decoded.name,
-        email: decoded.email,
-        googleId: decoded.sub,
-      };
-
-      // Send Google user info to your backend for registration/login
-      const response = await fetchRegister(googleUser.name, googleUser.email, googleUser.googleId);
-
-      if (response) {
+  
+      // Send Google credential token to the backend for validation
+      const response = await fetch(`http://localhost:3000/api/auth/google-login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ credential }),
+      });
+  console.log(response);
+  
+      if (!response.ok) {
+        throw new Error("Google login failed.");
+      }
+  
+      const result = await response.json();
+  
+      if (result.token) {
         setSuccessMessage("Google login successful!");
-        setToken(response);
-
+        setToken(result.token);
+  
         // Save the token in localStorage
-        localStorage.setItem("token", response);
-
+        localStorage.setItem("token", result.token);
+  
         navigate('/user');
       } else {
-        setErrorMessage("Google login failed.");
+        setErrorMessage(result.message || "Google login failed.");
       }
     } catch (error) {
       console.error("Google Login Error:", error);
       setErrorMessage("An error occurred during Google login.");
     }
   };
+  
 
   return (
     <div className="loginComponent">
