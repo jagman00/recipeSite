@@ -356,7 +356,6 @@ const Recipe = () => {
                   </p>
                 </div>
               </Link>
-
               {/* Don't show the button if logged in user is author */}
               {loggedInUserId !== recipe.user.userId && (
                 <FollowButton authorId={recipe.user.userId} />
