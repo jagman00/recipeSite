@@ -1110,8 +1110,7 @@ input::placeholder {
   border: 1px solid var(--black);
   box-shadow: 0 0 5px var(--black);
   border-radius: 5px;
-  margin-top: 10px;
-  margin: 0 auto;
+  margin: 20px auto 0;
   box-sizing: border-box;
   width: 120px;
   color: var(--white);
