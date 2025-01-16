@@ -13,7 +13,7 @@ app.use(cors());
 //     origin: "http://localhost:5173/",
 //     credentials: true,
 //   })
-//);
+// );
 
 // Health Check Endpoint
 let errorLogs = []; // Store logs globally 
