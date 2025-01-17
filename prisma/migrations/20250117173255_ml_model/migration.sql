@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Activity" ADD COLUMN     "weight" DOUBLE PRECISION NOT NULL DEFAULT 1.0;
