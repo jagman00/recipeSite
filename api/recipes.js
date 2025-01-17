@@ -100,6 +100,7 @@ router.get("/", async (req, res, next) => {
             profileUrl: true,
           },
         },
+        categories: true, // Include related category
         _count: {
           /* Include count of comments, bookmarks, and likes */
           select: {

@@ -233,7 +233,7 @@ const GetUser = ({setToken}) => {
               <div id="profileBorder">
                 <div id="userProfilePicContainer">
                   <img src={
-                        userInfo.profileUrl?.startsWith("http")
+                        userInfo.profileUrl?.startsWith("http") 
                           ? userInfo.profileUrl // Use external URLs as-is
                           : `http://localhost:3000${userInfo.profileUrl}` // Prepend base URL for local paths
                       } 
