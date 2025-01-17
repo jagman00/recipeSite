@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 function ActivityFeed() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -41,6 +42,36 @@ function ActivityFeed() {
     };
 
     fetchActivities();
+  }, []);
+
+ 
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("User is not authenticated.");
+          return;
+        }
+
+        const response = await fetch("/api/recommendations", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setRecommendations(data);
+        } else {
+          console.error("Failed to fetch recommendations");
+        }
+      } catch (error) {
+        console.error("Error fetching recommendations:", error);
+      }
+    };
+
+    fetchRecommendations();
   }, []);
 
   if (loading) return <div>Loading...</div>;
@@ -93,6 +124,28 @@ function ActivityFeed() {
           ))}
         </ul>
       )}
+
+{/* recommendations non-functional. style at your own risk. */}
+
+
+<div className="recommendations">
+        <h3>Recommended Recipes</h3>
+        {recommendations.length === 0 ? (
+          <p>No recommendations available at the moment.</p>
+        ) : (
+          <ul>
+            {recommendations.map((recipe) => (
+              <li key={recipe.recipeId}>
+                <Link to={`/recipe/${recipe.recipeId}`}>
+                  <img src={recipe.recipeUrl} alt={recipe.title} />
+                  <h4>{recipe.title}</h4>
+                  <p>{recipe.user?.name || "Unknown Author"}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
