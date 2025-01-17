@@ -115,7 +115,7 @@ const LoginUser = ({ setToken }) => {
         <button type="submit">Login</button>
       </form>
 
-      <div style={{ margin: "20px 0" }}>
+      <div style={{ margin: "20px auto 0", width: "270px" }}>
         <GoogleLogin
           onSuccess={handleGoogleLogin}
           onError={() => setErrorMessage("Google login failed.")}
