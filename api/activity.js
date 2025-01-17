@@ -53,4 +53,57 @@ prisma.$on("query", (e) => {
   console.log("Params:", e.params);
 });
 
+// for possible recommendations
+// GET /api/activity-feed/unliked-recipes
+
+router.get("/unliked-recipes", authenticateUser, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    // Fetch activity user IDs linked to this user
+    const userActivities = await prisma.activity.findMany({
+      where: { userId },
+      select: { userId: true },
+    });
+
+    const activityUserIds = userActivities.map((activity) => activity.userId);
+
+    // Fetch unliked recipes and new recipes
+    const unlikedAndNewRecipes = await prisma.recipe.findMany({
+      where: {
+        OR: [
+          {
+            // Recipes not liked by the user
+            NOT: {
+              likes: { some: { userId } },
+            },
+          },
+          {
+            // New recipes added in the last 7 days
+            createdAt: {
+              gte: new Date(new Date() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+            },
+          },
+        ],
+      },
+      include: {
+        user: {
+          select: { name: true, profileUrl: true },
+        },
+        _count: { select: { likes: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 20, // Limit the number of results
+    });
+
+    return res.status(200).json(unlikedAndNewRecipes);
+  } catch (error) {
+    console.error("Error fetching unliked or new recipes:", error.message);
+    return res.status(500).json({
+      message: "Failed to fetch unliked or new recipes.",
+      error: error.message,
+    });
+  }
+});
+
 module.exports = router;
