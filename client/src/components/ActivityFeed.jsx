@@ -98,7 +98,7 @@ function ActivityFeed() {
             {recommendations.map((recipe) => (
               <li key={recipe.recipeId}>
                 <Link to={`/recipe/${recipe.recipeId}`}>
-                  <img src={recipe.recipeUrl || "/placeholder-image.png"} alt={recipe.title} />
+                  <img src={recipe.recipeUrl.includes("https")? recipe.recipeUrl:`http://localhost:3000${recipe.recipeUrl}` } alt={recipe.title} />
                   <h4>{recipe.title}</h4>
                   <p>By {recipe.user?.name || "Unknown Author"}</p>
                 </Link>
@@ -110,6 +110,7 @@ function ActivityFeed() {
     </div>
   );
 }
+
 
 function renderActivityDetails(activity) {
   const { type, recipe, comment } = activity;
