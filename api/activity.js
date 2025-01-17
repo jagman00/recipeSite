@@ -106,4 +106,30 @@ router.get("/unliked-recipes", authenticateUser, async (req, res) => {
   }
 });
 
+router.get("/user-item-matrix", async (req, res) => {
+  try {
+    const userItemMatrix = await prisma.activity.groupBy({
+      by: ["userId", "recipeId"],
+      _sum: {
+        weight: true, 
+      },
+      orderBy: {
+        userId: "asc",
+      },
+    });
+
+    const formattedMatrix = userItemMatrix.map((entry) => ({
+      userId: entry.userId,
+      recipeId: entry.recipeId,
+      interactionWeight: entry._sum.weight,
+    }));
+
+    res.status(200).json(formattedMatrix);
+  } catch (error) {
+    console.error("Error generating User-Item Matrix:", error.message);
+    res.status(500).json({ message: "Failed to fetch User-Item Matrix", error: error.message });
+  }
+});
+
+ 
 module.exports = router;

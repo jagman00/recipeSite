@@ -1,0 +1,92 @@
+[
+  {
+    "userId": 64,
+    "recipeId": 11,
+    "interactionWeight": 1
+  },
+  {
+    "userId": 1,
+    "recipeId": 58,
+    "interactionWeight": 2
+  },
+  {
+    "userId": 63,
+    "recipeId": 40,
+    "interactionWeight": 4
+  },
+  {
+    "userId": 63,
+    "recipeId": 7,
+    "interactionWeight": 1
+  },
+  {
+    "userId": 63,
+    "recipeId": 45,
+    "interactionWeight": 1
+  },
+  {
+    "userId": 65,
+    "recipeId": 40,
+    "interactionWeight": 2
+  },
+  {
+    "userId": 63,
+    "recipeId": 58,
+    "interactionWeight": 1
+  },
+  {
+    "userId": 65,
+    "recipeId": 14,
+    "interactionWeight": 2
+  },
+  {
+    "userId": 63,
+    "recipeId": 14,
+    "interactionWeight": 5
+  },
+  {
+    "userId": 63,
+    "recipeId": 47,
+    "interactionWeight": 1
+  },
+  {
+    "userId": 1,
+    "recipeId": 59,
+    "interactionWeight": 4
+  },
+  {
+    "userId": 65,
+    "recipeId": 45,
+    "interactionWeight": 2
+  },
+  {
+    "userId": 64,
+    "recipeId": 59,
+    "interactionWeight": 4
+  },
+  {
+    "userId": 63,
+    "recipeId": 11,
+    "interactionWeight": 2
+  },
+  {
+    "userId": 63,
+    "recipeId": 24,
+    "interactionWeight": 2
+  },
+  {
+    "userId": 64,
+    "recipeId": 14,
+    "interactionWeight": 2
+  },
+  {
+    "userId": 65,
+    "recipeId": 58,
+    "interactionWeight": 2
+  },
+  {
+    "userId": 63,
+    "recipeId": 59,
+    "interactionWeight": 1
+  }
+]
