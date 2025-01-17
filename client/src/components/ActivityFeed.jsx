@@ -63,7 +63,7 @@ function ActivityFeed() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="activity-feed">
+    <div id="userContainer" className="activity-feed">
       <h2>Latest Activity</h2>
       {activities.length === 0 ? (
         <p>No recent activity to display.</p>
@@ -89,7 +89,6 @@ function ActivityFeed() {
           ))}
         </ul>
       )}
-
       <div className="recommendations">
         <h3>Unliked Recipes You Might Like</h3>
         {recommendations.length === 0 ? (

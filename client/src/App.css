@@ -24,7 +24,7 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
-input::placeholder {
+input::placeholder, textarea::placeholder {
   color: #4d4d4d;
 }
 .introText {
@@ -1527,7 +1527,6 @@ input::placeholder {
   width: 100%;
   object-fit: cover;
 }
-
 .conversionCloseButton {
   background-image: url("./assets/openart-image_IOoTSc82_1735921515997_raw.jpg");
   color: white;
@@ -1539,7 +1538,10 @@ input::placeholder {
   margin-right: 5px;
   transition: background-color 0.3s ease;
 }
-
+.conversionTable {
+  margin: 0 auto;
+}
+/*contact component styling */
 .contactPage {
   background-image: url("./assets/largeParchmentBackground.jpg");
   background-size: cover;
@@ -1555,43 +1557,57 @@ input::placeholder {
   margin: 50px auto;
   padding: 20px;
 }
-
 .contactPage h1 {
   font-family: "Uncial Antiqua", serif;
   text-align: center;
   margin-bottom: 20px;
   color: #000000;
 }
-
 .contactPage p {
   font-size: 20px;
   line-height: 1.6;
   margin-bottom: 20px;
 }
-
 .contactPage h2 {
   font-family: "Uncial Antiqua", serif;
   font-size: 30px;
   margin-bottom: 10px;
 }
-
 .contactPage ul {
   list-style-type: none;
   padding: 0;
 }
-
 .contactPage li {
   font-size: 1em;
   margin-bottom: 10px;
 }
-
 .contactPage a {
   color: #007bff;
   text-decoration: none;
 }
-
+.contactPage a {
+  color: var(--black);
+}
+.contactPage a:visited,
+.contactPage a:focus {
+  color: var(--black);
+}
 .contactPage a:hover {
   text-decoration: underline;
+}
+.contactForm input,
+.contactForm textarea {
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--black);
+  font-family: "EB Garamond", serif;
+  font-size: 20px;
+  font-weight: 500;
+  resize: none;
+}
+.contactForm input:focus,
+.contactForm textarea:focus {
+  outline: none;
 }
 .contactMessageContainer {
   background-image: url("./assets/largeParchmentBackground.jpg");
@@ -1605,17 +1621,14 @@ input::placeholder {
   word-wrap: break-word;
   height: 100%;
 }
-
 .contactMessageContainer h2 {
   font-size: 30px;
 }
-
 .contactMessageList {
   list-style: none;
   padding: 0;
   width: 100%;
 }
-
 .contactMessagedeleteButton {
  padding: 7px 0px 7px;
   font-size: 20px;
@@ -1630,14 +1643,31 @@ input::placeholder {
   color: var(--white);
   font-family: "EB Garamond", serif;
 }
-
 .contactMessagedeleteButton:hover {
   cursor: pointer;
 
   box-shadow: 0 0 2px var(--black);
 }
-
-
+#submitMessageBtn {
+  padding: 7px 6px 7px;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--black);
+  background: none;
+  border: 1px solid var(--black);
+  box-shadow: 0 0 5px var(--black);
+  border-radius: 5px;
+  width: auto;
+  background-image: url("./assets/openart-image_IOoTSc82_1735921515997_raw.jpg");
+  color: var(--white);
+  font-family: "EB Garamond", serif;
+  margin-top: 5px;
+}
+#submitMessageBtn:hover {
+  cursor: pointer;
+  box-shadow: 0 0 2px var(--black);
+}
+/*ActivityFeed component styling*/
 
 /*Media queries*/
 @media (max-width: 1550px) {

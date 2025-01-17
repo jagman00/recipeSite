@@ -47,7 +47,7 @@ const Contact = () => {
       <h2>Our Team</h2>
       <ul>
         <li>
-          <strong>Jackson Grant</strong> -
+          <strong>Jackson Grant</strong> -&nbsp;
           <a
             href="https://github.com/jagman00"
             target="_blank"
@@ -57,7 +57,7 @@ const Contact = () => {
           </a>
         </li>
         <li>
-          <strong>Thu Yein Tun</strong> -
+          <strong>Thu Yein Tun</strong> -&nbsp;
           <a
             href="https://github.com/thu1111"
             target="_blank"
@@ -67,7 +67,7 @@ const Contact = () => {
           </a>
         </li>
         <li>
-          <strong>William Howard</strong> -
+          <strong>William Howard</strong> -&nbsp;
           <a
             href="https://github.com/Williamd110"
             target="_blank"
@@ -77,7 +77,7 @@ const Contact = () => {
           </a>
         </li>
         <li>
-          <strong>Caleb Vang Dodson</strong> -
+          <strong>Caleb Vang Dodson</strong> -&nbsp;
           <a
             href="https://github.com/CalebDodson"
             target="_blank"
@@ -87,7 +87,7 @@ const Contact = () => {
           </a>
         </li>
         <li>
-          <strong>Ryan Raidt</strong> -
+          <strong>Ryan Raidt</strong> -&nbsp;
           <a
             href="https://github.com/RyanRaidt"
             target="_blank"
@@ -108,7 +108,7 @@ const Contact = () => {
       {errorMessage && <p className="errorMessage">{errorMessage}</p>}
       <form className="contactForm" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="name">Name:</label>
+          <label htmlFor="name">Name: </label>
           <input
             type="text"
             id="name"
@@ -120,7 +120,7 @@ const Contact = () => {
           />
         </div>
         <div>
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">Email: </label>
           <input
             type="email"
             id="email"
@@ -142,7 +142,7 @@ const Contact = () => {
             required
           ></textarea>
         </div>
-        <button type="submit">Send Message</button>
+        <button id="submitMessageBtn" type="submit">Send Message</button>
       </form>
     </div>
   );
