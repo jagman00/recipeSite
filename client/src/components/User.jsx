@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { Link, useNavigate } from "react-router-dom";
 import FollowButton from "./FollowButton";
 import Modal from "./Modal.jsx";  
+import axios from "axios";
 
 const GetUser = ({setToken}) => {
   const [userInfo, setUserInfo] = useState({
@@ -24,7 +25,7 @@ const GetUser = ({setToken}) => {
   const [modalOpen, setModalOpen] = useState(false); // State for modal
   const [modalTitle, setModalTitle] = useState(""); // Title for the modal
   const [modalContent, setModalContent] = useState(null); // Content of the modal
-
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -107,7 +108,8 @@ const GetUser = ({setToken}) => {
     const updatedProfile = {
       name: editProfile.name, // Get the updated name from the form
       email: editProfile.email, // Get the updated email from the form
-      profileUrl: editProfile.profileUrl || userInfo.profileUrl, // Only update if the profileUrl was changed
+      // profileUrl: editProfile.profileUrl || userInfo.profileUrl, // Only update if the profileUrl was changed
+      profileUrl: userInfo.profileUrl, // Use the latest profileUrl from state
       userTitle: editProfile.userTitle, // Get the updated userTitle from the form
       bio: editProfile.bio, // Get the updated bio from the form
     };
@@ -115,7 +117,7 @@ const GetUser = ({setToken}) => {
     try {
       const updatedUser = await updateUser(userId, updatedProfile);
 
-      console.log("User updated successfully:", updatedUser);
+      // console.log("User updated successfully:", updatedUser);
       setUserInfo(updatedUser); // Update the user info in the state
       // Fetch the updated user again to ensure consistency
       await fetchLoggedInUser(localStorage.getItem("token"));
@@ -194,6 +196,33 @@ const GetUser = ({setToken}) => {
     setModalContent(null);
   };
 
+  // Profile Image Upload (Edit Profile)
+  const handleProfileImageUpload = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();  
+    formData.append("profileImage", e.target.files[0]);
+  
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `http://localhost:3000/api/users/${userId}/upload-profile`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      // Refresh user info to reflect the new profile image
+      await fetchLoggedInUser(token);
+    } catch (error) {
+      console.error("Error uploading profile image:", error);
+    }
+  };
+
   return (
     <div id="userComponent">
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
@@ -203,7 +232,12 @@ const GetUser = ({setToken}) => {
             <div id="userPicAndDetailsContainer">
               <div id="profileBorder">
                 <div id="userProfilePicContainer">
-                  <img src={userInfo?.profileUrl} alt="User Profile" />
+                  <img src={
+                        userInfo.profileUrl?.startsWith("http")
+                          ? userInfo.profileUrl // Use external URLs as-is
+                          : `http://localhost:3000${userInfo.profileUrl}` // Prepend base URL for local paths
+                      } 
+                      alt="User Profile" />
                 </div>
               </div>
               <div id="userDetailsContainer">
@@ -229,11 +263,10 @@ const GetUser = ({setToken}) => {
                     <label>
                       <strong>Profile Picture URL:</strong>
                       <br />
-                      <input
-                        type="text"
-                        name="profileUrl"
-                        value={editProfile.profileUrl}
-                        onChange={handleProfileChange}/>
+                      <input 
+                        type="file" 
+                        onChange={handleProfileImageUpload} 
+                        name="profileUrl" />
                     </label>
                     <br />
                     <label>
@@ -307,7 +340,10 @@ const GetUser = ({setToken}) => {
                         <div key={recipe.recipeId} className="recipeCard">
                             <Link to={`/recipe/${recipe.recipeId}`}>
                                 <div id="profileImgContainer">
-                                    <img src={recipe.recipeUrl} className="image" alt={recipe.title} />
+                                    <img 
+                                    src={recipe.recipeUrl.includes("http") ? recipe.recipeUrl:`http://localhost:3000${recipe.recipeUrl}`}
+                                    className="image" 
+                                    alt={recipe.title} />
                                 </div>
                             </Link>
                             <div id="recipeBar">

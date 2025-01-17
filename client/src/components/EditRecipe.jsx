@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../App.css";
 import { fetchCategories } from "../API";
+import axios from "axios";
 
 const EditRecipe = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // id of the recipe to edit
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const [recipe, setRecipe] = useState({
@@ -117,7 +118,7 @@ const EditRecipe = () => {
       }));
 
     const recipeData = {
-      ...recipe,
+      ...recipe, //
       servingSize: parseInt(recipe.servingSize, 10),
       steps: formattedSteps,
       ingredients: recipe.ingredients.map((ingredient) => ({
@@ -146,6 +147,33 @@ const EditRecipe = () => {
     } catch (error) {
       console.error("Error updating recipe:", error);
       setError("Failed to update recipe.");
+    }
+  };
+
+  // Recipe Image Upload (Edit Recipe)
+  const handleImageUpload = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();
+    formData.append("recipeImage", e.target.files[0]);
+  
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post( 
+        `http://localhost:3000/api/recipes/${id}/upload-image`, //
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update state with new image URL
+      setRecipe((prev) => ({ ...prev, recipeUrl: response.data.recipeUrl }));
+    } catch (error) {
+      console.error("Error uploading profile image:", error);
     }
   };
 
@@ -225,16 +253,27 @@ const EditRecipe = () => {
           </label>
         </div>
         <div>
-          <label htmlFor="recipeUrl">
-            Image URL:
-            <input
-              id="recipeUrl"
-              type="url"
-              name="recipeUrl"
-              value={recipe.recipeUrl}
-              onChange={handleChange}
-              required
+          <label>Current Recipe Image:</label>
+          {recipe.recipeUrl ? (
+            <img
+              src={
+                recipe.recipeUrl.startsWith("http")
+                  ? recipe.recipeUrl
+                  : `http://localhost:3000${recipe.recipeUrl}`
+              }
+              alt="Recipe"
+              style={{ width: "200px", height: "auto" }}
             />
+          ) : (
+            <p>No image available</p>
+          )}
+        </div>
+        <div>
+          <label htmlFor="recipeUrl">
+            Choose file to change image URL:
+            <input type="file" 
+                   onChange={handleImageUpload} 
+                   name = "recipeUrl"/>
           </label>
         </div>
         <div>

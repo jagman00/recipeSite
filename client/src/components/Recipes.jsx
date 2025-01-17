@@ -113,7 +113,9 @@ const RecipesList = () => {
             >
               <div id="imgContainer">
                 <img
-                  src={recipe.recipeUrl}
+                  src={recipe.recipeUrl.includes("https") 
+                    ? recipe.recipeUrl
+                    :`http://localhost:3000${recipe.recipeUrl}`}
                   className="image"
                   alt={recipe.title}
                   loading="lazy"
