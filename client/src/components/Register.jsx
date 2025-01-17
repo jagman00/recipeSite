@@ -42,7 +42,7 @@ const RegisterUser = ({ setToken }) => {
     try {
         const { credential } = credentialResponse;
 
-        const response = await fetch('http://localhost:3000/auth/google-login', {
+        const response = await fetch('http://localhost:3000/api/auth/google-login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

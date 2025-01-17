@@ -29,7 +29,7 @@ router.post("/", authenticateUser, upload.single("recipeImage"), async (req, res
         recipeUrl,
         steps: JSON.parse(steps),
         userId,
-        // categories,
+        categoryName,
         ingredients: {
           /* Create related ingredients */ /* Expect an array of ingredient objects*/
           create: JSON.parse(ingredients).map((ingredient) => ({ 
@@ -843,39 +843,4 @@ router.post("/:id/upload-image", authenticateUser, upload.single("recipeImage"),
   }
 );
 
-});
-router.get("/recommendations", authenticateUser, async (req, res) => {
-    const userId = req.user.userId;
-
-    try {
-        // Step 1: Fetch user activities
-        const activities = await prisma.activity.findMany({
-            where: { userId },
-            select: { recipeId: true },
-        });
-
-        // Extract unique recipe IDs
-        const recipeIds = [...new Set(activities.map((activity) => activity.recipeId).filter((id) => id !== null && id !== undefined))];
-
-        if (recipeIds.length === 0) {
-            return res.status(200).json([]); // No recommendations
-        }
-
-        // Step 2: Fetch recipes
-        const recipes = await prisma.recipe.findMany({
-            where: { recipeId: { in: recipeIds } },
-            include: {
-                user: { select: { name: true, profileUrl: true } },
-                categories: true,
-                ingredients: true,
-                _count: { select: { likes: true, bookmarks: true } },
-            },
-        });
-
-        return res.status(200).json(recipes);
-    } catch (error) {
-        console.error("Error fetching recommendations:", error);
-        return res.status(500).json({ message: "Failed to fetch recommendations.", error: error.message });
-    }
-});
 
