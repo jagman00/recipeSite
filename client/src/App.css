@@ -1042,15 +1042,14 @@ input::placeholder, textarea::placeholder {
 }
 .loginComponent button {
   background-image: url("./assets/openart-image_IOoTSc82_1735921515997_raw.jpg");
-  padding: 7px 12px 7px 12px;
+  padding: 5px 12px 5px 12px;
   font-size: 24px;
   background-color: transparent;
   border: 1px solid var(--black);
   box-shadow: 0 0 5px var(--black);
   border-radius: 5px;
-  margin-top: 10px;
-  width: 120px;
-  margin: 0 auto;
+  width: auto;
+  margin: 20px auto 0;
   box-sizing: border-box;
   color: var(--white);
   font-family: "EB Garamond", serif;
@@ -1595,6 +1594,19 @@ input::placeholder, textarea::placeholder {
 .contactPage a:hover {
   text-decoration: underline;
 }
+.contactForm {
+  width: 360px;
+  margin: 0 auto;
+}
+.contactForm label {
+  display: flex;
+}
+.contactForm label span {
+  display: inline-block;
+  text-align: right;
+  margin-right: 10px;
+  width: 90px;
+}
 .contactForm input,
 .contactForm textarea {
   background: none;
@@ -1604,6 +1616,12 @@ input::placeholder, textarea::placeholder {
   font-size: 20px;
   font-weight: 500;
   resize: none;
+  width: 100%;
+  margin-bottom: 5px;
+}
+.contactForm textarea {
+  border: 1px solid var(--black);
+  padding: 2px;
 }
 .contactForm input:focus,
 .contactForm textarea:focus {
@@ -1645,7 +1663,6 @@ input::placeholder, textarea::placeholder {
 }
 .contactMessagedeleteButton:hover {
   cursor: pointer;
-
   box-shadow: 0 0 2px var(--black);
 }
 #submitMessageBtn {
@@ -1667,8 +1684,78 @@ input::placeholder, textarea::placeholder {
   cursor: pointer;
   box-shadow: 0 0 2px var(--black);
 }
-/*ActivityFeed component styling*/
 
+/*ActivityFeed component styling*/
+.activity-feed {
+  background-image: url("./assets/largeParchmentBackground.jpg");
+  width: auto;
+  max-width: 1000px;
+  align-self: flex-start;
+  color: var(--black);
+  text-align: center;
+  width: auto;
+  height: auto;
+  font-family: "EB Garamond", serif;
+  z-index: 1;
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--black);
+  margin: 50px auto;
+  padding: 20px;
+}
+.activityFeed {
+  list-style: none;
+}
+.activityFeed a {
+  text-decoration: none;
+  color: var(--black);
+}
+.activity-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 20px;
+}
+.activityFeed a:focus,
+.activityFeed a:visited {
+  color: var(--black);
+}
+.activityImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.activityFeed li {
+  margin-bottom: 40px;
+}
+.recommendationFeed {
+  list-style: none;
+  width: auto;
+  max-width: 560px;
+}
+.recommendationFeed a {
+  text-decoration: none;
+  color: var(--black);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 20px;
+}
+.recommendationFeed a:focus,
+.recommendationFeed a:visited {
+  color: var(--black);
+}
+.recommendationFeed li {
+  margin-bottom: 40px;
+}
+.feedImgContainer {
+  width: 400px;
+  height: 300px;
+}
+.feedImgContainer img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 /*Media queries*/
 @media (max-width: 1550px) {
   .adminDashboard {
@@ -1681,6 +1768,12 @@ input::placeholder, textarea::placeholder {
   }
   .recipes {
     max-width: 800px;
+  }
+}
+@media (max-width: 1240px) {
+  .contactPage {
+    margin-left: 20px;
+    margin-right: 20px;
   }
 }
 @media (max-width: 1050px) {

@@ -68,37 +68,51 @@ function ActivityFeed() {
       {activities.length === 0 ? (
         <p>No recent activity to display.</p>
       ) : (
-        <ul>
+        <ul className="activityFeed">
           {activities.map((activity) => (
             <li key={activity.id}>
               <Link to={`/recipe/${activity.recipe?.recipeId}`} className="activity-link">
                 <div className="activity-item">
-                  <img
-                    src={activity.recipe?.recipeUrl || "/placeholder-image.png"}
-                    alt={activity.recipe?.title || "Recipe Image"}
-                    className="activity-image"
-                  />
+                  {activity.recipe && activity.recipe.recipeUrl ? (
+                    <div className="feedImgContainer">
+                      <img
+                        src={activity.recipe.recipeUrl.includes("https")
+                          ? activity.recipe.recipeUrl
+                          :`http://localhost:3000${activity.recipe.recipeUrl}`}
+                        alt={activity.recipe?.title || "Recipe Image"}
+                        className="activityImg"
+                      />
+                    </div>
+                  ) : ( "/placeholder-image.png")}
                   <div>
                     <strong>{activity.user?.name || "Unknown User"}</strong>
                     {renderActivityDetails(activity)}
                   </div>
+                  <small>{new Date(activity.createdAt).toLocaleString()}</small>
                 </div>
               </Link>
-              <small>{new Date(activity.createdAt).toLocaleString()}</small>
             </li>
           ))}
         </ul>
       )}
       <div className="recommendations">
-        <h3>Unliked Recipes You Might Like</h3>
+        <h3 style={{margin: "0 auto"}}>Recipes You Might Like</h3>
+
         {recommendations.length === 0 ? (
           <p>No recommendations available at the moment.</p>
         ) : (
-          <ul>
+          <ul className="recommendationFeed">
             {recommendations.map((recipe) => (
               <li key={recipe.recipeId}>
                 <Link to={`/recipe/${recipe.recipeId}`}>
-                  <img src={recipe.recipeUrl.includes("https")? recipe.recipeUrl:`http://localhost:3000${recipe.recipeUrl}` } alt={recipe.title} />
+                  {recipe.recipeUrl ? (
+                    <div className="feedImgContainer">
+                      <img src={recipe.recipeUrl.includes("https")
+                        ? recipe.recipeUrl:`http://localhost:3000${recipe.recipeUrl}` } 
+                        alt={recipe.title}
+                      />
+                    </div>
+                  ) : ( "/placeholder-image.png")}
                   <h4>{recipe.title}</h4>
                   <p>By {recipe.user?.name || "Unknown Author"}</p>
                 </Link>

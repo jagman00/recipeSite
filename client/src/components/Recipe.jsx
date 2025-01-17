@@ -25,10 +25,7 @@ const Recipe = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const token = localStorage.getItem("token");
-
-  
-  
+  const token = localStorage.getItem("token");  
 
   //get the page state from the location
   const currentPage = location.state?.page || 1;
@@ -383,6 +380,7 @@ const Recipe = () => {
             </div>
               <p>{recipe.description}</p>
               <p>Serving Size: {recipe.servingSize}</p>
+              <p>Category: {recipe.categories[0].categoryName}</p>
               <div id="recipeIconContainer" className="no-print">
                 <button className="recipeIcon" onClick={handleToggleLike}>
                   <img

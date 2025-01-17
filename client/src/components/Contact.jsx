@@ -108,39 +108,45 @@ const Contact = () => {
       {errorMessage && <p className="errorMessage">{errorMessage}</p>}
       <form className="contactForm" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="name">Name: </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Your Name"
-            required
-          />
+          <label htmlFor="name">
+            <span>Name: </span>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Your Name"
+              required
+            />
+          </label>
         </div>
         <div>
-          <label htmlFor="email">Email: </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Your Email"
-            required
-          />
+          <label htmlFor="email">
+            <span>Email: </span>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Your Email"
+              required
+            />
+          </label>
         </div>
-        <div>
-          <label htmlFor="message">Message:</label>
-          <textarea
-            id="message"
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            placeholder="Your Message"
-            required
-          ></textarea>
+        <div className="message">
+          <label htmlFor="message">
+            <span>Message: </span>
+            <textarea
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              placeholder="Your Message"
+              required
+            ></textarea>
+          </label>
         </div>
         <button id="submitMessageBtn" type="submit">Send Message</button>
       </form>

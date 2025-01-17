@@ -99,8 +99,9 @@ function Navbar({ token, setToken, isAdmin }) {
             id="latestBtn"
             className="header"
             to="/latest"
+            style={{alignSelf: "center"}}
           >
-            Latest
+            Feed
           </Link>
         )}
       </div>
