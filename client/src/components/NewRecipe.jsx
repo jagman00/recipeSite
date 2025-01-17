@@ -11,7 +11,7 @@ const NewRecipe = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [categories, setCategories] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(""); // State for selected category
+  const [selectedCategoryId, setSelectedCategoryId] = useState(""); // State for selected category's id
   const [loadingCategories, setLoadingCategories] = useState(true); // Loading state for categories
   const [servingSize, setServingSize] = useState(1); // Default serving size
   const [ingredients, setIngredients] = useState([{ name: "", quantity: "", unit: "" }]);
@@ -19,7 +19,7 @@ const NewRecipe = () => {
   const [error, setError] = useState(null); // Error state for categories
 
   const [recipeImage, setRecipeImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
+  const [imagePreview, setImagePreview] = useState("");  
   
   useEffect(() => {
     const loadCategories = async () => {
@@ -73,7 +73,7 @@ const NewRecipe = () => {
     recipeData.append("title", title);
     recipeData.append("description", description);
     recipeData.append("servingSize", servingSize);
-    // recipeData.append("categories", selectedCategory);
+    recipeData.append("categoryId", selectedCategoryId);
     recipeData.append("recipeImage", recipeImage);
     recipeData.append("steps", JSON.stringify(formattedSteps));
     recipeData.append("ingredients", JSON.stringify(formattedIngredients));
@@ -154,8 +154,8 @@ const NewRecipe = () => {
             ) : (
               <select
               id="category"
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
+              value={selectedCategoryId}
+              onChange={(e) => setSelectedCategoryId(e.target.value)}
               required
             >
               <option value="" disabled>
