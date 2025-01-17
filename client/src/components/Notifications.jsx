@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const token = localStorage.getItem('token');
-  console.log("Notifications:", notifications);
-  
 
   useEffect(() => {
     const fetchNotifications = async () => {

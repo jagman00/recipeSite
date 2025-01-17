@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchCategories } from "../API";
 import "../App.css";
+import axios from "axios";
 
 const NewRecipe = () => {
   const navigate = useNavigate();
@@ -13,12 +14,13 @@ const NewRecipe = () => {
   const [selectedCategory, setSelectedCategory] = useState(""); // State for selected category
   const [loadingCategories, setLoadingCategories] = useState(true); // Loading state for categories
   const [servingSize, setServingSize] = useState(1); // Default serving size
-  const [recipeUrl, setRecipeUrl] = useState(""); // State for the image URL
   const [ingredients, setIngredients] = useState([{ name: "", quantity: "", unit: "" }]);
   const [steps, setSteps] = useState([""]);
   const [error, setError] = useState(null); // Error state for categories
 
-
+  const [recipeImage, setRecipeImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  
   useEffect(() => {
     const loadCategories = async () => {
       try {
@@ -56,48 +58,57 @@ const NewRecipe = () => {
 
     const formattedSteps = steps
     .filter((step) => step.trim()) 
-    .map((instruction, index) => ({
+    .map((instruction, index) => ({ 
       stepNumber: index + 1,
       instruction, 
     }));
 
-    const recipeData = {
-        title,
-        description,
-        servingSize: parseInt(servingSize, 10),
-        recipeUrl,
-        steps: formattedSteps,
-        ingredients: ingredients.map((ingredient) => ({
-          ingredientName: ingredient.name,
-          quantityAmount: ingredient.quantity.toString(),
-          quantityUnit: ingredient.unit,
-        })),
-      };
+    const formattedIngredients = ingredients.map((ingredient) => ({ 
+      ingredientName: ingredient.name,
+      quantityAmount: ingredient.quantity.toString(),
+      quantityUnit: ingredient.unit,
+    }));
 
-      try {
+    const recipeData = new FormData();
+    recipeData.append("title", title);
+    recipeData.append("description", description);
+    recipeData.append("servingSize", servingSize);
+    // recipeData.append("categories", selectedCategory);
+    recipeData.append("recipeImage", recipeImage);
+    recipeData.append("steps", JSON.stringify(formattedSteps));
+    recipeData.append("ingredients", JSON.stringify(formattedIngredients));
+
+    try {
     const token = localStorage.getItem("token"); // Retrieve token from localStorage
-    const response = await fetch("/api/recipes", {
-      method: "POST",
+    const response = await axios.post("http://localhost:3000/api/recipes", recipeData, {
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(recipeData),
     });
-
-    if (response.ok) {
-      navigate("/");
+    
+    if (response.status===201) {
+        alert("Recipe created successfully!");
+        navigate("/");
     } else {
-      const errorData = await response.json();
-      console.error("Failed to submit recipe:", errorData);
-      alert(errorData.message || "Failed to submit recipe. Please try again.");
+      console.error("Failed to submit recipe:", response);
     }
   } catch (error) {
     console.error("Error submitting recipe:", error);
-    alert("An error occurred while submitting the recipe.");
   }
 };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setRecipeImage(file);
+    
+    // Generate preview URL using FileReader
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);  // Set the preview URL
+    };
+    if (file) reader.readAsDataURL(file); // Read the file as a data URL
+  };
 
   return (
     <div className="new-recipe-form">
@@ -181,14 +192,17 @@ const NewRecipe = () => {
 
         {/* Recipe URL */}
         <div>
-          <label htmlFor="recipeUrl">
+          <label htmlFor="recipeImage">
             Image:
+            {imagePreview && (
+              <div className="image-preview">
+                <img src={imagePreview} alt="Recipe Preview" style={{ width: "200px", height: "200px", objectFit: "cover" }} />
+              </div>
+            )}
             <input
-              id="recipeUrl"
-              type="url"
-              value={recipeUrl}
-              onChange={(e) => setRecipeUrl(e.target.value)}
-              placeholder="Enter a URL for the recipe image"
+              type="file"
+              id="recipeImage"
+              onChange={handleImageChange}
               required
             />
           </label>

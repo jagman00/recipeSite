@@ -23,6 +23,11 @@ const AuthorProfile = () => {
 
     const token = localStorage.getItem("token");
 
+    console.log("Author ID: ", authorId);
+    console.log("Logged-in User ID: ", loggedInUserId);
+    
+    
+
     useEffect(() => {
 
         const getAuthorInfo = async () => {
@@ -143,7 +148,10 @@ const AuthorProfile = () => {
                     <div id="userPicAndDetailsContainer">
                         <div id="profileBorder">
                             <div id="userProfilePicContainer">
-                                <img src={authorInfo?.profileUrl} alt="User Profile" />
+                                <img src={authorInfo.profileUrl?.startsWith("http")
+                                        ? authorInfo.profileUrl 
+                                        : `http://localhost:3000${authorInfo.profileUrl}`} 
+                                     alt="User Profile" />
                             </div>
                         </div>
                         <div id="userDetailsContainer">
@@ -162,11 +170,12 @@ const AuthorProfile = () => {
                                 {followingCount >= 1000 ? (followingCount / 1000).toFixed(1) + "k" : followingCount}
                             </span>
                         <div/>
+                        {authorId == loggedInUserId ? null: ( 
                         <FollowButton
                             authorId={authorInfo.userId}
                             onFollowChange={(userId, isFollowing) => handleFollowChange(loggedInUserId, isFollowing, loggedInUserName)} // Pass name dynamically
                             authorName={authorInfo.name}
-                        />
+                        />)}
                     </div>
                     <Modal isOpen={modalOpen} onClose={handleCloseModal} title={modalTitle}>
                         {modalContent}
@@ -181,7 +190,11 @@ const AuthorProfile = () => {
                         <div key={recipe.recipeId} className="recipeCard">
                             <Link to={`/recipe/${recipe.recipeId}`}>
                                 <div id="profileImgContainer">
-                                    <img src={recipe.recipeUrl} className="image" alt={recipe.title} />
+                                    <img src={recipe.recipeUrl.includes("https") 
+                                            ? recipe.recipeUrl
+                                            :`http://localhost:3000${recipe.recipeUrl}`}
+                                         className="image" 
+                                         alt={recipe.title} />
                                 </div>
                                 <div id="recipeBar">
                                     <h4>{recipe.title}</h4>

@@ -5,6 +5,11 @@ const prisma = require("../prisma");
 const authenticateUser = require("../middleware/authenticateUser");
 const authenticateAdmin = require("../middleware/authenticateAdmin");
 
+// File upload configuration
+const upload = require("./fileUpload");
+const fs = require("fs");
+const path = require("path");
+
 // GET /api/users
 // Get all users (by admin only)
 router.get("/", authenticateAdmin, async (req, res, next) => {
@@ -19,7 +24,7 @@ router.get("/", authenticateAdmin, async (req, res, next) => {
     // Count the total number of users
     const userCount = await prisma.user.count();
 
-    res.status(200).json({ userCount,users });
+    res.status(200).json({ userCount, users });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Fail to fetch users" });
@@ -28,7 +33,7 @@ router.get("/", authenticateAdmin, async (req, res, next) => {
 
 // GET /api/users/:id /*UPDATED */
 // Get a speicifc user by id including his recipes /*Updated */ only registered users
-router.get("/:id", authenticateUser , async (req, res, next) => {
+router.get("/:id", authenticateUser, async (req, res, next) => {
   const { id } = req.params;
   try {
     const user = await prisma.user.findUnique({
@@ -100,7 +105,7 @@ router.get("/:id/recipes", async (req, res, next) => {
       where: { userId: parseInt(id) },
     });
 
-    res.status(200).json({recipeCount,recipes});
+    res.status(200).json({ recipeCount, recipes });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Fail to fetch recipes" });
@@ -114,11 +119,9 @@ router.put("/:id", authenticateUser, async (req, res, next) => {
   const { name, email, profileUrl, userTitle, bio } = req.body;
   try {
     if (req.user.userId !== parseInt(id)) {
-      return res
-        .status(403)
-        .json({
-          message: "You are not authorized to update this user's profile",
-        });
+      return res.status(403).json({
+        message: "You are not authorized to update this user's profile",
+      });
     }
     const updatedUser = await prisma.user.update({
       where: { userId: parseInt(id) },
@@ -133,51 +136,51 @@ router.put("/:id", authenticateUser, async (req, res, next) => {
 
 // DELETE /api/users/:id
 // Delete a user by id (by the user or an admin)
-router.delete(
-  "/:id",
-  authenticateUser,
-  async (req, res, next) => {
-    const { id } = req.params;
-    try {
-      const user = await prisma.user.findUnique({
-        where: { userId: parseInt(id) },
-      });
-      if (!user) return res.status(404).json({ message: "User not found" });
+router.delete("/:id", authenticateUser, async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { userId: parseInt(id) },
+    });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-      // Check if the user is the owner of the account or an admin
-      if (parseInt(id) !== req.user.userId && !req.user.isAdmin) {
-        return res
-          .status(403)
-          .json({ message: "You are not authorized to delete this account" });
-      }
-
-      await prisma.user.delete({
-        where: { userId: parseInt(id) },
-      });
-
-      res.status(204).end();
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Fail to delete user" });
+    // Check if the user is the owner of the account or an admin
+    if (parseInt(id) !== req.user.userId && !req.user.isAdmin) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to delete this account" });
     }
+
+    // Delete the associated image file if it exists and is a local file
+    if (user.profileUrl && !user.profileUrl.startsWith("http")) {
+      const imagePath = path.join(__dirname, "../", user.profileUrl);
+      if (fs.existsSync(imagePath)) fs.unlinkSync(imagePath);
+    }
+
+    await prisma.user.delete({
+      where: { userId: parseInt(id) },
+    });
+
+    res.status(204).end();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Fail to delete user" });
   }
-);
+});
 
 // Get all bookmarked recipes of a specific user (only by the user) (admin cannot access)
 // GET /api/users/:id/bookmarks
 router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
   const { id } = req.params;
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10; 
+  const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit; // Calculate the offset
-  
+
   try {
     if (req.user.userId !== parseInt(id)) {
-      return res
-        .status(403)
-        .json({
-          message: "You are not authorized to view this user's bookmarks",
-        });
+      return res.status(403).json({
+        message: "You are not authorized to view this user's bookmarks",
+      });
     }
 
     const bookmarks = await prisma.bookmark.findMany({
@@ -185,16 +188,16 @@ router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
       include: {
         recipe: {
           include: {
-            user: { 
-                select: { userId: true, name: true, profileUrl:true } 
+            user: {
+              select: { userId: true, name: true, profileUrl: true },
             },
-            _count: { 
-                select: { likes: true, bookmarks:true ,comments: true }
+            _count: {
+              select: { likes: true, bookmarks: true, comments: true },
             },
           },
         },
       },
-      orderBy: { bookmarkId: "desc"}, // newest bookmark first
+      orderBy: { bookmarkId: "desc" }, // newest bookmark first
       skip, // Skip this number of recipes
       take: limit, // Limit the number of recipes per page
     });
@@ -206,10 +209,10 @@ router.get("/:id/bookmarks", authenticateUser, async (req, res, next) => {
     const recipes = bookmarks.map((bookmark) => bookmark.recipe);
 
     const bookmarkCount = await prisma.bookmark.count({
-        where: { userId: parseInt(id) },
-        });
+      where: { userId: parseInt(id) },
+    });
 
-    res.status(200).json({bookmarkCount,recipes});
+    res.status(200).json({ bookmarkCount, recipes });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Fail to fetch bookmarks" });
@@ -224,11 +227,9 @@ router.get("/:id/comments", authenticateUser, async (req, res, next) => {
   try {
     // Check if the authenticated user matches the requested user ID or is an admin
     if (req.user.userId !== parseInt(id) && !req.user.isAdmin) {
-      return res
-        .status(403)
-        .json({
-          message: "You are not authorized to view this user's comments.",
-        });
+      return res.status(403).json({
+        message: "You are not authorized to view this user's comments.",
+      });
     }
 
     // Fetch all comments for the given user ID
@@ -264,10 +265,10 @@ router.get("/:id/comments", authenticateUser, async (req, res, next) => {
     }
 
     const commentCount = await prisma.comment.count({
-        where: { userId: parseInt(id) },
-        });
+      where: { userId: parseInt(id) },
+    });
 
-    res.status(200).json({commentCount,comments});
+    res.status(200).json({ commentCount, comments });
   } catch (error) {
     console.error("Error in getting a comment:", error);
     res.status(500).json({ message: "Failed to fetch comments." });
@@ -279,108 +280,108 @@ router.get("/:id/comments", authenticateUser, async (req, res, next) => {
 // allows a user to follow/unfollow another user
 // POST /api/users/:id/follow
 router.post("/:id/follow", authenticateUser, async (req, res, next) => {
-    const { id } = req.params; // id of the user to follow/unfollow
-    const  currentUserId = parseInt(req.user.userId); // id of the authenticated user
-    try {
-      if (currentUserId === parseInt(id)) {
-        return res
-          .status(400)
-          .json({ message: "You cannot follow yourself" });
-      }
-  
-      // Check if the user is already following the target user
-      const existingFollow = await prisma.userFollower.findUnique({
-        where: {
-            followFromUserId_followToUserId: {
-              followFromUserId: currentUserId,
-              followToUserId: parseInt(id),
-            },
-          },
-      });
+  const { id } = req.params; // id of the user to follow/unfollow
+  const currentUserId = parseInt(req.user.userId); // id of the authenticated user
+  try {
+    if (currentUserId === parseInt(id)) {
+      return res.status(400).json({ message: "You cannot follow yourself" });
+    }
 
-      let followStatus = false;
-  
-      if (existingFollow) { // Unfollow if already following
-        await prisma.userFollower.delete({
-          where: {
-              followFromUserId_followToUserId: {
-                followFromUserId: currentUserId,
-                followToUserId: parseInt(id),
-              },
-            },
-        });
-      } else { // Follow if not following yet
-        await prisma.userFollower.create({
-          data: {
+    // Check if the user is already following the target user
+    const existingFollow = await prisma.userFollower.findUnique({
+      where: {
+        followFromUserId_followToUserId: {
+          followFromUserId: currentUserId,
+          followToUserId: parseInt(id),
+        },
+      },
+    });
+
+    let followStatus = false;
+
+    if (existingFollow) {
+      // Unfollow if already following
+      await prisma.userFollower.delete({
+        where: {
+          followFromUserId_followToUserId: {
             followFromUserId: currentUserId,
             followToUserId: parseInt(id),
           },
-        });
-        followStatus = true;
+        },
+      });
+    } else {
+      // Follow if not following yet
+      await prisma.userFollower.create({
+        data: {
+          followFromUserId: currentUserId,
+          followToUserId: parseInt(id),
+        },
+      });
+      followStatus = true;
 
-        // Notify the followed user about the new follower
-        const followedUser = await prisma.user.findUnique({
-          where: { userId: parseInt(id) },
-          // select: { name: true },
-        });
+      // Notify the followed user about the new follower
+      const followedUser = await prisma.user.findUnique({
+        where: { userId: parseInt(id) },
+        // select: { name: true },
+      });
 
-        const fromUser = await prisma.user.findUnique({
-            where: { userId: currentUserId },
-            select: { name: true },
-        });
+      const fromUser = await prisma.user.findUnique({
+        where: { userId: currentUserId },
+        select: { name: true },
+      });
 
-        if (followedUser) {
-            await prisma.notification.create({
-                data: {
-                    type: 'follow',
-                    message: `${fromUser.name} followed you.`,
-                    userId: parseInt(id),
-                    fromUserId: currentUserId, //Follower ID
-                },
-            });
-        }
+      if (followedUser) {
+        await prisma.notification.create({
+          data: {
+            type: "follow",
+            message: `${fromUser.name} followed you.`,
+            userId: parseInt(id),
+            fromUserId: currentUserId, //Follower ID
+          },
+        });
       }
-  
-      res.status(200).json({ followStatus ,message: "Follow status updated" });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Failed to update follow status" });
     }
+
+    res.status(200).json({ followStatus, message: "Follow status updated" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to update follow status" });
+  }
 });
 
-
 // Get follow status /*UPDATE*/
-// GET /api/users/:id/follow-status 
+// GET /api/users/:id/follow-status
 router.get("/:id/follow-status", authenticateUser, async (req, res, next) => {
   const { id } = req.params; // id of the user to follow/unfollow
   const userId = req.user.userId;
 
   try {
-      const existingFollow = await prisma.userFollower.findUnique({
-        where: {
-          followFromUserId_followToUserId: {
-            followFromUserId: parseInt(userId),
-            followToUserId: parseInt(id),
-          },
+    const existingFollow = await prisma.userFollower.findUnique({
+      where: {
+        followFromUserId_followToUserId: {
+          followFromUserId: parseInt(userId),
+          followToUserId: parseInt(id),
         },
-      });
-  
-      res.status(200).json({ followStatus: !!existingFollow }); // Return boolean value
-    } catch (error) {
-      console.error("Error fetching follow status:", error);
-      res.status(500).json({ message: "Failed to fetch follow status." });
-    }
-  });
+      },
+    });
 
-// Get the list of followers for a specific user 
+    res.status(200).json({ followStatus: !!existingFollow }); // Return boolean value
+  } catch (error) {
+    console.error("Error fetching follow status:", error);
+    res.status(500).json({ message: "Failed to fetch follow status." });
+  }
+});
+
+// Get the list of followers for a specific user
 // GET /api/users/:id/followers
 router.get("/:id/followers", async (req, res, next) => {
-  const { id } = req.params; 
+  const { id } = req.params;
   try {
     const followers = await prisma.userFollower.findMany({
       where: { followToUserId: parseInt(id) }, // People following this user
       include: {
-        followFromUser: { // Include the details of the follower
+        followFromUser: {
+          // Include the details of the follower
           select: {
             userId: true,
             name: true,
@@ -394,8 +395,8 @@ router.get("/:id/followers", async (req, res, next) => {
     const followerList = followers.map((follower) => follower.followFromUser);
     const followerCount = followerList.length;
 
-    res.status(200).json({followerCount,followerList});
-    // A consistent structure, even if the followers list is empty 
+    res.status(200).json({ followerCount, followerList });
+    // A consistent structure, even if the followers list is empty
     // ({ followerCount: 0, followerList: [] })
   } catch (error) {
     console.error(error);
@@ -406,12 +407,13 @@ router.get("/:id/followers", async (req, res, next) => {
 // Get the list of people that the user is following
 // GET /api/users/:id/followings
 router.get("/:id/followings", async (req, res, next) => {
-  const { id } = req.params; 
+  const { id } = req.params;
   try {
     const followings = await prisma.userFollower.findMany({
       where: { followFromUserId: parseInt(id) }, // People this user is following
       include: {
-        followToUser: { // Include the details of people being followed
+        followToUser: {
+          // Include the details of people being followed
           select: {
             userId: true,
             name: true,
@@ -425,9 +427,47 @@ router.get("/:id/followings", async (req, res, next) => {
     const followingList = followings.map((following) => following.followToUser);
     const followingCount = followingList.length;
 
-    res.status(200).json({followingCount,followingList});
+    res.status(200).json({ followingCount, followingList });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch followings" });
   }
 });
+
+
+// POST /api/users/:id/upload-profile
+router.post("/:id/upload-profile", authenticateUser, upload.single("profileImage"), async (req, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+
+      // Ensure the user exists
+      const user = await prisma.user.findUnique({ where: { userId } });
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      // Delete the existing image if it exists and is a local file
+      if (user.profileUrl && !user.profileUrl.startsWith("http")) {
+        // Only delete local (not external URLs)
+        const oldImagePath = path.join(__dirname, "../", user.profileUrl);
+
+        // Ensure file exists before attempting to delete
+        if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+        } else {
+            console.warn(`File not found for deletion: ${oldImagePath}`);
+        }
+      }
+
+      // Save the new image path
+      const profileUrl = `/uploads/${req.file.filename}`;
+      await prisma.user.update({
+        where: { userId },
+        data: { profileUrl },
+      });
+
+      res.status(200).json({ message: "Profile image uploaded successfully", profileUrl });
+    } catch (error) {
+      console.error("Error uploading profile image:", error);
+      res.status(500).json({ message: "Failed to upload profile image" });
+    }
+  }
+);

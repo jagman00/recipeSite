@@ -8,12 +8,8 @@ app.use(express.json());
 app.use(require('morgan')('dev'));
 app.use(cors());
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173/",
-//     credentials: true,
-//   })
-// );
+// Serve static files from the "uploads" folder
+app.use("/uploads", express.static("uploads"));
 
 // Health Check Endpoint
 let errorLogs = []; // Store logs globally 
