@@ -18,6 +18,7 @@ const EditRecipe = () => {
   });
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [newSelectedCategoryId, setNewSelectedCategoryId] = useState("");
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [error, setError] = useState(null);
 
@@ -40,7 +41,7 @@ const EditRecipe = () => {
           })),
           steps: data.steps.map((step) => step.instruction),
         });
-        setSelectedCategory(data.categoryId);
+        setSelectedCategory(data.categories[0]?.id || ""); // Set current category
       } catch (error) {
         console.error("Error fetching recipe:", error);
         setError("Failed to load recipe data.");
@@ -126,7 +127,7 @@ const EditRecipe = () => {
         quantityAmount: ingredient.quantity.toString(),
         quantityUnit: ingredient.unit,
       })),
-      categoryId: selectedCategory,
+      categoryId: newSelectedCategoryId,
     };
 
     try {
@@ -218,8 +219,8 @@ const EditRecipe = () => {
             ) : (
               <select
                 id="category"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                value={newSelectedCategoryId||selectedCategory}
+                onChange={(e) => setNewSelectedCategoryId(e.target.value)}
                 required
               >
                 <option value="" disabled>

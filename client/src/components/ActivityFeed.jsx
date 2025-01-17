@@ -73,11 +73,16 @@ function ActivityFeed() {
             <li key={activity.id}>
               <Link to={`/recipe/${activity.recipe?.recipeId}`} className="activity-link">
                 <div className="activity-item">
-                  <img
-                    src={activity.recipe?.recipeUrl || "/placeholder-image.png"}
-                    alt={activity.recipe?.title || "Recipe Image"}
-                    className="activity-image"
-                  />
+                  {activity.recipe && activity.recipe.recipeUrl ? (
+                      <img
+                        src={activity.recipe.recipeUrl.includes("https")
+                          ? activity.recipe.recipeUrl
+                          :`http://localhost:3000${activity.recipe.recipeUrl}`}
+                        alt={activity.recipe?.title || "Recipe Image"}
+                        className="activity-image"
+                        style={{ width: "100px", height: "100px" }}
+                      />
+                  ) : ( "/placeholder-image.png")}
                   <div>
                     <strong>{activity.user?.name || "Unknown User"}</strong>
                     {renderActivityDetails(activity)}
@@ -98,7 +103,12 @@ function ActivityFeed() {
             {recommendations.map((recipe) => (
               <li key={recipe.recipeId}>
                 <Link to={`/recipe/${recipe.recipeId}`}>
-                  <img src={recipe.recipeUrl.includes("https")? recipe.recipeUrl:`http://localhost:3000${recipe.recipeUrl}` } alt={recipe.title} />
+                  {recipe.recipeUrl ? (
+                    <img src={recipe.recipeUrl.includes("https")
+                      ? recipe.recipeUrl:`http://localhost:3000${recipe.recipeUrl}` } 
+                      alt={recipe.title} 
+                      style={{ width: "100px", height: "100px" }}/>
+                  ) : ( "/placeholder-image.png")}
                   <h4>{recipe.title}</h4>
                   <p>By {recipe.user?.name || "Unknown Author"}</p>
                 </Link>

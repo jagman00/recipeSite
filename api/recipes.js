@@ -140,6 +140,7 @@ router.get("/:id", async (req, res, next) => {
           },
         },
         ingredients: true /* Include related ingredients */,
+        categories: true, // Include related category
         comments: {
           include: {
             user: {
@@ -180,7 +181,7 @@ router.get("/:id", async (req, res, next) => {
 // PUT /api/recipes/:id
 router.put("/:id", authenticateUser, async (req, res, next) => {
   const { id } = req.params;
-  const { title, description, servingSize, recipeUrl, steps, ingredients } =
+  const { title, description, servingSize, recipeUrl, steps, ingredients, categoryId } =
     req.body;
 
   try {
@@ -206,6 +207,9 @@ router.put("/:id", authenticateUser, async (req, res, next) => {
         servingSize,
         recipeUrl,
         steps,
+        categories: {
+            connect: { id: parseInt(categoryId) }, // Update category association
+          },
         ingredients: {
           /* Update related ingredients */
           deleteMany: {} /* Delete all existing ingredients */,
