@@ -15,7 +15,7 @@ const path = require("path");
 // Create new recipe by authenticated user /*create ingredients inclusively*/
 // POST /api/recipes
 router.post("/", authenticateUser, upload.single("recipeImage"), async (req, res, next) => {
-  const { title, description, servingSize, steps, ingredients } = req.body;
+  const { title, description, servingSize, steps, ingredients, categoryId } = req.body;
   const userId = parseInt(req.user.userId);
 
   try {
@@ -29,7 +29,9 @@ router.post("/", authenticateUser, upload.single("recipeImage"), async (req, res
         recipeUrl,
         steps: JSON.parse(steps),
         userId,
-        categoryName,
+        categories: {
+            connect: { id: parseInt(categoryId) }, // Associate category
+          },
         ingredients: {
           /* Create related ingredients */ /* Expect an array of ingredient objects*/
           create: JSON.parse(ingredients).map((ingredient) => ({ 
