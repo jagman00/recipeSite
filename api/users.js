@@ -471,3 +471,40 @@ router.post("/:id/upload-profile", authenticateUser, upload.single("profileImage
     }
   }
 );
+
+
+/**
+ * Route to toggle admin status for a user
+ * @route PUT /api/users/:id/toggle-admin
+ * @access Admin only
+ */
+router.put("/:id/toggle-admin", authenticateAdmin, async (req, res) => {
+  const userId = parseInt(req.params.id); // Parse the user ID from params
+
+  try {
+    // Find the user by ID
+    const user = await prisma.user.findUnique({
+      where: { userId },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Toggle the admin status
+    const updatedUser = await prisma.user.update({
+      where: { userId },
+      data: {
+        isAdmin: !user.isAdmin,
+      },
+    });
+
+    res.status(200).json({
+      message: `User ${updatedUser.isAdmin ? "promoted to" : "demoted from"} admin.`,
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error toggling admin status:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
