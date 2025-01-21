@@ -19,12 +19,27 @@ router.get('/', authenticateUser, async (req, res) => {
                 },
             },
             orderBy: { createdAt: 'desc' },
-            take: 20, // Limit to the most recent 20 notifications
         });
         res.status(200).json(notifications);
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
         res.status(500).json({ message: 'Failed to fetch notifications.' });
+    }
+});
+
+// Mark notifications as read
+// PUT /api/notifications/mark-read
+router.put('/mark-read', authenticateUser, async (req, res) => {
+    const userId = req.user.userId;
+    try {
+        await prisma.notification.updateMany({
+            where: { userId: parseInt(userId), read: false },
+            data: { read: true },
+        });
+        res.status(204).end();
+    } catch (error) {
+        console.error('Error marking notifications as read:', error.message);
+        res.status(500).json({ message: 'Failed to mark notifications as read.' });
     }
 });
 

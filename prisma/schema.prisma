@@ -173,6 +173,7 @@ model Notification {
   id      Int     @id @default(autoincrement())
   type    String // e.g., 'like', 'comment', 'new_recipe', 'bookmark', 'follow'
   message String
+  read   Boolean @default(false)
 
   userId Int // User to whom the notification is sent
   user   User @relation(fields: [userId], references: [userId], onDelete: Cascade)
