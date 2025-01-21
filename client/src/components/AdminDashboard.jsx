@@ -20,7 +20,11 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [messages, setMessages] = useState([]);
-  
+  const [categories, setCategories] = useState([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null); 
+  const [editingCategoryId, setEditingCategoryId] = useState(null);
+  const [editingCategoryName, setEditingCategoryName] = useState(""); 
+
   // Group users by month
   const groupByMonth = (users) => {
     const counts = {};
@@ -127,7 +131,7 @@ function AdminDashboard() {
       } else {
         setServerHealth("Issues Detected");
       }
-      setErrorLogs(data.logs || ["No errors logged."]); 
+      setErrorLogs(data.logs || ["No errors logged."]);
     } catch (error) {
       setServerHealth("Offline");
       setErrorLogs(["Failed to fetch server logs."]);
@@ -160,21 +164,21 @@ function AdminDashboard() {
       );
     }
   };
-  
- useEffect(() => {
-   const fetchMessages = async () => {
-     try {
-       const response = await fetch("http://localhost:3000/api/contact");
-       if (!response.ok) throw new Error("Failed to fetch messages.");
-       const data = await response.json();
-       setMessages(data);
-     } catch (error) {
-       console.error("Error fetching messages:", error);
-     }
-   };
 
-   fetchMessages();
- }, []);
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/contact");
+        if (!response.ok) throw new Error("Failed to fetch messages.");
+        const data = await response.json();
+        setMessages(data);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+
+    fetchMessages();
+  }, []);
 
   const handleDeleteMessage = async (id) => {
     if (window.confirm("Are you sure you want to delete this message?")) {
@@ -199,6 +203,81 @@ function AdminDashboard() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/categories");
+      const data = await response.json();
+      if (!response.ok) throw new Error("Failed to fetch categories");
+      setCategories(data.categories || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  // Fetch categories when the component loads
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const handleEditCategory = async (id) => {
+    if (!editingCategoryName.trim()) {
+      alert("Category name cannot be empty.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/categories/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ categoryName: editingCategoryName }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update category");
+
+      // Update the local state
+      setCategories((prev) =>
+        prev.map((category) =>
+          category.id === id
+            ? { ...category, categoryName: editingCategoryName }
+            : category
+        )
+      );
+      setEditingCategoryId(null);
+      setEditingCategoryName("");
+    } catch (error) {
+      console.error("Error updating category:", error);
+    }
+  };
+
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this category?"))
+      return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/categories/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to delete category");
+
+      // Update the local state
+      setCategories((prev) => prev.filter((category) => category.id !== id));
+    } catch (error) {
+      console.error("Error deleting category:", error);
+    }
+  };
 
   // Render loading or error messages
   if (loading) return <p>Loading...</p>;
@@ -265,6 +344,7 @@ function AdminDashboard() {
             <p key={index}>{log}</p>
           ))}
         </div>
+
         {/* Create New Category */}
         <div className="createCategoryContainer adminCard">
           <h2>Create New Category</h2>
@@ -275,7 +355,64 @@ function AdminDashboard() {
             placeholder="Enter category name"
           />
           <button onClick={createCategory}>Create Category</button>
-          {categoryMessage && <p>{categoryMessage}</p>}
+          {categoryMessage && (
+            <p className="categoryMessage">{categoryMessage}</p>
+          )}
+
+          {/* Manage Categories Dropdown */}
+          <div className="manageCategoriesDropdown">
+            <h3>Manage Existing Categories</h3>
+            <select
+              value={selectedCategoryId || ""}
+              onChange={(e) => {
+                const selectedId = e.target.value;
+                const selectedCategory = categories.find(
+                  (category) => category.id === parseInt(selectedId, 10)
+                );
+                setSelectedCategoryId(selectedId);
+                setEditingCategoryId(selectedId);
+                setEditingCategoryName(selectedCategory?.categoryName || "");
+              }}
+            >
+              <option value="" disabled>
+                Select a category to manage
+              </option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.categoryName}
+                </option>
+              ))}
+            </select>
+
+            {editingCategoryId && (
+              <div>
+                <input
+                  type="text"
+                  value={editingCategoryName}
+                  onChange={(e) => setEditingCategoryName(e.target.value)}
+                  placeholder="Edit category name"
+                />
+                <button onClick={() => handleEditCategory(editingCategoryId)}>
+                  Save
+                </button>
+                <button
+                  onClick={() => {
+                    setEditingCategoryId(null);
+                    setEditingCategoryName("");
+                    setSelectedCategoryId(null);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="deleteButton"
+                  onClick={() => handleDeleteCategory(editingCategoryId)}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Reported Recipes */}
@@ -369,7 +506,7 @@ function AdminDashboard() {
           <h2>Contact Messages</h2>
           <ul className="contactMessageList">
             {messages.map((message) => (
-              <li key={message.id} >
+              <li key={message.id}>
                 <p>
                   <strong>Name:</strong> {message.name}
                 </p>
