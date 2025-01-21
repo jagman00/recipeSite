@@ -24,6 +24,7 @@ function AdminDashboard() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null); 
   const [editingCategoryId, setEditingCategoryId] = useState(null);
   const [editingCategoryName, setEditingCategoryName] = useState(""); 
+  const [allUsers, setAllUsers] = useState([]);
 
   // Group users by month
   const groupByMonth = (users) => {
@@ -41,6 +42,55 @@ function AdminDashboard() {
       }
     });
     return Object.entries(counts).map(([month, count]) => ({ month, count }));
+  };
+
+   // Fetch all users alphabetically
+   const fetchAllUsers = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:3000/api/users", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error("Failed to fetch users");
+
+      // Sort users alphabetically by name
+      const sortedUsers = data.users.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
+      setAllUsers(sortedUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  }; 
+
+  // Toggle admin status
+  const toggleAdminStatus = async (userId, isAdmin) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:3000/api/users/${userId}/toggle-admin`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ isAdmin: !isAdmin }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update admin status");
+
+      // Update local state
+      setAllUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.userId === userId ? { ...user, isAdmin: !isAdmin } : user
+        )
+      );
+    } catch (error) {
+      console.error("Error toggling admin status:", error);
+    }
   };
 
   // Fetch data
@@ -166,6 +216,9 @@ function AdminDashboard() {
   };
 
   useEffect(() => {
+
+    fetchAllUsers();
+
     const fetchMessages = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/contact");
@@ -522,6 +575,28 @@ function AdminDashboard() {
                 >
                   Delete
                 </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      {/* New Users List Section */}
+      <div className="allUsers adminCard">
+        <h2>All Users</h2>
+        <div className="usersListContainer">
+          <ul className="usersList">
+            {allUsers.map((user) => (
+              <li key={user.userId} className="userItem">
+                <span>{user.name}</span> - 
+                <span>{user.email}</span> - 
+                <span>
+                 <button
+                    className={`toggleAdminButton ${user.isAdmin ? "remove" : "make"}`}
+                    onClick={() => toggleAdminStatus(user.userId, user.isAdmin)}
+                  >
+                    {user.isAdmin ? "Remove Admin" : "Make Admin"}
+                  </button>
+                </span>
               </li>
             ))}
           </ul>
