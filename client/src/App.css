@@ -1417,7 +1417,6 @@ input::placeholder, textarea::placeholder {
 }
 .createCategoryContainer button:hover {
   cursor: pointer;
-
   box-shadow: 0 0 2px var(--black);
 }
 .createCategoryContainer p {
@@ -1427,6 +1426,46 @@ input::placeholder, textarea::placeholder {
 #manageCategoriesContainer button {
   margin-top: 10px;
   margin-left: 10px;
+}
+.allUsers {
+  width: auto;
+  max-width: 780px;
+  margin: 0 auto;
+  font-weight: 500;
+}
+.allUsers h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.usersListContainer {
+  display: flex;
+  justify-content: center;
+}
+.allUsers ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+}
+.toggleAdminButton {
+  padding: 7px 5px 7px;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--black);
+  background: none;
+  border: 1px solid var(--black);
+  box-shadow: 0 0 5px var(--black);
+  border-radius: 5px;
+  width: auto;
+  min-width: 80px;
+  background-image: url("./assets/openart-image_IOoTSc82_1735921515997_raw.jpg");
+  color: var(--white);
+  font-family: "EB Garamond", serif;
+  margin-left: 5px;
+  margin-bottom: 5px;
+}
+.toggleAdminButton:hover {
+  cursor: pointer;
+  box-shadow: 0 0 2px var(--black);
 }
 /*Bookmarks component styling*/
 #recipeBookmarkBar {
@@ -1787,6 +1826,12 @@ input::placeholder, textarea::placeholder {
   .adminDashboard {
     grid-template-columns: repeat(1, minmax(450px, 1fr));
   }
+  .allUsers {
+    width: auto;
+    max-width: 950px;
+    margin-left: 50px;
+    margin-right: 50px;
+  }
 }
 @media (max-width: 960px) {
   .recipe-list {
@@ -1864,6 +1909,9 @@ input::placeholder, textarea::placeholder {
     margin-left: 20px;
     margin-right: 20px;
     margin-bottom: 20px;
+  }
+  .allUsers {
+    margin: 0 20px 20px 20px;
   }
 }
 /* Print-specific styles */
