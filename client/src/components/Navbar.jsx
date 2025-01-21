@@ -4,6 +4,7 @@ import "../App.css";
 import userIcon from "../assets/UserIconWhite.png";
 import logoIcon from "../assets/RoundTable.png";
 import { jwtDecode } from "jwt-decode";
+import NotificationBell from "./NotificationBell";
 
 function Navbar({ token, setToken, isAdmin }) {
   const [userId, setUserId] = useState(null);
@@ -107,6 +108,9 @@ function Navbar({ token, setToken, isAdmin }) {
             Feed
           </Link>
         )}
+      </div>
+      <div className="notificationBell">
+        {token && <NotificationBell />}
       </div>
       <div className="dropdownMenu">
         <button
