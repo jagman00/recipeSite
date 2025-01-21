@@ -84,14 +84,17 @@ function Navbar({ token, setToken, isAdmin }) {
           placeholder="Search for recipes or users"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch(); // Trigger search on Enter key press
+            }
+          }}
+          enterKeyHint="search" 
+          inputMode="search" 
         />
-        <button 
-          id="searchBtn" 
-          onClick={handleSearch}
-        >
-          <img 
-            src="../src/assets/SearchIcon.png" 
-          />
+
+        <button id="searchBtn" onClick={handleSearch}>
+          <img src="../src/assets/SearchIcon.png" />
           Search
         </button>
         {token && (
@@ -99,7 +102,7 @@ function Navbar({ token, setToken, isAdmin }) {
             id="latestBtn"
             className="header"
             to="/latest"
-            style={{alignSelf: "center"}}
+            style={{ alignSelf: "center" }}
           >
             Feed
           </Link>
