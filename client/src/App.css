@@ -1381,7 +1381,8 @@ input::placeholder, textarea::placeholder {
   gap: 10px;
   box-shadow: 0 0 10px var(--black);
 }
-.createCategoryContainer input {
+.createCategoryContainer input,
+.createCategoryContainer select {
   padding: 10px;
   width: 300px;
   background: none;
@@ -1395,11 +1396,12 @@ input::placeholder, textarea::placeholder {
   font-weight: 500;
   color: var(--black);
 }
-.createCategoryContainer input:focus {
+.createCategoryContainer input:focus,
+.createCategoryContainer select:focus {
   outline: none;
 }
 .createCategoryContainer button {
-  padding: 7px 0 7px;
+  padding: 7px 5px 7px;
   font-size: 20px;
   font-weight: 500;
   color: var(--black);
@@ -1407,7 +1409,8 @@ input::placeholder, textarea::placeholder {
   border: 1px solid var(--black);
   box-shadow: 0 0 5px var(--black);
   border-radius: 5px;
-  width: 150px;
+  width: auto;
+  min-width: 80px;
   background-image: url("./assets/openart-image_IOoTSc82_1735921515997_raw.jpg");
   color: var(--white);
   font-family: "EB Garamond", serif;
@@ -1420,6 +1423,10 @@ input::placeholder, textarea::placeholder {
 .createCategoryContainer p {
   margin-top: 10px;
   font-size: 16px;
+}
+#manageCategoriesContainer button {
+  margin-top: 10px;
+  margin-left: 10px;
 }
 /*Bookmarks component styling*/
 #recipeBookmarkBar {
@@ -1822,6 +1829,9 @@ input::placeholder, textarea::placeholder {
   }
 }
 @media (max-width: 640px) {
+  #searchBtn {
+    display: none;
+  }
   #userContainer {
     margin-left: 20px;
     margin-right: 20px;

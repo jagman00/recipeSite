@@ -438,7 +438,7 @@ function AdminDashboard() {
             </select>
 
             {editingCategoryId && (
-              <div>
+              <div id="manageCategoriesContainer">
                 <input
                   type="text"
                   value={editingCategoryName}
