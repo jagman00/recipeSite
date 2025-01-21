@@ -1440,6 +1440,8 @@ input::placeholder, textarea::placeholder {
 .usersListContainer {
   display: flex;
   justify-content: center;
+  max-height: 300px;
+  overflow-y: auto;
 }
 .allUsers ul {
   list-style-type: none;
