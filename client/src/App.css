@@ -1804,6 +1804,23 @@ input::placeholder, textarea::placeholder {
   height: 100%;
   object-fit: cover;
 }
+.dismissButton {
+  margin-top: 10px;
+  padding: 5px 15px;
+  font-size: 14px;
+  color: white;
+  background-image: url("./assets/openart-image_IOoTSc82_1735921515997_raw.jpg");
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dismissButton:hover {
+ cursor: pointer;
+  box-shadow: 0 0 2px var(--black);
+}
+
 /*Media queries*/
 @media (max-width: 1550px) {
   .adminDashboard {

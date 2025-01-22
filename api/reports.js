@@ -70,3 +70,30 @@ router.get("/comments", authenticateAdmin, async (req, res) => {
   }
 });
 
+// Dismiss a reported recipe (Admin only)
+router.delete("/recipes/:id", authenticateAdmin, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedReport = await prisma.recipeReport.delete({
+      where: { reportId: parseInt(id) },
+    });
+    res.status(200).json({ message: "Recipe report dismissed successfully.", deletedReport });
+  } catch (error) {
+    console.error("Error dismissing recipe report:", error);
+    res.status(500).json({ error: "Failed to dismiss the recipe report." });
+  }
+});
+
+// Dismiss a reported comment (Admin only)
+router.delete("/comments/:id", authenticateAdmin, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedReport = await prisma.commentReport.delete({
+      where: { reportId: parseInt(id) },
+    });
+    res.status(200).json({ message: "Comment report dismissed successfully.", deletedReport });
+  } catch (error) {
+    console.error("Error dismissing comment report:", error);
+    res.status(500).json({ error: "Failed to dismiss the comment report." });
+  }
+});
