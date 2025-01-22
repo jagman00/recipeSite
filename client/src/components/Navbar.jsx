@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
 import userIcon from "../assets/UserIconWhite.png";
@@ -10,6 +10,7 @@ function Navbar({ token, setToken, isAdmin }) {
   const [userId, setUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   const updateTokenState = () => {
@@ -53,6 +54,26 @@ function Navbar({ token, setToken, isAdmin }) {
     };
   }, []);
 
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) // Check if click is outside
+      ) {
+        setDropdownVisible(false);
+      }
+    };
+
+    if (dropdownVisible) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [dropdownVisible]);
 
 // *** thu token state
   //   const handleStorageChange = () => {
@@ -98,16 +119,6 @@ function Navbar({ token, setToken, isAdmin }) {
           <img src="../src/assets/SearchIcon.png" />
           Search
         </button>
-        {token && (
-          <Link
-            id="latestBtn"
-            className="header"
-            to="/latest"
-            style={{ alignSelf: "center" }}
-          >
-            Feed
-          </Link>
-        )}
       </div>
       <div className="notificationBell">
         {token && <NotificationBell />}
@@ -134,16 +145,12 @@ function Navbar({ token, setToken, isAdmin }) {
                   Profile
                 </Link>
                 <Link
-                  id="bookmarksBtn"
+                  id="latestBtn"
                   className="header"
-                  to="/notifications"
-                  onClick={() => setDropdownVisible(false)}
+                  to="/latest"
                 >
-                  Notifications
+                  Feed
                 </Link>
-                <button className="logoutButton" onClick={handleLogout}>
-                  Logout
-                </button>
                 <Link
                   className="postrecipebutton"
                   to="/new-recipe"
@@ -166,7 +173,6 @@ function Navbar({ token, setToken, isAdmin }) {
                 >
                   Contact
                 </Link>
-
                 {isAdmin && (
                   <Link
                     className="adminDashboardButton"
@@ -176,6 +182,9 @@ function Navbar({ token, setToken, isAdmin }) {
                     Admin Dashboard
                   </Link>
                 )}
+                <button className="logoutButton" onClick={handleLogout}>
+                  Logout
+                </button>
               </>
             ) : (
               <>
