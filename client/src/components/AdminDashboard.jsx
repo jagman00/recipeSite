@@ -472,7 +472,7 @@ function AdminDashboard() {
           {/* Manage Categories Dropdown */}
           <div className="manageCategoriesDropdown">
             <h3>Manage Existing Categories</h3>
-            <select
+            <select aria-label="Manage Categories Dropdown"
               value={selectedCategoryId || ""}
               onChange={(e) => {
                 const selectedId = e.target.value;

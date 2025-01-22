@@ -116,7 +116,7 @@ function Navbar({ token, setToken, isAdmin }) {
         />
 
         <button id="searchBtn" onClick={handleSearch}>
-          <img src="../src/assets/SearchIcon.png" />
+          <img src="../src/assets/SearchIcon.png" alt="Search Icon" />
           Search
         </button>
       </div>
