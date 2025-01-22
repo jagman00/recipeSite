@@ -332,6 +332,63 @@ function AdminDashboard() {
     }
   };
 
+  const handleDismissRecipeReport = async (reportId) => {
+    if (
+      window.confirm("Are you sure you want to dismiss this recipe report?")
+    ) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/reports/recipes/${reportId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to dismiss recipe report.");
+
+        // Update state to remove the dismissed report
+        setReportedRecipes((prevReports) =>
+          prevReports.filter((report) => report.reportId !== reportId)
+        );
+        alert("Recipe report dismissed successfully.");
+      } catch (error) {
+        console.error("Error dismissing recipe report:", error);
+        alert("Failed to dismiss recipe report. Please try again.");
+      }
+    }
+  };
+
+  const handleDismissCommentReport = async (reportId) => {
+    if (
+      window.confirm("Are you sure you want to dismiss this comment report?")
+    ) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/reports/comments/${reportId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to dismiss comment report.");
+
+        // Update state to remove the dismissed report
+        setReportedComments((prevReports) =>
+          prevReports.filter((report) => report.reportId !== reportId)
+        );
+        alert("Comment report dismissed successfully.");
+      } catch (error) {
+        console.error("Error dismissing comment report:", error);
+        alert("Failed to dismiss comment report. Please try again.");
+      }
+    }
+  };
   // Render loading or error messages
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -502,6 +559,12 @@ function AdminDashboard() {
                       ? new Date(report.createdAt).toLocaleString()
                       : "Unknown Date"}
                   </p>
+                  <button
+                    onClick={() => handleDismissRecipeReport(report.reportId)}
+                    className="dismissButton"
+                  >
+                    Dismiss
+                  </button>
                 </li>
               ))}
             </ul>
@@ -546,6 +609,12 @@ function AdminDashboard() {
                       ? new Date(report.createdAt).toLocaleString()
                       : "Unknown Date"}
                   </p>
+                  <button
+                    onClick={() => handleDismissCommentReport(report.reportId)}
+                    className="dismissButton"
+                  >
+                    Dismiss
+                  </button>
                 </li>
               ))}
             </ul>

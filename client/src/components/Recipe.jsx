@@ -630,12 +630,7 @@ const Recipe = () => {
                                 alert("Please select a reason before reporting.");
                               }
                             }}
-                            style={{
-                              cursor: "pointer",
-                              background: "none",
-                              border: "1px solid #ccc",
-                              padding: "5px",
-                            }}
+                            
                           >
                             Submit
                           </button>
@@ -646,13 +641,7 @@ const Recipe = () => {
                                 [comment.id]: false, // Cancel and hide dropdown
                               }))
                             }
-                            style={{
-                              cursor: "pointer",
-                              background: "none",
-                              border: "1px solid #ccc",
-                              padding: "5px",
-                              marginLeft: "5px",
-                            }}
+                            
                           >
                             Cancel
                           </button>
