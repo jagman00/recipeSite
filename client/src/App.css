@@ -215,6 +215,12 @@ input::placeholder, textarea::placeholder {
   right: 0;
   background: white;
 }
+.bell-icon {
+  display: flex;
+}
+.bell-icon img {
+  height: 30px;
+}
 /*Recipes component styling*/
 .recipes {
   background-image: url("./assets/largeParchmentBackground.jpg");
@@ -1430,7 +1436,7 @@ input::placeholder, textarea::placeholder {
 .allUsers {
   width: auto;
   max-width: 780px;
-  margin: 0 auto;
+  margin: 0 auto 50px;
   font-weight: 500;
 }
 .allUsers h2 {

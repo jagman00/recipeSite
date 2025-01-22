@@ -1,6 +1,6 @@
 import React, {useState,useEffect, useRef} from "react";
 import { Link } from "react-router-dom";
-import bellIcon from "../assets/bellIcon.png";
+import bellIcon from "../assets/bellIcon1.png";
 import "../NotiBell.css"; 
 
 const NotificationBell = () => {
@@ -140,9 +140,10 @@ const NotificationBell = () => {
 
                                     {notification.recipe && (
                                         <Link 
-                                        to={`/recipe/${notification.recipe.recipeId}`}
-                                        className="notification-link"
-                                        onClick={handleLinkClick}>
+                                            to={`/recipe/${notification.recipe.recipeId}`}
+                                            className="notification-link"
+                                            onClick={handleLinkClick}
+                                        >
                                             {notification.recipe.title}
                                         </Link>
                                     )}
