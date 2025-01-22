@@ -623,6 +623,7 @@ function AdminDashboard() {
           )}
         </div>
       </div>
+      {/* Contact Message */}
       <div className="adminDashboard">
         <div className="contactMessageContainer">
           <h2>Contact Messages</h2>
@@ -656,11 +657,12 @@ function AdminDashboard() {
           <ul className="usersList">
             {allUsers.map((user) => (
               <li key={user.userId} className="userItem">
-                <span>{user.name}</span> - 
-                <span>{user.email}</span> - 
+                <span>{user.name}</span> -<span>{user.email}</span> -
                 <span>
-                 <button
-                    className={`toggleAdminButton ${user.isAdmin ? "remove" : "make"}`}
+                  <button
+                    className={`toggleAdminButton ${
+                      user.isAdmin ? "remove" : "make"
+                    }`}
                     onClick={() => toggleAdminStatus(user.userId, user.isAdmin)}
                   >
                     {user.isAdmin ? "Remove Admin" : "Make Admin"}

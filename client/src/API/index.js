@@ -13,7 +13,7 @@ export async function fetchRegister(name, email, password) {
         });
 
         if (!response.ok) {
-            throw new Error("Registeration Error!");
+            throw new Error("Registration Error!");
         }
 
         const result = await response.json();
