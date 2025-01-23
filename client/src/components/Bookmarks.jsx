@@ -11,10 +11,11 @@ const Bookmarks = () => {
   const token = localStorage.getItem("token");
 
   const [userId, setUserId] = useState(null);
-
   const [bookmarkedRecipes, setBookmarkedRecipes] = useState([]);
   const [page, setPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(""); // Error state
 
   const getLoggedInUserId = () => {
     if (token) {
@@ -35,19 +36,23 @@ const Bookmarks = () => {
 
   useEffect(() => {
     const getBookmarkedRecipes = async () => {
+      setLoading(true); // Start loading
       try {
         const data = await fetchBookmarkedRecipes(userId, token, page);
         setBookmarkedRecipes(data.recipes);
         setTotalPages(Math.ceil(data.bookmarkCount / 12));
+        setLoading(false); // Stop loading
       } catch (error) {
         console.error("Failed to fetch bookmarked recipes", error);
+        setError("Failed to fetch bookmarked recipes. Please try again.");
+        setLoading(false); // Stop loading on error
       }
     };
 
     if (userId) {
       getBookmarkedRecipes();
     }
-  }, [userId, token, page, bookmarkedRecipes.length]);
+  }, [userId, token, page]);
 
   // Handle pagination
   const handleNextPage = () => {
@@ -68,17 +73,20 @@ const Bookmarks = () => {
 
   const handleRemoveBookmark = async (recipeId) => {
     try {
-        const response = await fetch(`http://localhost:3000/api/recipes/${recipeId}/bookmarks`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            });
-            
-            if (!response.ok) {
-                throw new Error("Failed to remove your bookmark");
-            }
+      const response = await fetch(
+        `http://localhost:3000/api/recipes/${recipeId}/bookmarks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to remove your bookmark");
+      }
 
       setBookmarkedRecipes(
         bookmarkedRecipes.filter((recipe) => recipe.recipeId !== recipeId)
@@ -86,8 +94,15 @@ const Bookmarks = () => {
     } catch (error) {
       console.error("Failed to remove bookmark", error);
     }
+  };
+
+  if (loading) {
+    return <p>Loading bookmarked recipes...</p>; 
   }
 
+  if (error) {
+    return <p style={{ color: "red" }}>{error}</p>;
+  }
 
   return (
     <div className="recipes">
@@ -102,15 +117,14 @@ const Bookmarks = () => {
       <div className="recipe-list">
         {bookmarkedRecipes.map((recipe) => (
           <div key={recipe.recipeId} className="recipe-card">
-            <Link
-              to={`/recipe/${recipe.recipeId}`}
-              state={{ page }}
-            >
+            <Link to={`/recipe/${recipe.recipeId}`} state={{ page }}>
               <div id="imgContainer">
                 <img
-                  src={recipe.recipeUrl.includes("https") 
-                    ? recipe.recipeUrl
-                    :`http://localhost:3000${recipe.recipeUrl}`}
+                  src={
+                    recipe.recipeUrl.includes("https")
+                      ? recipe.recipeUrl
+                      : `http://localhost:3000${recipe.recipeUrl}`
+                  }
                   className="image"
                   alt={recipe.title}
                   loading="lazy"
@@ -119,9 +133,13 @@ const Bookmarks = () => {
             </Link>
 
             <div id="recipeBookmarkBar">
-                <h3>{recipe.title}</h3>
-                <button onClick={() => handleRemoveBookmark(recipe.recipeId)}
-                id="removeBookmarkBtn">Remove Bookmark</button>
+              <h3>{recipe.title}</h3>
+              <button
+                onClick={() => handleRemoveBookmark(recipe.recipeId)}
+                id="removeBookmarkBtn"
+              >
+                Remove Bookmark
+              </button>
             </div>
           </div>
         ))}
