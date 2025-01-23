@@ -5,6 +5,8 @@ import userIcon from "../assets/UserIconWhite.png";
 import logoIcon from "../assets/RoundTable.png";
 import { jwtDecode } from "jwt-decode";
 import NotificationBell from "./NotificationBell";
+import { io } from "socket.io-client";
+const socket = io("http://localhost:3000");
 
 function Navbar({ token, setToken, isAdmin }) {
   const [userId, setUserId] = useState(null);
@@ -39,6 +41,7 @@ function Navbar({ token, setToken, isAdmin }) {
   };
 
   const handleLogout = () => {
+    socket.emit("leave", userId)
     localStorage.clear();
     setToken(null);
     navigate("/"); // Redirect to home page after logout
@@ -121,7 +124,7 @@ function Navbar({ token, setToken, isAdmin }) {
         </button>
       </div>
       <div className="notificationBell">
-        {token && <NotificationBell />}
+        {token && <NotificationBell userId={userId}/>}
       </div>
       <div className="dropdownMenu">
         <button
@@ -151,6 +154,9 @@ function Navbar({ token, setToken, isAdmin }) {
                 >
                   Feed
                 </Link>
+                <button className="logoutButton" onClick={handleLogout}>
+                  Logout
+                </button>
                 <Link
                   className="postrecipebutton"
                   to="/new-recipe"

@@ -63,16 +63,35 @@ router.post("/", authenticateUser, upload.single("recipeImage"), async (req, res
       where: { userId },
       select: { name: true },
     });
+    
+    const notifications = await Promise.all(
+        followers.map(async (follower) => {  // Create a notification for each follower
+          return prisma.notification.create({
+            data: {
+              type: "new_recipe",
+              message: `${user.name} posted a new recipe: ${recipe.title}.`,
+              userId: follower.followFromUserId, // Notify the follower
+              fromUserId: userId, // Recipe creator
+              recipeId: recipe.recipeId, // New recipe
+            },
+            include: { // Populate the notification with fromUser and recipe details
+              fromUser: { select: { userId: true, name: true } },
+              recipe: { select: { recipeId: true, title: true } },
+            },
+          });
+        })
+      );
 
-    const notifications = followers.map((follower) => ({
-      type: "new_recipe",
-      message: `${user.name} posted a new recipe: ${recipe.title}.`,
-      userId: follower.followFromUserId, // Notify the follower
-      fromUserId: userId, // Recipe creator
-      recipeId: recipe.recipeId, // New recipe
-    }));
+    // Emit socket.io notification to each follower
+    if (req.io) {
+        notifications.forEach((notification) => {
+            req.io.to(`user-${notification.userId}`).emit('newNotification', notification);
+          });
+    } else {
+        console.error("Socket.IO instance (req.io) is not available");
+    }
 
-    await prisma.notification.createMany({ data: notifications });
+    
 
     res.status(201).json(recipe);
   } catch (error) {
@@ -375,14 +394,14 @@ router.post("/:id/comments", authenticateUser, async (req, res, next) => {
       where: { recipeId: parseInt(id) },
       select: { userId: true, title: true },
     });
-
+    
     const fromUser = await prisma.user.findUnique({
       where: { userId: parseInt(userId) },
       select: { name: true },
-    });
+    });    
 
     if (recipe) {
-      await prisma.notification.create({
+      const notification = await prisma.notification.create({
         data: {
           type: "comment",
           message: `${fromUser.name} commented on your recipe - "${recipe.title}".`,
@@ -390,7 +409,18 @@ router.post("/:id/comments", authenticateUser, async (req, res, next) => {
           fromUserId: parseInt(userId), //Commenter ID
           recipeId: parseInt(id),
         },
-      });
+        include: { // Populate the notification with additional details
+            fromUser: { select: { userId: true, name: true } },
+            recipe: { select: { recipeId: true, title: true } },
+            },
+      });      
+
+      // Emit the newNotification to the client in real-time
+      if (req.io) {
+        req.io.to(`user-${recipe.userId}`).emit("newNotification", notification);
+      } else {
+        console.error("Socket.IO instance (req.io) is not available");
+      }
     }
 
     res.status(201).json(newComment);
@@ -539,7 +569,7 @@ router.post("/:id/like", authenticateUser, async (req, res, next) => {
       });
 
       if (likeStatus && recipe) {
-        await prisma.notification.create({
+        const notification = await prisma.notification.create({
           data: {
             type: "like",
             message: `${fromUser.name} liked your recipe - "${recipe.title}".`,
@@ -547,9 +577,19 @@ router.post("/:id/like", authenticateUser, async (req, res, next) => {
             fromUserId: parseInt(userId), //Liker ID
             recipeId: parseInt(id),
           },
+          include: { // Additional details
+            fromUser: { select: { userId: true, name: true } },
+            recipe: { select: { recipeId: true, title: true } },
+            },
         });
+        
+        // Emit the newNotification
+        if (req.io) {
+            req.io.to(`user-${recipe.userId}`).emit("newNotification", notification);
+          } else {
+            console.error("Socket.IO instance (req.io) is not available");
+          }
       }
-    
 
     const likeCount = await prisma.like.count({
       where: { recipeId: parseInt(id) },
@@ -563,6 +603,7 @@ router.post("/:id/like", authenticateUser, async (req, res, next) => {
     res.status(500).json({ message: "Failed to toggle like status." });
   }
 });
+
 // Get like status /*UPDATE*/
 // GET /api/recipes/:id/like-status
 router.get("/:id/like-status", authenticateUser, async (req, res, next) => {
@@ -644,7 +685,7 @@ router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
       });
 
       if (recipe) {
-        await prisma.notification.create({
+        const notification = await prisma.notification.create({
           data: {
             type: "bookmark",
             message: `${fromUser.name} bookmarked your recipe - "${recipe.title}".`,
@@ -652,7 +693,18 @@ router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
             fromUserId: parseInt(userId), //Bookmarker ID
             recipeId: parseInt(id),
           },
+          include: { // additional details
+            fromUser: { select: { userId: true, name: true } },
+            recipe: { select: { recipeId: true, title: true } },
+            },
         });
+
+        // Emit the newNotification
+        if (req.io) {
+            req.io.to(`user-${recipe.userId}`).emit("newNotification", notification);
+          } else {
+            console.error("Socket.IO instance (req.io) is not available");
+          }
       }
     }
 
@@ -672,6 +724,7 @@ router.post("/:id/bookmarks", authenticateUser, async (req, res, next) => {
     res.status(500).json({ message: "Failed to toggle bookmark status." });
   }
 });
+
 // Get bookmark status /*UPDATE*/
 // GET /api/recipes/:id/bookmark-status
 router.get("/:id/bookmark-status", authenticateUser, async (req, res, next) => {

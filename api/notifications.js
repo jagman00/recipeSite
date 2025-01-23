@@ -21,6 +21,9 @@ router.get('/', authenticateUser, async (req, res) => {
             orderBy: { createdAt: 'desc' },
         });
         res.status(200).json(notifications);
+
+        // Emit an event to notify the client
+        req.io.to(`user-${userId}`).emit('newNotification' , notifications);
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
         res.status(500).json({ message: 'Failed to fetch notifications.' });
