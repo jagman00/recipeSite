@@ -49,8 +49,6 @@ const Bookmarks = () => {
     }
   }, [userId, token, page, bookmarkedRecipes.length]);
 
-  if (loading) return <div>Loading...</div>;
-
   // Handle pagination
   const handleNextPage = () => {
     if (page < totalPages) {
