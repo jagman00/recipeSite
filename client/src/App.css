@@ -191,11 +191,12 @@ input::placeholder, textarea::placeholder {
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 75px;
+  top: 70px;
   gap: 10px;
   padding: 10px 0 10px 10px;
   border-radius: 2px;
   box-shadow: 0 0 10px var(--black);
+  margin-right: 10px;
 }
 .dropdown a {
   padding: 0;

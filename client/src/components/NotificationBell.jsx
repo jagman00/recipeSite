@@ -1,6 +1,6 @@
 import React, {useState,useEffect, useRef, useContext} from "react";
 import { Link } from "react-router-dom";
-import bellIcon from "../assets/bellIcon1.png";
+import bellIcon from "../assets/bellIcon2.png";
 import "../NotiBell.css"; 
 import { SocketContext } from "../SocketContext";
 
