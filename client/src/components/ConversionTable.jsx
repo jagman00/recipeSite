@@ -32,44 +32,8 @@ const ConversionTable = ({ visible, onClose }) => {
               <td>15 mL</td>
             </tr>
             <tr>
-              <td>2 tablespoons</td>
-              <td>30 mL</td>
-            </tr>
-            <tr>
-              <td>1/4 cup (2 fl oz)</td>
-              <td>60 mL</td>
-            </tr>
-            <tr>
-              <td>1/3 cup</td>
-              <td>80 mL</td>
-            </tr>
-            <tr>
-              <td>1/2 cup (4 fl oz)</td>
-              <td>125 mL</td>
-            </tr>
-            <tr>
-              <td>2/3 cup</td>
-              <td>160 mL</td>
-            </tr>
-            <tr>
-              <td>3/4 cup (6 fl oz)</td>
-              <td>180 mL</td>
-            </tr>
-            <tr>
               <td>1 cup (8 fl oz)</td>
               <td>250 mL</td>
-            </tr>
-            <tr>
-              <td>1 1/2 cups (12 fl oz)</td>
-              <td>375 mL</td>
-            </tr>
-            <tr>
-              <td>2 cups (16 fl oz)</td>
-              <td>500 mL</td>
-            </tr>
-            <tr>
-              <td>3 cups (1 1/2 pints)</td>
-              <td>700 mL</td>
             </tr>
             <tr>
               <td>4 cups (1 quart)</td>
@@ -96,32 +60,12 @@ const ConversionTable = ({ visible, onClose }) => {
               <td>28 grams</td>
             </tr>
             <tr>
-              <td>4 ounces (1/4 lb)</td>
-              <td>113 grams</td>
-            </tr>
-            <tr>
-              <td>1/3 lb</td>
-              <td>150 grams</td>
-            </tr>
-            <tr>
               <td>8 ounces (1/2 lb)</td>
-              <td>230 grams</td>
-            </tr>
-            <tr>
-              <td>2/3 lb</td>
-              <td>300 grams</td>
-            </tr>
-            <tr>
-              <td>12 ounces (3/4 lb)</td>
-              <td>340 grams</td>
+              <td>227 grams</td>
             </tr>
             <tr>
               <td>16 ounces (1 lb)</td>
-              <td>450 grams</td>
-            </tr>
-            <tr>
-              <td>32 ounces (2 lbs)</td>
-              <td>900 grams</td>
+              <td>454 grams</td>
             </tr>
           </tbody>
         </table>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../App.css";
-import userIcon from "../assets/UserIconWhite.png";
+import userIcon from "../assets/UserIconWhite1.png";
 import logoIcon from "../assets/RoundTable.png";
 import { jwtDecode } from "jwt-decode";
 import NotificationBell from "./NotificationBell";
@@ -126,7 +126,7 @@ function Navbar({ token, setToken, isAdmin }) {
       <div className="notificationBell">
         {token && <NotificationBell userId={userId}/>}
       </div>
-      <div className="dropdownMenu">
+      <div className="dropdownMenu" ref={dropdownRef}>
         <button
           className="dropdownToggle"
           onClick={() => setDropdownVisible(!dropdownVisible)}

@@ -622,9 +622,7 @@ function AdminDashboard() {
             <p>No reported comments.</p>
           )}
         </div>
-      </div>
-      {/* Contact Message */}
-      <div className="adminDashboard">
+        {/* Contact Message */}
         <div className="contactMessageContainer">
           <h2>Contact Messages</h2>
           <ul className="contactMessageList">
