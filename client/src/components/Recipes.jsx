@@ -16,6 +16,7 @@ const RecipesList = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState(initialCategoryId);
   const [page, setPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   // Fetch all categories
   useEffect(() => {
@@ -25,11 +26,13 @@ const RecipesList = () => {
         setCategories(data);
       } catch (error) {
         console.error("Failed to fetch categories", error);
+      } finally {
+        setLoading(false);
       }
     };
     getCategories();
   }, []);
-
+ 
   // Fetch recipes
   useEffect(() => {
     const getRecipes = async () => {
@@ -56,11 +59,14 @@ const RecipesList = () => {
         }
       } catch (error) {
         console.error("Failed to fetch recipes", error);
+      }finally {
+        setLoading(false);
       }
     };
     getRecipes();
   }, [page, selectedCategoryId, searchQuery]);
-
+ 
+  
   // Handle category change
   const handleCategoryChange = (event) => {
     const categoryId = event.target.value;
@@ -85,70 +91,77 @@ const RecipesList = () => {
       navigate("/", { state: { selectedCategoryId, page: previousPage, searchQuery } });
     }
   };
-
+  
   return (
     <div className="recipes">
       <h2>Recipes</h2>
 
-      {/* Category Dropdown */}
-      <div className="category-filter">
-        <label htmlFor="category">Filter by Category: </label>
-        <select id="category" value={selectedCategoryId} onChange={handleCategoryChange}>
-          <option value="">All Categories</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.categoryName}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Recipe List */}
-      <div className="recipe-list">
-        {recipes.map((recipe) => (
-          <div key={recipe.recipeId} className="recipe-item">
-            <Link
-              to={`/recipe/${recipe.recipeId}`}
-              state={{ selectedCategoryId, page, searchQuery }}
-            >
-              <div id="imgContainer">
-                <img
-                  src={recipe.recipeUrl.includes("https") 
-                    ? recipe.recipeUrl
-                    :`http://localhost:3000${recipe.recipeUrl}`}
-                  className="image"
-                  alt={recipe.title}
-                  loading="lazy"
-                />
-              </div>
-              <div id="recipeBar">
-              <h3>{recipe.title}</h3>
-              <div id="likesAndBookmarks">
-                <p>
-                  <img src="../src/assets/likesIcon.png" alt="likes" /> {recipe._count?.likes || 0}
-                </p>
-                <p>
-                  <img src="../src/assets/bookmarksIcon.png" alt="bookmarks" /> {recipe._count?.bookmarks || 0}
-                </p>
-              </div>
-            </div>
-            </Link>
+   
+      {loading ? (
+        <div className="loader">Loading...</div>
+      ) : (
+        <>
+          {/* Category Dropdown */}
+          <div className="category-filter">
+            <label htmlFor="category">Filter by Category: </label>
+            <select id="category" value={selectedCategoryId} onChange={handleCategoryChange}>
+              <option value="">All Categories</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.categoryName}
+                </option>
+              ))}
+            </select>
           </div>
-        ))}
 
-        {/* Pagination */}
-        {!selectedCategoryId && !searchQuery && (
-          <div className="pagination">
-            <button onClick={handlePreviousPage} disabled={page === 1}>
-              Previous
-            </button>
-            <span id="paginationNumbers">{`Page ${page} of ${totalPages}`}</span>
-            <button onClick={handleNextPage} disabled={page === totalPages}>
-              Next
-            </button>
+       {/* Recipe List */}
+          <div className="recipe-list">
+            {recipes.map((recipe) => (
+              <div key={recipe.recipeId} className="recipe-item">
+                <Link
+                  to={`/recipe/${recipe.recipeId}`}
+                  state={{ selectedCategoryId, page, searchQuery }}
+                >
+                  <div id="imgContainer">
+                    <img
+                      src={recipe.recipeUrl.includes("https") 
+                        ? recipe.recipeUrl
+                        :`http://localhost:3000${recipe.recipeUrl}`}
+                      className="image"
+                      alt={recipe.title}
+                      loading="lazy"
+                    />
+                  </div>
+                  <div id="recipeBar">
+                  <h3>{recipe.title}</h3>
+                  <div id="likesAndBookmarks">
+                    <p>
+                      <img src="../src/assets/likesIcon.png" alt="likes" /> {recipe._count?.likes || 0}
+                    </p>
+                    <p>
+                      <img src="../src/assets/bookmarksIcon.png" alt="bookmarks" /> {recipe._count?.bookmarks || 0}
+                    </p>
+                  </div>
+                </div>
+                </Link>
+              </div>
+            ))}
+
+            {/* Pagination */}
+            {!selectedCategoryId && !searchQuery && (
+              <div className="pagination">
+                <button onClick={handlePreviousPage} disabled={page === 1}>
+                  Previous
+                </button>
+                <span id="paginationNumbers">{`Page ${page} of ${totalPages}`}</span>
+                <button onClick={handleNextPage} disabled={page === totalPages}>
+                  Next
+                </button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };
