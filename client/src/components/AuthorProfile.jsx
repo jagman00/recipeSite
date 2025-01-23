@@ -22,12 +22,7 @@ const AuthorProfile = () => {
     const [modalContent, setModalContent] = useState(null);
 
     const token = localStorage.getItem("token");
-
-    console.log("Author ID: ", authorId);
-    console.log("Logged-in User ID: ", loggedInUserId);
     
-    
-
     useEffect(() => {
 
         const getAuthorInfo = async () => {

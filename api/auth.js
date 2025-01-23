@@ -52,7 +52,7 @@ router.post("/register", async(req,res,next)=>{
         });
 
         const token = createToken(user);
-        res.status(201).json(token);
+        res.status(201).json({token, userId: user.userId});
     } catch (error) {
         next(error);
     }
@@ -77,7 +77,7 @@ router.post("/login", async(req,res,next)=>{
         }
 
         const token = createToken(user);
-        res.status(201).json(token);
+        res.status(201).json({token, userId: user.userId});
     } catch (error) {
         next(error);
     }
@@ -144,7 +144,7 @@ router.post('/google-login', async (req, res, next) => {
         // Generate a token for the user
         const token = createToken(user);
 
-        res.json({ token, user });
+        res.json({ token, userId: user.userId });
     } catch (error) {
         console.error('Google Login Error:', error);
         next(error);

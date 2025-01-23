@@ -1,14 +1,16 @@
-import React, {useState,useEffect, useRef} from "react";
+import React, {useState,useEffect, useRef, useContext} from "react";
 import { Link } from "react-router-dom";
 import bellIcon from "../assets/bellIcon1.png";
 import "../NotiBell.css"; 
+import { SocketContext } from "../SocketContext";
 
 const NotificationBell = () => {
+    const socket = useContext(SocketContext); // Get the socket from context
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const dropdownRef = useRef(null);
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');      
 
     //Fetch notifications
     useEffect(() => {
@@ -20,7 +22,13 @@ const NotificationBell = () => {
                     },
                 });
                 const data = await response.json();
-                setNotifications(data);
+
+                // Filter out invalid notifications
+                const validNotifications = data.filter(
+                    (notification) =>
+                        notification.message && notification.createdAt
+                );
+                setNotifications(validNotifications);
                 
                 // Count unread notifications
                 const unread = data.filter((notification) => !notification.read);
@@ -33,6 +41,29 @@ const NotificationBell = () => {
         fetchNotifications();
     }, [token]);
 
+    // Listen for new notifications
+    useEffect(() => {
+        if (!socket) {
+            console.error("Socket not initialized.");
+            return;
+          }
+
+        socket.on('newNotification', (notification) => { // Listen for notifications
+            //console.log("New notification received:", notification); // Debugging 
+            if (!notification.message || !notification.createdAt) {
+                // console.warn("Invalid notification received:", notification); //Debugging
+                return;
+            }
+            setNotifications((prev) => [notification, ...prev]); // Add new noti at top
+            setUnreadCount((count) => count + 1); // Increment unread count
+        });
+
+        return () => {
+            socket.off('newNotification');
+        };
+    }, [socket]);
+
+    // Time ago function
     function timeAgo(date) {
         const now = new Date();
         const seconds = Math.floor((now - date) / 1000);
@@ -66,7 +97,7 @@ const NotificationBell = () => {
 
                 // Update local state
                 setUnreadCount(0);
-                setNotifications(notifications.map((notification) => ({ ...notification, read: true })));
+                setNotifications(notifications.map((notification) => ({ ...notification, read: true }))); // Mark all notifications as read
             } catch (error) {
                 console.error('Error marking notifications as read:', error);
             }

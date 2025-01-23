@@ -23,10 +23,10 @@ const RegisterUser = ({ setToken }) => {
 
       if (response !== undefined) {
         setSuccessMessage("User registered successfully!");
-        setToken(response);
+        setToken(response.token);
 
         // Save the token in localStorage
-        localStorage.setItem("token", response);
+        localStorage.setItem("token", response.token);
 
         navigate('/user');
       } else {

@@ -19,14 +19,13 @@ const LoginUser = ({ setToken }) => {
 
     try {
       const response = await fetchLogin(email, password);
-      console.log('email: ', email, 'password: ', password);
       
       if (response !== undefined) {
         setSuccessMessage("Login successful!");
-        setToken(response);
+        setToken(response.token);        
 
         // Save the token in localStorage
-        localStorage.setItem("token", response); 
+        localStorage.setItem("token", response.token); 
         
 
         navigate('/user');
@@ -53,7 +52,7 @@ const LoginUser = ({ setToken }) => {
         },
         body: JSON.stringify({ credential }),
       });
-  console.log(response);
+  //console.log(response);
   
       if (!response.ok) {
         throw new Error("Google login failed.");
@@ -128,7 +127,7 @@ const LoginUser = ({ setToken }) => {
   );
 };
 
-LoginUser.propTypes = { //
+LoginUser.propTypes = { 
   setToken: PropTypes.func.isRequired,
 };
 

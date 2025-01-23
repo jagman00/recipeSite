@@ -26,3 +26,9 @@ To store the uploaded files
 recipeSite/uploads
 (3)In your .gitignore file please include
 uploads/
+
+
+For Using socket.io
+(1)Server - npm install socket.io
+(2)Client - npm install socket.io-client
+(or)if already included in package.json, just npm install on both sides.

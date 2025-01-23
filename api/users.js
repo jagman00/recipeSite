@@ -331,14 +331,24 @@ router.post("/:id/follow", authenticateUser, async (req, res, next) => {
       });
 
       if (followedUser) {
-        await prisma.notification.create({
+        const notification = await prisma.notification.create({
           data: {
             type: "follow",
             message: `${fromUser.name} followed you.`,
             userId: parseInt(id),
             fromUserId: currentUserId, //Follower ID
           },
+          include: { // Populate the notification with additional details
+            fromUser: { select: { userId: true, name: true } },
+            },
         });
+
+        // Emit the newNotification to the client in real-time
+        if (req.io) {
+          req.io.to(`user-${parseInt(id)}`).emit("newNotification", notification);
+        } else {
+          console.error("Socket.IO instance (req.io) is not available");
+        }
       }
     }
 

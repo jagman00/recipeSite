@@ -20,8 +20,13 @@ import { jwtDecode } from "jwt-decode";
 import "./responsive.css";
 import Contact from "./components/Contact";
 import ActivityFeed from "./components/ActivityFeed";
+import { createContext } from "react";
+import { io } from "socket.io-client";
+import { SocketContext } from "./SocketContext.js";
 
 function App() {
+  const socket = io("http://localhost:3000");
+
   const [token, setToken] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const FE_GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
@@ -34,6 +39,10 @@ function App() {
     if (token) {
       try {
         const decodedUser = jwtDecode(token);
+        const userId = decodedUser.userId;
+        //after verifying the token, emit the join event
+        socket.emit("join", userId); 
+        
         if (decodedUser.exp * 1000 < Date.now()) {
           // Token expiration time is in seconds
           localStorage.clear();
@@ -52,11 +61,12 @@ function App() {
     } else {
       setToken(null);
     }
-  }, []);
+  }, [socket]);
 
   const navbarKey = token ? `${token}-${isAdmin}` : "no-token";
 
   return (
+    <SocketContext.Provider value={socket}> {/*Provide the socket to the context*/}
     <div className="background">
       <GoogleOAuthProvider clientId={FE_GOOGLE_CLIENT_ID}>
         <Router>
@@ -102,6 +112,7 @@ function App() {
         </Router>
       </GoogleOAuthProvider>
     </div>
+    </SocketContext.Provider>
   );
 }
 
