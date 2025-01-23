@@ -25,6 +25,7 @@ const GetUser = ({setToken}) => {
   const [modalOpen, setModalOpen] = useState(false); // State for modal
   const [modalTitle, setModalTitle] = useState(""); // Title for the modal
   const [modalContent, setModalContent] = useState(null); // Content of the modal
+  const [loading, setLoading] = useState(true); 
   
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -47,6 +48,7 @@ const GetUser = ({setToken}) => {
   }, [userId]);
 
   const fetchLoggedInUser = async (token) => {
+    setLoading(true);
     setErrorMessage("");
     setUserInfo({
       recipes: [], // Ensure recipes is an array
@@ -70,13 +72,14 @@ const GetUser = ({setToken}) => {
         const followingsData = await fetchFollowings(response.userId);
         setFollowingCount(followingsData.followingCount);
         setFollowings(followingsData.followingList || []);
-
       } else {
         setErrorMessage(response?.message || "Unable to fetch user information.");
       }
     } catch (error) {
       console.error("Error Fetching User Info:", error);
       setErrorMessage("An error occurred while fetching user information.");
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
