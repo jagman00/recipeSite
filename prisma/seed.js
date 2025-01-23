@@ -33,7 +33,7 @@ async function main() {
 
 // Seed Users /*MODIFIED*/ hashed for bcrypt
 const users = [];
-const userCount = faker.number.int({ min: 30, max: 65 });
+const userCount = faker.number.int({ min: 100, max: 120 });
 console.log(`Seeding ${userCount} users...`);
 for (let i = 0; i < userCount; i++) {
   const hashedPassword = await bcrypt.hash(faker.internet.password(), 10);
@@ -104,7 +104,7 @@ const exampleSteps = [
 
   // Seed Recipes
   const recipes = [];
-  const recipeCount = faker.number.int({ min: 30, max: 70 });
+  const recipeCount = faker.number.int({ min: 150, max: 200 });
   console.log(`Seeding ${recipeCount} recipes...`);
   for (let i = 0; i < recipeCount; i++) {
     const selectedSteps = faker.helpers.arrayElement(exampleSteps).map((step, index) => ({
@@ -130,7 +130,20 @@ const exampleSteps = [
             `https://i.ibb.co/KLd9fP0/download.jpg`,
             `https://i.ibb.co/rQNWj4z/images.jpg`,
             `https://i.ibb.co/RB3cjwr/istockphoto-1214416414-612x612.jpg`,
-            `https://i.ibb.co/DzdttwP/shoyu-ramen-20181227133143.jpg`]),
+            `https://i.ibb.co/DzdttwP/shoyu-ramen-20181227133143.jpg`,
+            `https://i.ibb.co/yh6vqjx/images-12.jpg`,
+            `https://i.ibb.co/5TXh3JY/images-11.jpg`,
+            `https://i.ibb.co/KzmHWG0/images-10.jpg`,
+            `https://i.ibb.co/nChn4P0/images-9.jpg`,
+            `https://i.ibb.co/f9wZCPd/images-8.jpg`,
+            `https://i.ibb.co/XzYWc9s/images-7.jpg`,
+            `https://i.ibb.co/TPp4c2y/images-6.jpg`,
+            `https://i.ibb.co/1JQ4LCM/images-5.jpg`,
+            `https://i.ibb.co/4KNp4LY/images-4.jpg`,
+            `https://i.ibb.co/r0PBtdh/images-3.jpg`,
+            `https://i.ibb.co/s6hGfxC/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg`,
+            `https://i.ibb.co/M87L6DB/images-14.jpg`,
+            `https://i.ibb.co/crncG78/images-13.jpg`]),
           steps: selectedSteps,
           userId: faker.helpers.arrayElement(users).userId,
           createdAt: faker.date.past({ years: 1 })
@@ -142,7 +155,7 @@ const exampleSteps = [
   // Seed Ingredients
   console.log('Seeding ingredients for each recipe...');
   for (const recipe of recipes) {
-    const ingredientCount = faker.number.int({ min: 3, max: 6 });
+    const ingredientCount = faker.number.int({ min: 4, max: 6 });
     for (let i = 0; i < ingredientCount; i++) {
       await prisma.ingredient.create({
         data: {
@@ -215,7 +228,7 @@ for (const recipe of recipes) {
 console.log('Each recipe has been linked to one unique category!');
 
   // Seed Bookmarks /*MODIFIED*/ avoid duplicate bookmarks
-  const bookmarkCount = faker.number.int({ min: 50, max: 70 });
+  const bookmarkCount = faker.number.int({ min: 150, max: 200 });
   console.log(`Seeding ${bookmarkCount} bookmarks...`);
   for (let i = 0; i < bookmarkCount; i++) {
     const randomUserId = faker.helpers.arrayElement(users).userId;
@@ -245,7 +258,7 @@ console.log('Each recipe has been linked to one unique category!');
   // const createdAt = faker.date.past({ years: 1 });
   // const updatedAt = faker.date.between({ from: createdAt, to: new Date() });
 
-  const commentCount = faker.number.int({ min: 120, max: 150 });
+  const commentCount = faker.number.int({ min: 150, max: 200 });
   console.log(`Seeding ${commentCount} comments`);
   for (let i = 0; i < commentCount; i++) {
     const createdAt = faker.date.past({ years: 1 });
@@ -263,7 +276,7 @@ console.log('Each recipe has been linked to one unique category!');
   }
 
   // Seed Likes /*MODIFIED*/ avoid duplicate likes
-  const likeCount = faker.number.int({ min: 80, max: 100 });
+  const likeCount = faker.number.int({ min: 140, max: 200 });
   console.log(`Seeding ${likeCount} likes`);
   for (let i = 0; i < likeCount; i++) {
     const randomUserId = faker.helpers.arrayElement(users).userId;
