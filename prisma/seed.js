@@ -7,14 +7,14 @@ const bcrypt = require('bcrypt');
 
 async function main() {
     //Dropping the tables if exists /*MODIFIED*/
-    await prisma.bookmark.deleteMany();
-    await prisma.comment.deleteMany();
-    await prisma.ingredient.deleteMany();
-    await prisma.like.deleteMany();
-    await prisma.recipe.deleteMany();
-    await prisma.category.deleteMany();
-    await prisma.userFollower.deleteMany();
-    await prisma.user.deleteMany();
+    // await prisma.bookmark.deleteMany();
+    // await prisma.comment.deleteMany();
+    // await prisma.ingredient.deleteMany();
+    // await prisma.like.deleteMany();
+    // await prisma.recipe.deleteMany();
+    // await prisma.category.deleteMany();
+    // await prisma.userFollower.deleteMany();
+    // await prisma.user.deleteMany();
 
   console.log('Seeding the database with random quantities');
 
