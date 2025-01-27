@@ -18,8 +18,8 @@ RUN npm install -g vite
 COPY . .
 RUN npm install
 
-COPY prisma .
-RUN npx prisma generate
+# COPY prisma .
+# RUN npx prisma generate
 
-EXPOSE 3000
-CMD [ "node", "server.js" ]
+EXPOSE 5173
+CMD [ "npm", "run", "dev" ]
