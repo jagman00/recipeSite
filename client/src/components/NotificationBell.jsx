@@ -28,7 +28,7 @@ const NotificationBell = () => {
             const data = await response.json();
             
             if (response.ok){
-                const {notifications: newNotifications, hasMore: more} = data;
+                const {notifications: newNotifications, unreadCount, hasMore: more} = data;
 
                 // When fetching first page, replace notifications
                 // When fetching subsequent pages, append notifications
@@ -36,7 +36,8 @@ const NotificationBell = () => {
                     page === 1 
                     ? newNotifications 
                     : [...prevNotifications, ...newNotifications]
-                );     
+                );
+                setUnreadCount(unreadCount); // Update unread count from the server     
                 setHasMore(more); // Update "hasMore" flag
 
                 // Calculate unread count during the first page
@@ -55,6 +56,11 @@ const NotificationBell = () => {
             setLoading(false); // Stop loading
         }
     };
+
+    // When the user logs in (triggered by login or component mount)
+    useEffect(() => {
+        fetchNotifications(1); // Fetch notifications and initialize unread count
+    }, [token]); // Trigger on token change
 
     useEffect(() => {
         if (page>1) {
