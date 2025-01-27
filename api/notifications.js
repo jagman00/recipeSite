@@ -29,9 +29,12 @@ router.get('/', authenticateUser, async (req, res) => {
         const totalNotifications = await prisma.notification.count({ 
             where: { userId: parseInt(userId) } 
         });
+        const unreadCount = await prisma.notification.count({
+            where: { userId: parseInt(userId), read: false },
+        });
         const hasMore = parseInt(offset) + notifications.length < totalNotifications;
 
-        res.status(200).json({ notifications, hasMore });
+        res.status(200).json({ notifications, unreadCount, hasMore });
 
         // Emit an event to notify the client
         req.io.to(`user-${userId}`).emit('newNotification' , notifications);
