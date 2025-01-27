@@ -78,20 +78,6 @@ function Navbar({ token, setToken, isAdmin }) {
     };
   }, [dropdownVisible]);
 
-// *** thu token state
-  //   const handleStorageChange = () => {
-  //     updateTokenState();
-  //   };
-
-  //   // Listen for changes to localStorage (such as token update)
-  //   window.addEventListener("storage", handleStorageChange);
-
-  //   return () => {
-  //     // Clean up the event listener when the component is unmounted
-  //     window.removeEventListener("storage", handleStorageChange);
-  //   };
-  // }, []); // Empty dependency array to run only once on mount
-
   return (
     <nav className="navbar">
       <Link to="/">

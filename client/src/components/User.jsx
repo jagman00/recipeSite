@@ -159,7 +159,6 @@ const GetUser = ({setToken}) => {
             <Link to={`/author/${follower.userId}`}>{follower.name}</Link>
             <FollowButton
               authorId={follower.userId}
-              //onFollowChange={(userId, isFollowing) => handleFollowChange(userId, isFollowing, follower.name)} // Pass name dynamically
               onFollowChange={handleFollowChange}
               authorName={follower.name}
             />

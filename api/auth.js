@@ -150,7 +150,3 @@ router.post('/google-login', async (req, res, next) => {
         next(error);
     }
 });
-
-// router.post('/google-register', async (req, res) => {
-
-// })
