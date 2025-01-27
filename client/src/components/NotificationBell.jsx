@@ -10,57 +10,81 @@ const NotificationBell = () => {
     const [unreadCount, setUnreadCount] = useState(0);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const dropdownRef = useRef(null);
-    const token = localStorage.getItem('token');      
+    const token = localStorage.getItem('token');
+    
+    const [page, setPage] = useState(1); // Tracks the current page
+    const [hasMore, setHasMore] = useState(true); // Tracks if there are more notifications to load
+    const [loading, setLoading] = useState(false); // For showing 
+    
+    // Fetch notifications
+    const fetchNotifications = async (page = 1) => {
+        setLoading(true); // Start loading
+        try {
+            const response = await fetch(`/api/notifications?limit=10&offset=${(page - 1) * 10}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            
+            if (response.ok){
+                const {notifications: newNotifications, hasMore: more} = data;
 
-    //Fetch notifications
-    useEffect(() => {
-        const fetchNotifications = async () => {
-            try {
-                const response = await fetch('/api/notifications', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                const data = await response.json();
+                // When fetching first page, replace notifications
+                // When fetching subsequent pages, append notifications
+                setNotifications((prevNotifications) => 
+                    page === 1 
+                    ? newNotifications 
+                    : [...prevNotifications, ...newNotifications]
+                );     
+                setHasMore(more); // Update "hasMore" flag
 
-                // Filter out invalid notifications
-                const validNotifications = data.filter(
-                    (notification) =>
-                        notification.message && notification.createdAt
-                );
-                setNotifications(validNotifications);
-                
-                // Count unread notifications
-                const unread = data.filter((notification) => !notification.read);
-                setUnreadCount(unread.length);
-            } catch (error) {
-                console.error('Error fetching notifications:', error);
+                // Calculate unread count during the first page
+                if (page === 1) {
+                    const unread = newNotifications.filter((notification) => !notification.read).length;
+                    setUnreadCount(unread);
+                }
+
+            } else {
+                console.error('Failed to fetch notifications:', data.message);
             }
-        };
 
-        fetchNotifications();
-    }, [token]);
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        } finally {
+            setLoading(false); // Stop loading
+        }
+    };
 
-    // Listen for new notifications
     useEffect(() => {
-        if (!socket) {
-            console.error("Socket not initialized.");
-            return;
-          }
+        if (page>1) {
+            fetchNotifications(page); // Fetch notifications for the current page
+        }
+    }, [page]);
 
-        socket.on('newNotification', (notification) => { // Listen for notifications
-            //console.log("New notification received:", notification); // Debugging 
-            if (!notification.message || !notification.createdAt) {
-                // console.warn("Invalid notification received:", notification); //Debugging
-                return;
+    const loadMoreNotifications = () => {
+        if (!loading && hasMore) {
+            setPage((prevPage) => prevPage + 1); // Increment the page number
+        }
+    };
+
+    // Listen for real-time notifications
+    useEffect(() => {
+        if (socket) {
+            socket.on('newNotification', (notification) => { // Listen for notifications
+                //console.log("New notification received:", notification); // Debugging 
+                if (notification.message && notification.createdAt) {
+                    setNotifications((prev) => [
+                        notification,
+                        ...prev.filter((notif) => notif.id !== notification.id),
+                    ]);
+                    setUnreadCount((count) => count + 1); // Increment unread count
+                }
+            });
+            return () => {
+                socket.off('newNotification');
             }
-            setNotifications((prev) => [notification, ...prev]); // Add new noti at top
-            setUnreadCount((count) => count + 1); // Increment unread count
-        });
-
-        return () => {
-            socket.off('newNotification');
-        };
+        }
     }, [socket]);
 
     // Time ago function
@@ -81,30 +105,38 @@ const NotificationBell = () => {
         return `${years} yr${years > 1 ? 's' : ''} ago`;
     }
 
-    
-    const handleBellClick = async (event) => {
-        setDropdownVisible((prev) => !prev);
+    const handleBellClick = async () => {
+        const newVisibility = !dropdownVisible;
+        setDropdownVisible(newVisibility);
 
-        // Mark notifications as read when dropdown opens
-        if (!dropdownVisible && unreadCount > 0) { 
-            try {
-                await fetch('/api/notifications/mark-read', {
-                    method: 'PUT',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                // Update local state
-                setUnreadCount(0);
-                setNotifications(notifications.map((notification) => ({ ...notification, read: true }))); // Mark all notifications as read
-            } catch (error) {
-                console.error('Error marking notifications as read:', error);
-            }
+        if (newVisibility) {
+            // When opening the dropdown
+            await markAllAsRead(); // Mark all notifications as read
+            setPage(1);
+            fetchNotifications(1); // Fetch the latest notifications
         }
     }
+
+    // Function to mark all notifications as read
+    const markAllAsRead = async () => {
+        try {
+            
+            await fetch('/api/notifications/mark-read', {
+                method: 'PUT',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setUnreadCount(0); // Reset unread count
+            setNotifications((prev) =>
+                prev.map((notification) => ({ ...notification, read: true }))
+        ); // Mark notifications as read locally
+        } catch (error) {
+            console.error('Error marking notifications as read:', error);
+        }
+    };
     
-    // Hide dropdown on outside click
+    // Close dropdown on outside click
     useEffect(() => {
         const handleOutsideClick = (event) => {
             if (
@@ -113,6 +145,7 @@ const NotificationBell = () => {
                 !event.target.closest(".bell-icon") // Check if clicked element is not the bell icon
             ) {
                 setDropdownVisible(false);
+                markAllAsRead(); // Mark all notifications as read
             }
         };
 
@@ -185,6 +218,18 @@ const NotificationBell = () => {
                             ))}
                         </ul>
                         
+                    )}
+
+                    {/* "See More Notifications" Button */}
+                    {hasMore && (
+                        <button 
+                            onClick={loadMoreNotifications} 
+                            disabled={loading} 
+                            className="see-more-button">
+                                {loading 
+                                ? "Loading..."
+                                : 'See More Notifications'}
+                        </button>
                     )}
                     
                 </div>
