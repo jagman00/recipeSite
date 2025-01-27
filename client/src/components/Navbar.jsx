@@ -140,9 +140,6 @@ function Navbar({ token, setToken, isAdmin }) {
                 >
                   Feed
                 </Link>
-                <button className="logoutButton" onClick={handleLogout}>
-                  Logout
-                </button>
                 <Link
                   className="postrecipebutton"
                   to="/new-recipe"
