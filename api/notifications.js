@@ -7,6 +7,8 @@ const authenticateUser = require('../middleware/authenticateUser')
 // GET /api/notifications
 router.get('/', authenticateUser, async (req, res) => {
     const userId = req.user.userId;
+    const { limit = 10, offset = 0 } = req.query; // Default to 10 and 0 if not provided
+
     try {
         const notifications = await prisma.notification.findMany({
             where: { userId: parseInt(userId) },
@@ -19,8 +21,17 @@ router.get('/', authenticateUser, async (req, res) => {
                 },
             },
             orderBy: { createdAt: 'desc' },
+            take: parseInt(limit), // Fetch `limit` number of notifications
+            skip: parseInt(offset), // Skip `offset` number of notifications
         });
-        res.status(200).json(notifications);
+
+        // Check if there are more notifications beyond the current batch
+        const totalNotifications = await prisma.notification.count({ 
+            where: { userId: parseInt(userId) } 
+        });
+        const hasMore = parseInt(offset) + notifications.length < totalNotifications;
+
+        res.status(200).json({ notifications, hasMore });
 
         // Emit an event to notify the client
         req.io.to(`user-${userId}`).emit('newNotification' , notifications);
