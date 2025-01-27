@@ -51,7 +51,7 @@ io.on("connection", (socket) => {
       return;
     }
     socket.join(`user-${userId}`); // Use a unique room name for each user
-    console.log(`User ${userId} joined thier rooms.`);
+    console.log(`User ${userId} joined their rooms.`);
   })
 
   socket.on("leave", (userId) => {
