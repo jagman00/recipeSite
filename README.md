@@ -1,7 +1,7 @@
 # Recipe Round Table
 Recipe Round Table is a full-stack web application designed to connect food enthusiasts with a vibrant community for sharing and discovering recipes. The platform provides a seamless experience for users to create, share, bookmark, and explore recipes while engaging with others through likes, comments, and follows.
 
-# Key Features
+## Key Features
 1. User Account
 	•	Secure user register and login authentications using JSON Web Tokens (JWT).
     •	User can also register and login wiht gmail account (OAuth).
@@ -47,58 +47,58 @@ Recipe Round Table is a full-stack web application designed to connect food enth
 8. Responsive Design 
     •	Seamless user interface across devices with different screen sizes: desktop, tablet or mobile.
 
-# Tech Stack
-Frontend: HTML, CSS, JavaScript, React
-Backend: Node.js, Express
-Database: PostgreSQL with Prisma for ORM
-Other Tools
+## Tech Stack
+- **Frontend**: HTML, CSS, JavaScript, React
+- **Backend**: Node.js, Express
+- **Database**: PostgreSQL with Prisma for ORM
+- **Other Tools**
 	•	Socket.IO: Real-time notifications.
 	•	JWT: Secure authentication.
 	•	Multer: For image uploads.
     •	Postman: For testing and documenting API
 
-# Contributors
-Jackson Grant
-Thu Yein Tun
-William Howard
-Caleb Vang Dodson
-Ryan Raidt
+## Contributors
+- **Jackson Grant**
+- **Thu Yein Tun**
+- **William Howard**
+- **Caleb Vang Dodson**
+- **Ryan Raidt**
 
-# Installation and Setup
-# Prerequisites
-Node.js and npm
-PostgreSQL
+## Installation and Setup
+### Prerequisites
+- Node.js and npm
+- PostgreSQL
 
-# Clone the Repository
-git clone git@github.com:jagman00/recipeSite.git
-cd recipeSite
+### Clone the Repository
+- git clone git@github.com:jagman00/recipeSite.git
+- cd recipeSite
 
-# Install Dependencies
-npm install 
+### Install Dependencies
+- npm install 
 
-# Configure Environment Variables
+### Configure Environment Variables
 Create a .env file in the root direcroty
-    DATABASE_URL=your_postgresql_database_url
-    JWT_SECRET=your_secret_key
+- DATABASE_URL=your_postgresql_database_url
+- JWT_SECRET=your_secret_key
 
-# Run the Development Server
-npm run dev
+### Run the Development Server
+- npm run dev
 
 
-# Usage
+## Usage
 1.	Sign Up or Log In: Create an account or log in to access the platform.
 2.	Explore Recipes: Browse recipes shared by the community.
 3.	Create Recipes: Add your own recipes to the platform.
 4.	Engage: Like, comment on, and bookmark recipes. Follow other users to see their latest creations.
 5.	Manage Notifications: Stay updated with real-time notifications.
 
-# Future Enhancements
-	•	Implement advanced search and filtering. 
-	•	Add social sharing options for recipes.
-	•	Introduce a premium subscription with exclusive recipes and features.
+## Future Enhancements
+- Implement advanced search and filtering. 
+- Add social sharing options for recipes.
+- Introduce a premium subscription with exclusive recipes and features.
 
 
-# Extra Notes for developers : 
+### Extra Notes for developers : 
 If there any changes and update in schema.prisma
 try running 
 npx prisma generate 
