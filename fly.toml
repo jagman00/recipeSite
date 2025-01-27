@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for recipesite-weathered-feather-1289 on 2025-01-26T19:57:32-06:00
+# fly.toml app configuration file generated for recipesite-divine-cloud-4606 on 2025-01-26T20:15:55-06:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'recipesite-weathered-feather-1289'
+app = 'recipesite-divine-cloud-4606'
 primary_region = 'dfw'
 
 [build]
