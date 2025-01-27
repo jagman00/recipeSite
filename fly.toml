@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for recipesite-still-sound-8556 on 2025-01-26T19:51:20-06:00
+# fly.toml app configuration file generated for recipesite-weathered-feather-1289 on 2025-01-26T19:57:32-06:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'recipesite-still-sound-8556'
+app = 'recipesite-weathered-feather-1289'
 primary_region = 'dfw'
 
 [build]
