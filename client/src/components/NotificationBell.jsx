@@ -185,27 +185,28 @@ const NotificationBell = () => {
                                 <li key={notification.id} className={notification.read ? 'read' : 'unread'}>
                                     {notification.fromUser && (
                                         <Link 
-                                        to={`/author/${notification.fromUser.userId}`}
-                                        className="notification-link"
-                                        onClick={handleLinkClick}>
+                                            to={`/author/${notification.fromUser.userId}`}
+                                            className="notification-link"
+                                            onClick={handleLinkClick}
+                                        >
                                             {notification.fromUser.name}
                                         </Link>
                                     )}
 
                                     {notification.type === "like" && (
-                                        <span>liked your recipe - </span>
+                                        <span> liked your recipe - </span>
                                     )}
                                     {notification.type === "comment" && (
-                                        <span>commented on your recipe - </span>
+                                        <span> commented on your recipe - </span>
                                     )}
                                     {notification.type === "new_recipe" && (
-                                        <span>created a new recipe - </span>
+                                        <span> created a new recipe - </span>
                                     )}
                                     {notification.type === "bookmark" && (
-                                        <span>bookmarked your recipe - </span>
+                                        <span> bookmarked your recipe - </span>
                                     )}
                                     {notification.type === "follow" && (
-                                        <span>followed you.</span>
+                                        <span> followed you.</span>
                                     )}
 
                                     {notification.recipe && (

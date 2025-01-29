@@ -1496,6 +1496,7 @@ input::placeholder, textarea::placeholder {
   color: var(--white);
   font-family: "EB Garamond", serif;
   margin-top: 5px;
+  margin-bottom: 10px;
 }
 #removeBookmarkBtn:hover {
   cursor: pointer;
@@ -1763,6 +1764,10 @@ input::placeholder, textarea::placeholder {
 .activityFeed a {
   text-decoration: none;
   color: var(--black);
+}
+.activityFeedInfo {
+  max-width: 400px;
+  text-align: left;
 }
 .activity-item {
   display: flex;
