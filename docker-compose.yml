@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:15
+    container_name: recipe-site-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  frontend-app:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: recipe-site-frontend
+    depends_on:
+      - postgres
+    ports:
+      - "5173:5173"
+    environment:
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
+      PORT: "3000"
+      JWT_SECRET: "super_secret"
+      GOOGLE_CLIENT_ID: "700364176320-10uhplln8pn9t1146v54e7i6ggpbvc76.apps.googleusercontent.com"
+      VITE_GOOGLE_CLIENT_ID: "700364176320-10uhplln8pn9t1146v54e7i6ggpbvc76.apps.googleusercontent.com"
+
+  backend-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: recipe-site-backend
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://postgres:password@postgres:5432/postgres"
+      PORT: "3000"
+      JWT_SECRET: "super_secret"
+      GOOGLE_CLIENT_ID: "700364176320-10uhplln8pn9t1146v54e7i6ggpbvc76.apps.googleusercontent.com"
+      VITE_GOOGLE_CLIENT_ID: "700364176320-10uhplln8pn9t1146v54e7i6ggpbvc76.apps.googleusercontent.com"
+
+volumes:
+  postgres_data:
