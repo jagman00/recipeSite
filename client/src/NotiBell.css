@@ -36,6 +36,14 @@
     padding: 10px;
     border-radius: 2px;
 }
+.notification-dropdown h2 {
+    margin-left: 10px;
+}
+.notification-dropdown a {
+    padding-left: 0;
+    padding-right: 0;
+    
+}
 .notification-dropdown ul {
     list-style: none;
 } 
@@ -48,4 +56,26 @@
 }
 .notification-link:hover {
     text-decoration: underline; 
+}
+.see-more-button {
+    background-image: url('./assets/largeParchmentBackground.jpg');
+    background-size: cover;
+    padding: 5px 5px 5px 5px;
+    font-size: 20px;
+    color: var(--black);
+    border: 1px solid var(--black);
+    box-shadow: 0 0 5px var(--black);
+    border-radius: 5px;
+    width: auto;
+    font-family: "EB Garamond", serif;
+    font-weight: 500;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto 0;
+}
+.see-more-button:hover {
+    cursor: pointer;
+    box-shadow: 0 0 2px var(--black);
 }

@@ -84,7 +84,7 @@ function ActivityFeed() {
                       />
                     </div>
                   ) : ( "/placeholder-image.png")}
-                  <div>
+                  <div className="activityFeedInfo">
                     <strong>{activity.user?.name || "Unknown User"}</strong>
                     {renderActivityDetails(activity)}
                   </div>
@@ -131,18 +131,18 @@ function renderActivityDetails(activity) {
 
   switch (type) {
     case "like":
-      return <> liked <em>{recipe?.title || "a recipe"}</em></>;
+      return <span> liked <em>{recipe?.title || "a recipe"}</em></span>;
     case "comment":
       return (
-        <>
+        <span>
           commented on <em>{recipe?.title || "a recipe"}</em>:{" "}
           <q>{comment?.text || "No comment text"}</q>
-        </>
+        </span>
       );
     case "bookmark":
-      return <> bookmarked <em>{recipe?.title || "a recipe"}</em></>;
+      return <span> bookmarked <em>{recipe?.title || "a recipe"}</em></span>;
     case "new_recipe":
-      return <> posted a new recipe: <em>{recipe?.title || "Untitled Recipe"}</em></>;
+      return <span> posted a new recipe: <em>{recipe?.title || "Untitled Recipe"}</em></span>;
     default:
       return null;
   }
