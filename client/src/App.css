@@ -1769,6 +1769,10 @@ input::placeholder, textarea::placeholder {
   max-width: 400px;
   text-align: left;
 }
+.recipeFeedInfo {
+  max-width: 400px;
+  text-align: left;
+}
 .activity-item {
   display: flex;
   flex-direction: column;
