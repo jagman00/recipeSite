@@ -170,7 +170,9 @@ const NotificationBell = () => {
         <div className="notification-bell" >
             <button onClick={handleBellClick} className="bell-icon">
                 <img src={bellIcon} alt="Notifications" />
-                {unreadCount > 0 && <span className="unread-count">{unreadCount}</span>}
+                {unreadCount > 0 && 
+                (unreadCount < 9 ? <span className="unread-count">{unreadCount}</span> :
+                <span className="unread-count">9+</span>)}
             </button>
 
             {dropdownVisible && (
