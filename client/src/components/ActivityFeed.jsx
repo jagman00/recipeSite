@@ -113,8 +113,8 @@ function ActivityFeed() {
                       />
                     </div>
                   ) : ( "/placeholder-image.png")}
-                  <h4>{recipe.title}</h4>
-                  <p>By {recipe.user?.name || "Unknown Author"}</p>
+                  <h4 className="recipeFeedInfo">{recipe.title}</h4>
+                  <p className="recipeFeedInfo">By {recipe.user?.name || "Unknown Author"}</p>
                 </Link>
               </li>
             ))}
@@ -135,7 +135,7 @@ function renderActivityDetails(activity) {
     case "comment":
       return (
         <span>
-          commented on <em>{recipe?.title || "a recipe"}</em>:{" "}
+          &nbsp;commented on <em>{recipe?.title || "a recipe"}</em>:{" "}
           <q>{comment?.text || "No comment text"}</q>
         </span>
       );

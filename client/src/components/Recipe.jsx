@@ -467,8 +467,6 @@ const Recipe = () => {
                       }}
                       style={{
                         cursor: "pointer",
-                        background: "none",
-                        border: "1px solid #ccc",
                         padding: "5px",
                       }}
                     >
@@ -478,8 +476,6 @@ const Recipe = () => {
                       onClick={() => setShowReportDropdown(false)} // Cancel and hide dropdown
                       style={{
                         cursor: "pointer",
-                        background: "none",
-                        border: "1px solid #ccc",
                         padding: "5px",
                         marginLeft: "5px",
                       }}
